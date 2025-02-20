@@ -1,0 +1,90 @@
+Test with input './philo 5 800 200 200':
+  Expected: Should run indefinitely with no deaths
+  Time taken: 10008 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 1 800 200 200':
+  Expected: Philosopher should die after 800ms due to no forks
+  Time taken: 803 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 5 600 200 200':
+  Expected: Should run for a while with no deadlock, then exit normally
+  Time taken: 10009 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 5 300 200 100':
+  Expected: At least one philosopher should die due to starvation
+  Time taken: 10005 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 5 800 200 200 3':
+  Expected: Each philosopher eats 3 times, then program exits
+  Time taken: 1804 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 5 800 0 0 1':
+  Expected: Should stop after each philosopher eats once, despite zero wait times
+  Time taken: 10 ms
+  Exited with status 1
+--------------------------
+Test with input './philo 200 800 200 200':
+  Expected: Stress test, should not crash or deadlock
+  Time taken: 10006 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 5 10 1 1':
+  Expected: Most philosophers should die quickly due to extreme timing constraints
+  Time taken: 10008 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 5 -100 200 200':
+  Expected: Should fail with an error due to negative time
+  Time taken: 10 ms
+  Exited with status 1
+--------------------------
+Test with input './philo 0 800 200 200':
+  Expected: Should fail with an error due to zero philosophers
+  Time taken: 10 ms
+  Exited with status 1
+--------------------------
+Test with input './philo 5 800 200':
+  Expected: Should fail due to incorrect argument count
+  Time taken: 10 ms
+  Exited with status 1
+--------------------------
+Test with input './philo 5 800 200 200 10 20':
+  Expected: Should fail due to too many arguments
+  Time taken: 10 ms
+  Exited with status 1
+--------------------------
+Test with input './philo 5 100 50 30':
+  Expected: Should run briefly but exit normally, ensuring eating logic is followed
+  Time taken: 10008 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 2 800 200 200':
+  Expected: Both philosophers should eat without deadlocking
+  Time taken: 10003 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 10 800 200 200':
+  Expected: Should run indefinitely with no deaths, testing moderate load
+  Time taken: 10003 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 5 1000 500 400':
+  Expected: Should allow extended eating periods with no deaths
+  Time taken: 10006 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 3 500 250 200':
+  Expected: Should balance eating and thinking with no starvation
+  Time taken: 10009 ms
+  Exited with status 0
+--------------------------
+Test with input './philo 5 100 100 100 5':
+  Expected: Should exit after each philosopher eats 5 times
+  Time taken: 10005 ms
+  Exited with status 0
+--------------------------
