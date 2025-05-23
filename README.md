@@ -123,7 +123,7 @@ Level: [████████░░] 80% Complete
 
 | Skill | Proficiency | Projects |
 |-------|-------------|----------|
-| **C Programming** | ████████░░ 80% | Libft, Printf, Push_swap |
+| **C Programming** | ███████░░░ 70% | Libft, Printf, Push_swap |
 | **Algorithms** | ███████░░░ 70% | Push_swap, Philosophers |
 | **System Programming** | ██████░░░░ 60% | Minishell, Pipex |
 | **Web Development** | █████░░░░░ 50% | Webserv, Transcendence |
