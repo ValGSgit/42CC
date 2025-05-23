@@ -6,8 +6,6 @@
 ![Status](https://img.shields.io/badge/Status-In%20Progress-orange?style=for-the-badge)
 ![Level](https://img.shields.io/badge/Level-4.10-blue?style=for-the-badge)
 
-<img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FFile%3A42_Logo.svg&psig=AOvVaw2zN_j3ROoPIC-Bm57QCbjc&ust=1748104843317000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCNCF6JOEuo0DFQAAAAAdAAAAABAE" alt="42 Badge" width="150"/>
-
 ### 💫 *"The journey of a thousand miles begins with a single step"*
 
 </div>
