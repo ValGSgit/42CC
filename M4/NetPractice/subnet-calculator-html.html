@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subnet Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        input[type="range"] {
+            background: linear-gradient(to right, #3b82f6 0%, #3b82f6 50%, #e5e7eb 50%, #e5e7eb 100%);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const SubnetCalculator = () => {
+            const [ip, setIp] = useState('192.168.1.0');
+            const [cidr, setCidr] = useState(24);
+            const [result, setResult] = useState(null);
+            const [showBinary, setShowBinary] = useState(false);
+            const [mode, setMode] = useState('calculator');
+
+            const calculateSubnet = () => {
+                const ipParts = ip.split('.').map(Number);
+                const maskBits = cidr;
+                const hostBits = 32 - maskBits;
+                const totalHosts = Math.pow(2, hostBits);
+                const usableHosts = totalHosts - 2;
+
+                // Calculate subnet mask
+                const mask = [];
+                for (let i = 0; i < 4; i++) {
+                    const bits = Math.max(0, Math.min(8, maskBits - i * 8));
+                    mask.push(256 - Math.pow(2, 8 - bits));
+                }
+
+                // Calculate network address
+                const network = ipParts.map((part, i) => part & mask[i]);
+                
+                // Calculate broadcast address
+                const broadcast = network.map((part, i) => part | (255 - mask[i]));
+
+                // Calculate first and last usable IP
+                const firstUsable = [...network];
+                firstUsable[3] += 1;
+                
+                const lastUsable = [...broadcast];
+                lastUsable[3] -= 1;
+
+                setResult({
+                    network: network.join('.'),
+                    broadcast: broadcast.join('.'),
+                    mask: mask.join('.'),
+                    firstUsable: firstUsable.join('.'),
+                    lastUsable: lastUsable.join('.'),
+                    totalHosts,
+                    usableHosts,
+                    hostBits
+                });
+            };
+
+            useEffect(() => {
+                calculateSubnet();
+            }, [ip, cidr]);
+
+            const toBinary = (num) => {
+                return num.toString(2).padStart(8, '0');
+            };
+
+            const commonSubnets = [
+                { cidr: 24, mask: '255.255.255.0', hosts: 254, name: 'Standard /24' },
+                { cidr: 25, mask: '255.255.255.128', hosts: 126, name: 'Half /24' },
+                { cidr: 26, mask: '255.255.255.192', hosts: 62, name: 'Quarter /24' },
+                { cidr: 27, mask: '255.255.255.224', hosts: 30, name: 'Eighth /24' },
+                { cidr: 28, mask: '255.255.255.240', hosts: 14, name: 'Sixteenth /24' },
+                { cidr: 30, mask: '255.255.255.252', hosts: 2, name: 'Point-to-Point' }
+            ];
+
+            const keyPoints = [
+                {
+                    title: "CIDR Notation",
+                    content: "/24 means the first 24 bits are the network portion. The remaining 8 bits are for hosts."
+                },
+                {
+                    title: "Subnet Mask",
+                    content: "255.255.255.0 (/24) means the first 3 octets identify the network, last octet is for hosts."
+                },
+                {
+                    title: "Network Address",
+                    content: "The first IP in a subnet. All host bits are 0. Cannot be assigned to devices."
+                },
+                {
+                    title: "Broadcast Address",
+                    content: "The last IP in a subnet. All host bits are 1. Cannot be assigned to devices."
+                },
+                {
+                    title: "Usable IPs",
+                    content: "Total IPs minus 2 (network and broadcast). These can be assigned to devices."
+                }
+            ];
+
+            return (
+                <div className="max-w-6xl mx-auto p-6 bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+                    <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
+                            <div className="flex items-center gap-3 mb-4">
+                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <h1 className="text-3xl font-bold">Subnet Master</h1>
+                            </div>
+                            <p className="text-blue-100">Interactive tool to master IP subnetting for NetPractice</p>
+                        </div>
+
+                        <div className="p-6">
+                            <div className="flex gap-4 mb-6">
+                                <button 
+                                    onClick={() => setMode('calculator')}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                                        mode === 'calculator' 
+                                            ? 'bg-blue-600 text-white shadow-lg' 
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    Calculator
+                                </button>
+                                <button 
+                                    onClick={() => setMode('reference')}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                                        mode === 'reference' 
+                                            ? 'bg-blue-600 text-white shadow-lg' 
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    Quick Reference
+                                </button>
+                            </div>
+
+                            {mode === 'calculator' && (
+                                <div className="grid lg:grid-cols-2 gap-8">
+                                    <div className="space-y-6">
+                                        <div className="bg-gray-50 p-6 rounded-lg">
+                                            <h2 className="text-xl font-semibold mb-4 text-gray-800">Network Input</h2>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">IP Address</label>
+                                                    <input
+                                                        type="text"
+                                                        value={ip}
+                                                        onChange={(e) => setIp(e.target.value)}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        placeholder="192.168.1.0"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">CIDR (/{cidr})</label>
+                                                    <input
+                                                        type="range"
+                                                        min="8"
+                                                        max="30"
+                                                        value={cidr}
+                                                        onChange={(e) => setCidr(parseInt(e.target.value))}
+                                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                                    />
+                                                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                                        <span>/8</span>
+                                                        <span>/16</span>
+                                                        <span>/24</span>
+                                                        <span>/30</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="binary"
+                                                        checked={showBinary}
+                                                        onChange={(e) => setShowBinary(e.target.checked)}
+                                                        className="rounded"
+                                                    />
+                                                    <label htmlFor="binary" className="text-sm text-gray-700">Show binary representation</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-blue-50 p-6 rounded-lg">
+                                            <h3 className="text-lg font-semibold mb-4 text-blue-800 flex items-center gap-2">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                Memory Tips
+                                            </h3>
+                                            <div className="space-y-3">
+                                                <div className="text-sm">
+                                                    <strong>/24 = 256 IPs:</strong> Think "Class C" - most common for LANs
+                                                </div>
+                                                <div className="text-sm">
+                                                    <strong>/25 = 128 IPs:</strong> Half of /24 (256 ÷ 2)
+                                                </div>
+                                                <div className="text-sm">
+                                                    <strong>/26 = 64 IPs:</strong> Quarter of /24 (256 ÷ 4)
+                                                </div>
+                                                <div className="text-sm">
+                                                    <strong>/30 = 4 IPs:</strong> Point-to-point links (2 usable)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        {result && (
+                                            <div className="bg-green-50 p-6 rounded-lg">
+                                                <h2 className="text-xl font-semibold mb-4 text-green-800">Subnet Information</h2>
+                                                <div className="space-y-3">
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="bg-white p-3 rounded border-l-4 border-blue-500">
+                                                            <div className="text-sm text-gray-600">Network Address</div>
+                                                            <div className="font-mono font-bold text-lg">{result.network}</div>
+                                                            {showBinary && (
+                                                                <div className="text-xs text-gray-500 mt-1">
+                                                                    {result.network.split('.').map(n => toBinary(parseInt(n))).join('.')}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="bg-white p-3 rounded border-l-4 border-red-500">
+                                                            <div className="text-sm text-gray-600">Broadcast Address</div>
+                                                            <div className="font-mono font-bold text-lg">{result.broadcast}</div>
+                                                            {showBinary && (
+                                                                <div className="text-xs text-gray-500 mt-1">
+                                                                    {result.broadcast.split('.').map(n => toBinary(parseInt(n))).join('.')}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div className="bg-white p-3 rounded border-l-4 border-purple-500">
+                                                        <div className="text-sm text-gray-600">Subnet Mask</div>
+                                                        <div className="font-mono font-bold text-lg">{result.mask}</div>
+                                                        {showBinary && (
+                                                            <div className="text-xs text-gray-500 mt-1">
+                                                                {result.mask.split('.').map(n => toBinary(parseInt(n))).join('.')}
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="bg-white p-3 rounded border-l-4 border-green-500">
+                                                            <div className="text-sm text-gray-600">First Usable IP</div>
+                                                            <div className="font-mono font-bold">{result.firstUsable}</div>
+                                                        </div>
+                                                        <div className="bg-white p-3 rounded border-l-4 border-green-500">
+                                                            <div className="text-sm text-gray-600">Last Usable IP</div>
+                                                            <div className="font-mono font-bold">{result.lastUsable}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="bg-white p-4 rounded">
+                                                        <div className="grid grid-cols-3 gap-4 text-center">
+                                                            <div>
+                                                                <div className="text-2xl font-bold text-blue-600">{result.totalHosts}</div>
+                                                                <div className="text-sm text-gray-600">Total IPs</div>
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-2xl font-bold text-green-600">{result.usableHosts}</div>
+                                                                <div className="text-sm text-gray-600">Usable IPs</div>
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-2xl font-bold text-purple-600">{result.hostBits}</div>
+                                                                <div className="text-sm text-gray-600">Host Bits</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {mode === 'reference' && (
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div>
+                                        <h2 className="text-xl font-semibold mb-4">Common Subnets</h2>
+                                        <div className="space-y-2">
+                                            {commonSubnets.map((subnet, idx) => (
+                                                <div key={idx} className="bg-gray-50 p-4 rounded-lg flex justify-between items-center">
+                                                    <div>
+                                                        <div className="font-mono font-bold">/{subnet.cidr}</div>
+                                                        <div className="text-sm text-gray-600">{subnet.name}</div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <div className="font-mono text-sm">{subnet.mask}</div>
+                                                        <div className="text-sm text-gray-600">{subnet.hosts} usable IPs</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h2 className="text-xl font-semibold mb-4">Key Concepts</h2>
+                                        <div className="space-y-4">
+                                            {keyPoints.map((point, idx) => (
+                                                <div key={idx} className="bg-blue-50 p-4 rounded-lg">
+                                                    <h3 className="font-semibold text-blue-800 mb-2">{point.title}</h3>
+                                                    <p className="text-sm text-gray-700">{point.content}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<SubnetCalculator />, document.getElementById('root'));
+    </script>
+</body>
+</html>

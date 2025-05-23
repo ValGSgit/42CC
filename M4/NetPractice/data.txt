@@ -1,0 +1,45 @@
+🎯 Essential Patterns to Memorize
+Powers of 2 Shortcuts
+
+/24 = 256 IPs (2^8 host bits)
+/25 = 128 IPs (2^7 host bits)
+/26 = 64 IPs (2^6 host bits)
+/27 = 32 IPs (2^5 host bits)
+/28 = 16 IPs (2^4 host bits)
+/30 = 4 IPs (2^2 host bits) - Perfect for point-to-point links
+
+Quick Mental Math Tricks
+
+Host Bits = 32 - CIDR
+
+/24 → 32-24 = 8 host bits → 2^8 = 256 total IPs
+
+
+Usable IPs = Total - 2
+
+Always subtract 2 (network + broadcast addresses)
+
+
+Subnet Mask Patterns
+
+/24 = 255.255.255.0 (most common)
+/25 = 255.255.255.128 (128 = 10000000 in binary)
+/26 = 255.255.255.192 (192 = 11000000 in binary)
+/30 = 255.255.255.252 (252 = 11111100 in binary)
+
+
+
+📚 NetPractice-Specific Tips
+Common Scenarios You'll Encounter
+
+LAN segments: Usually /24 or /25
+Point-to-point links: Always /30 (2 usable IPs)
+Router interfaces: Must be in same subnet to communicate
+Default routes: 0.0.0.0/0 means "any network"
+
+Troubleshooting Checklist
+
+Are devices in the same subnet? (Network portions must match)
+Is the IP within the usable range? (Not network or broadcast)
+Do subnet masks match on connected devices?
+Are routes configured for different subnets?
