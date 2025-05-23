@@ -113,7 +113,7 @@ Welcome to my **42 School adventure**! This repository is a living documentation
 ### 🎯 42 Cursus Progress
 
 ```
-Level: [████████░░] 80% Complete
+Level: [██████░░░░] 60% Complete
 ```
 
 **Current Level:** 4.10  
@@ -123,7 +123,7 @@ Level: [████████░░] 80% Complete
 
 | Skill | Proficiency | Projects |
 |-------|-------------|----------|
-| **C Programming** | ███████░░░ 70% | Libft, Printf, Push_swap |
+| **C Programming** | ████████░░ 80% | Libft, Printf, Push_swap |
 | **Algorithms** | ███████░░░ 70% | Push_swap, Philosophers |
 | **System Programming** | ██████░░░░ 60% | Minishell, Pipex |
 | **Web Development** | █████░░░░░ 50% | Webserv, Transcendence |
