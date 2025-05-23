@@ -4,7 +4,7 @@
   
 ![42 School](https://img.shields.io/badge/42-School-000000?style=for-the-badge&logo=42&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-In%20Progress-orange?style=for-the-badge)
-![Level](https://img.shields.io/badge/Level-X.XX-blue?style=for-the-badge)
+![Level](https://img.shields.io/badge/Level-4.10-blue?style=for-the-badge)
 
 <img src="https://github.com/42School/42-project-badges/raw/main/badges/libftm.png" alt="42 Badge" width="150"/>
 
@@ -116,9 +116,8 @@ Welcome to my **42 School adventure**! This repository is a living documentation
 Level: [████████░░] 80% Complete
 ```
 
-**Current Level:** X.XX  
-**Projects Completed:** XX/XX  
-**Evaluation Points:** XXXX  
+**Current Level:** 4.10  
+**Projects Completed:** 9/17    
 
 ### 📈 Skills Development
 
@@ -138,7 +137,7 @@ Level: [████████░░] 80% Complete
 
 <div align="center">
 
-> ### 🎓 "At 42, we don't just learn to code - we learn to think like developers"
+> ### 🎓 "At 42, we don't just learn to code - we learn to learn and to think like developers"
 
 </div>
 
@@ -188,7 +187,7 @@ graph LR
 
 ### 💭 *"The best way to predict the future is to create it"*
 
-**⭐ If you find my journey inspiring, please give this repo a star!**
+**⭐ If you find my journey interesting, please give this repo a star!**
 
 *Last Updated: May 2025*
 
