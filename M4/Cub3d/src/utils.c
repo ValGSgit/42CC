@@ -6,7 +6,7 @@
 /*   By: vagarcia <vagarcia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 23:38:14 by vagarcia          #+#    #+#             */
-/*   Updated: 2025/05/22 15:23:09 by vagarcia         ###   ########.fr       */
+/*   Updated: 2025/05/28 10:33:09 by vagarcia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,3 +98,11 @@ void	init_player_direction(t_player *player, char direction)
 	else if (direction == 'E' || direction == 'W')
 		init_player_direction1(player, direction);
 }
+
+#if BONUS == 0
+// Create RGB color value from individual components
+int	create_rgb(int r, int g, int b)
+{
+	return (r << 16 | g << 8 | b);
+}
+#endif

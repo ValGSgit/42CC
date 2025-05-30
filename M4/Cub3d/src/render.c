@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vagarcia <vagarcia@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kfan <kfan@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 23:38:06 by vagarcia          #+#    #+#             */
-/*   Updated: 2025/05/21 19:26:59 by vagarcia         ###   ########.fr       */
+/*   Updated: 2025/05/28 19:49:22 by kfan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,9 @@ int	render_frame(t_game *game)
 	{
 		get_coin(game, 1);
 		update_map(game, &player1, &player2);
-		update_sprites(game);
 	}
+	if (BONUS)
+		update_sprites(game);
 	if (game->win == NULL)
 		return (1);
 	if (render_player1(game))

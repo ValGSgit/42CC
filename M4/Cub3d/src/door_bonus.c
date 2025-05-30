@@ -6,7 +6,7 @@
 /*   By: kfan <kfan@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 23:38:06 by vagarcia          #+#    #+#             */
-/*   Updated: 2025/05/22 12:06:57 by kfan             ###   ########.fr       */
+/*   Updated: 2025/05/28 21:21:10 by kfan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void	dead(t_game *game, t_ray *ray, int i, int j)
 	change_map(game, ray);
 	if (i < 2)
 	{
+		game->player[i].coin = 0;
 		game->player[i].dead = 1;
 		game->sprites[game->player[i].index].texture = SPRITE_PLAYER2;
 	}
@@ -75,7 +76,6 @@ void	dead(t_game *game, t_ray *ray, int i, int j)
 		while (++j < game->sprite_count)
 		{
 			if ((game->sprites[j].texture == SPRITE_ENEMY
-					|| game->sprites[j].texture == SPRITE_ENEMY_BENTLEY
 					|| game->sprites[j].texture == SPRITE_ENEMY_FIAT)
 				&& (int)game->sprites[j].x == ray->map_x
 				&& (int)game->sprites[j].y == ray->map_y)
@@ -95,16 +95,25 @@ void	fire(t_game *game, int i)
 {
 	t_ray	ray;
 	int		x;
+	int		hit;
 
+	if (game->player[i].dead == 1)
+		return ;
 	x = WIN_WIDTH / 2;
 	init_ray(&ray, x, game, i);
 	calculate_step_and_side_dist(&ray, &game->player[i]);
 	perform_dda_bonus(&ray, game->map.grid, game->map.height, game->map.width);
-	if (BONUS == 2 && ray.hit == 3 && game->player[0].dead == 0)
+	calculate_wall_distance(&ray, &game->player[i]);
+	hit = 0;
+	if (game->camera_y[i] < 0)
+		ray.perp_wall_dist *= -1;
+	if (ray.perp_wall_dist * game->camera_y[i] < 450)
+		hit = 1;
+	if (BONUS == 2 && ray.hit == 3 && game->player[0].dead == 0 && hit)
 		dead(game, &ray, 0, -1);
-	if (BONUS == 2 && ray.hit == 4 && game->player[1].dead == 0)
+	if (BONUS == 2 && ray.hit == 4 && game->player[1].dead == 0 && hit)
 		dead(game, &ray, 1, -1);
-	if (BONUS == 1 && ray.hit == 3)
+	if (BONUS == 1 && ray.hit == 3 && hit)
 		dead(game, &ray, 2, -1);
 	game->camera_y[i] += 30;
 	render_frame(game);

@@ -6,7 +6,7 @@
 /*   By: vagarcia <vagarcia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 23:38:22 by vagarcia          #+#    #+#             */
-/*   Updated: 2025/05/22 15:23:38 by vagarcia         ###   ########.fr       */
+/*   Updated: 2025/05/30 10:09:17 by vagarcia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,8 @@
 # define SPRITE_ENEMY 3
 # define SPRITE_GUN 4
 # define SPRITE_DOOR 5
-# define MAX_SPRITES 100
-# define SPRITE_ENEMY_BENTLEY 6
-# define SPRITE_ENEMY_FIAT 7
+# define MAX_SPRITES 1024
+# define SPRITE_ENEMY_FIAT 6
 # define MAX_SPRITE_TYPES 10
 
 // Structure for sprite drawing calculations
@@ -222,6 +221,8 @@ typedef struct s_sprite
 	int		texture;
 	double	distance; // Distance from player (for sorting)
 	int		visible; // Whether the sprite is visible
+	int		direction_x; // sprite moving direction
+	int		direction_y; // sprite moving direction
 }	t_sprite;
 
 typedef struct s_game
@@ -278,6 +279,7 @@ int		parse(t_map	*map, char *input, int x);
 int		parse_line(t_map *map, char *temp, int line);
 int		check_map(t_map *map, int gnl_flag, int line);
 int		check_identifier(t_map *map, int error);
+int		can_pass(char c);
 //init
 int		init_map(t_map	*map, char *input);
 //error
@@ -357,6 +359,8 @@ void	render_dead(t_game *game, int i);
 void	draw_coin_info(t_game *game, int i);
 void	draw_range(t_game *game, int i, char *dst);
 void	draw_map(t_game *game, int x, int y, int pixel);
+void	move_enemy_x(t_game *game, int i);
+void	move_enemy_y(t_game *game, int i);
 
 // Weapon/player arm
 void	draw_player_weapon_bobbing(t_game *game);

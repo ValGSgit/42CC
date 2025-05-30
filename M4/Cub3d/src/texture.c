@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   texture.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vagarcia <vagarcia@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kfan <kfan@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 23:38:10 by vagarcia          #+#    #+#             */
-/*   Updated: 2025/05/22 16:22:23 by vagarcia         ###   ########.fr       */
+/*   Updated: 2025/05/27 14:19:11 by kfan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ void	scaling_texture(t_game *game, int tex_num, int x, int y)
 	game->textures[tex_num].img.img = NULL;
 }
 
-// Replace access check with open check
 void	load_texture(t_game *game, int tex_num)
 {
 	game->textures[tex_num].img.img = mlx_xpm_file_to_image(game->mlx,

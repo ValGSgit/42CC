@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   texture_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vagarcia <vagarcia@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kfan <kfan@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 16:42:46 by vagarcia          #+#    #+#             */
-/*   Updated: 2025/05/23 17:44:35 by vagarcia         ###   ########.fr       */
+/*   Updated: 2025/05/28 12:11:15 by kfan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,6 @@ void	load_textures_bonus(t_game *game)
 			ft_strdup("textures/bonus/p2.xpm");
 	game->textures_bonus[SPRITE_ENEMY].path = \
 			ft_strdup("textures/bonus/car1.xpm");
-	game->textures_bonus[SPRITE_ENEMY_BENTLEY].path = \
-			ft_strdup("textures/bonus/bentley.xpm");
 	game->textures_bonus[SPRITE_ENEMY_FIAT].path = \
 			ft_strdup("textures/bonus/fiat.xpm");
 	game->textures_bonus[SPRITE_COIN].path = \

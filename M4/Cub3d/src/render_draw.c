@@ -6,7 +6,7 @@
 /*   By: vagarcia <vagarcia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 23:38:06 by vagarcia          #+#    #+#             */
-/*   Updated: 2025/05/23 11:28:50 by vagarcia         ###   ########.fr       */
+/*   Updated: 2025/05/28 16:20:27 by vagarcia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ void	draw_floor(t_game *game, int x, int draw_end)
 	int	y;
 
 	y = draw_end;
+	if (y < 0)
+		y = 0;
 	while (y + 1 < WIN_HEIGHT)
 	{
 		my_mlx_pixel_put(&game->img, x, y, game->floor.color);

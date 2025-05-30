@@ -3,14 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   parse_line.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kfan <kfan@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vagarcia <vagarcia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 12:02:25 by kfan              #+#    #+#             */
-/*   Updated: 2025/05/21 15:12:47 by kfan             ###   ########.fr       */
+/*   Updated: 2025/05/28 10:57:51 by vagarcia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
+
+int	can_pass(char c)
+{
+	if (c == '0')
+		return (1);
+	if (BONUS && (c == 'E' || c == 'N' || c == 'S' || c == 'W' || c == 'O'
+			|| c == 'C' || c == 'K' || c == 'F'))
+		return (1);
+	return (0);
+}
 
 static int	parse_texture(t_map *map, char *path, int x)
 {

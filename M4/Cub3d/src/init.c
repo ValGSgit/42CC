@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kfan <kfan@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vagarcia <vagarcia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 12:02:25 by kfan              #+#    #+#             */
-/*   Updated: 2025/05/21 15:29:35 by kfan             ###   ########.fr       */
+/*   Updated: 2025/05/28 16:32:01 by vagarcia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,15 @@ int	init_map(t_map *map, char *input)
 	map->grid = NULL;
 	map->flag = 0;
 	map->players = 0;
-	i = 0;
-	while (i < 7)
-	{
+	i = -1;
+	while (++i < 7)
 		map->identifier[i] = 0;
-		i++;
-	}
 	i = 0;
 	while (input[i])
 		i++;
 	if (i < 4 || ft_strncmp(&input[i - 4], ".cub", 4))
+		return (identifier_error(-1, 0), 1);
+	if (i < 5 || !ft_strncmp(&input[i - 5], "/.cub", 5))
 		return (identifier_error(-1, 0), 1);
 	return (0);
 }

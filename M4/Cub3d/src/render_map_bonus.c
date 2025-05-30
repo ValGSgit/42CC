@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_map_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vagarcia <vagarcia@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kfan <kfan@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 23:38:06 by vagarcia          #+#    #+#             */
-/*   Updated: 2025/05/23 17:46:24 by vagarcia         ###   ########.fr       */
+/*   Updated: 2025/05/27 14:18:56 by kfan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ void	draw_map(t_game *game, int x, int y, int pixel)
 				break ;
 			if (game->map.grid[(y / pixel)][(x / pixel)] == '1')
 				*(unsigned int *)dst = 0;
-			else
+			else if (game->map.grid[(y / pixel)][(x / pixel)] == '0')
 				*(unsigned int *)dst = create_rgb(255, 255, 255);
 			draw_map_items(game, x, y, pixel);
 			x++;
