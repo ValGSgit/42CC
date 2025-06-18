@@ -2,8 +2,8 @@
 
 <div align="center">
   
-![42 School](https://img.shields.io/badge/42-School-000000?style=for-the-badge&logo=42&logoColor=white)
-![Status](https://img.shields.io/badge/Status-In%20Progress-orange?style=for-the-badge)
+![School](https://img.shields.io/badge/42-School-000000?style=for-the-badge&logo=42&logoColor=white)
+![Status](https://img.shields.io/badge/Status-In%30Progress-yellow?style=for-the-badge)
 ![Level](https://img.shields.io/badge/Level-5.29-blue?style=for-the-badge)
 
 ### 💫 *"The journey of a thousand miles begins with a single step"*
