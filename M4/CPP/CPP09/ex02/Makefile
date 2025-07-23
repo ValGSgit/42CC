@@ -1,31 +1,60 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::   #
+#    Makefile                                           :+:      :+:    :+:   #
+#                                                     +:+ +:+         +:+     #
+#    By: your_login <your_email@student.42.fr>      +#+  +:+       +#+        #
+#                                                 +#+#+#+#+#+   +#+           #
+#    Created: 2025/07/10 00:00:00 by your_login       #+#    #+#             #
+#    Updated: 2025/07/10 00:00:00 by your_login      ###   ########.fr       #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = PmergeMe
 
-SRC = main.cpp \
+# Compiler and flags
+CXX = c++
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
-OBJ = $(SRC:.cpp=.o)
-CC = c++
-CFLAGS = -Wall -Wextra -Werror -std=c++98
-DEPFLAGS = -MD -MP
-DEPS = $(SRC:.cpp=.d)
+# Source files
+SRCDIR = .
+SRCS = main.cpp PmergeMe.cpp
+OBJS = $(SRCS:.cpp=.o)
 
+# Header dependencies
+HEADERS = PmergeMe.hpp
+
+# Default target
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+# Build target
+$(NAME): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 
-%.o: %.cpp %.d
-	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
+# Object file compilation with dependency tracking
+%.o: %.cpp $(HEADERS)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.d: ;
-
+# Clean object files
 clean:
-	rm -f $(OBJ) $(DEPS)
+	rm -f $(OBJS)
 
+# Clean everything
 fclean: clean
 	rm -f $(NAME)
 
+# Rebuild everything
 re: fclean all
 
--include $(DEPS)
+# Test targets for development
+test: $(NAME)
+	./$(NAME) 3 5 9 7 4
 
-.PHONY: all clean fclean re
+test_error: $(NAME)
+	./$(NAME) "-1" "2"
+
+test_large: $(NAME)
+	./$(NAME) `seq 1 100 | shuf | head -20 | tr '\n' ' '`
+
+# Phony targets
+.PHONY: all clean fclean re test test_error test_large

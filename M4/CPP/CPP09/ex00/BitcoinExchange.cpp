@@ -128,14 +128,7 @@ bool BitcoinExchange::parseDate(const std::string &dateStr, struct tm &dateStruc
 	return true;
 }
 
-/**
- * Validates a struct tm date structure using mktime for calendar correctness.
- * Uses mktime to check if the date is valid (e.g., rejects Feb 30, Apr 31).
- * mktime normalizes invalid dates, so we compare the normalized result with input.
- * Also validates that the year is within Bitcoin's relevant range (2009-2030).
- * @param dateStruct The struct tm to validate
- * @return true if the date is valid, false otherwise
- */
+//I regret using this approach tbh
 bool BitcoinExchange::validateDateStructure(const struct tm &dateStruct) const {
 	// Create a copy for mktime (mktime modifies the struct)
 	struct tm tempStruct = dateStruct;
@@ -155,6 +148,10 @@ bool BitcoinExchange::validateDateStructure(const struct tm &dateStruct) const {
 		return false;
 
 	int actualYear = originalYear + 1900;
+	// Bitcoin's genesis block was created on January 2, 2009
+	// Reject any date before that
+	if (actualYear == 2009 && originalMonth == 0 && originalDay < 2)
+		return false;
 	if (actualYear < 2009 || actualYear > 2030)
 		return false;
 	
@@ -171,16 +168,6 @@ bool BitcoinExchange::isValidDate(const std::string& date) const {
 	
 	return true;
 }
-
-// std::string BitcoinExchange::formatDate(const struct tm &dateStruct) const {
-// 	char buffer[11]; // YYYY-MM-DD + null terminator
-// 	std::ostringstream oss;
-// 	oss << std::setfill('0') << std::setw(4) << (dateStruct.tm_year + 1900) << '-'
-// 		<< std::setfill('0') << std::setw(2) << (dateStruct.tm_mon + 1) << '-'
-// 		<< std::setfill('0') << std::setw(2) << dateStruct.tm_mday;
-// 	std::strcpy(buffer, oss.str().c_str());
-// 	return std::string(buffer);
-// }
 
 bool BitcoinExchange::isValidValue(const std::string& valueStr, double& value) const {
 	char* endptr;
@@ -208,7 +195,7 @@ std::string BitcoinExchange::findClosestDate(const std::string& date) const {
 	}
 	// also lower_bound might return an iterator to end() if the search date is greater than all dates in database
 	if (it == _dataBase.end() || it->first != date) {
-		--it; //decrement to return the latest date if not found
+		--it;
 	}
 	return it->first; //First is special map iterator for key (first = key, second = value)
 }	

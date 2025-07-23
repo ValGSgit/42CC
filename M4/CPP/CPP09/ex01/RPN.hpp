@@ -5,8 +5,8 @@
 # include <iomanip>
 # include <stack>
 # include <algorithm>
-# include <sstream>  // For std::stringstream and std::istringstream
-# include <cstdio>   // For EOF constant
+# include <sstream>
+# include <cstdio>   // For EOF
 # include <string>
 # include <stdexcept>
 # include <cctype>
@@ -14,6 +14,6 @@
 
 std::string ft_trim(const std::string& str);
 std::stack<std::string> parseRPNTokens(const std::string& input);
-int evaluateRPN(std::stack<std::string> tokens);
+double evaluateRPN(std::stack<std::string> tokens);
 
 #endif

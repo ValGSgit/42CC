@@ -110,46 +110,6 @@ run_test "OVF-042: 9*9*9*9+1+1" "9 9 9 * * 9 * 1 + 1 +" "6563" 0
 run_test "OVF-043: 1*1*9*9*9*9" "1 1 * 9 * 9 * 9 * 9 *" "6561" 0
 run_test "OVF-044: (8*8*8*8)/1" "8 8 8 * * 8 * 1 /" "4096" 0
 
-#echo to run a test
-run_test() {
-    local test_name="$1"
-    local input="$2"
-    local expected_output="$3"
-    local expected_exit_code="$4"
-    
-    echo -n "Testing: $test_name... "
-    
-    # Run the program and capture output and exit code
-    result=$(./RPN "$input" 2>&1)
-    exit_code=$?
-    
-    TOTAL_TESTS=$((TOTAL_TESTS + 1))
-    
-    # Check if the result matches expected
-    if [ "$exit_code" -eq "$expected_exit_code" ] && [ "$result" = "$expected_output" ]; then
-        echo -e "${GREEN}PASS${NC}"
-        PASSED_TESTS=$((PASSED_TESTS + 1))
-    else
-        echo -e "${RED}FAIL${NC}"
-        echo -e "  Expected: '$expected_output' (exit code: $expected_exit_code)"
-        echo -e "  Got:      '$result' (exit code: $exit_code)"
-        FAILED_TESTS=$((FAILED_TESTS + 1))
-    fi
-}
-
-# Build the program first
-echo -e "${YELLOW}Building RPN calculator...${NC}"
-make clean > /dev/null 2>&1
-make > /dev/null 2>&1
-
-if [ $? -ne 0 ]; then
-    echo -e "${RED}Build failed! Exiting.${NC}"
-    exit 1
-fi
-
-echo -e "${GREEN}Build successful!${NC}"
-echo
-
 # Test cases from the subject
 echo -e "${BLUE}=== Subject Test Cases ===${NC}"
 run_test "Subject example 1" "8 9 * 9 - 9 - 9 - 4 - 1 +" "42" 0
@@ -222,6 +182,15 @@ echo
 echo -e "${BLUE}=== Division by Zero Tests ===${NC}"
 run_test "Division by zero" "5 0 /" "Error: division by zero" 1
 run_test "Complex division by zero" "1 2 + 0 /" "Error: division by zero" 1
+run_test "Zero from subtraction" "5 5 - 1 /" "0" 0
+run_test "Division by computed zero" "2 1 1 - /" "Error: division by zero" 1
+
+echo
+
+# Error cases - Division overflow (INT_MIN / -1)
+echo -e "${BLUE}=== Division Overflow Tests ===${NC}"
+run_test "Division result stays in range" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 0 5 - * 0 1 - /" "1.9371e+09" 0
+run_test "Large negative division" "9 9 * 9 * 9 * 0 1 - * 0 1 - /" "6561" 0
 
 echo
 
@@ -437,8 +406,8 @@ run_test "EXT-075: (9-8)*(7+6)" "9 8 - 7 6 + *" "13" 0
 
 # Complex division operations (25 tests)
 run_test "EXT-076: 9*8*7/6" "9 8 * 7 * 6 /" "84" 0
-run_test "EXT-077: 8*7*6/5" "8 7 * 6 * 5 /" "67" 0
-run_test "EXT-078: 7*6*5/4" "7 6 * 5 * 4 /" "52" 0
+run_test "EXT-077: 8*7*6/5" "8 7 * 6 * 5 /" "67.2" 0
+run_test "EXT-078: 7*6*5/4" "7 6 * 5 * 4 /" "52.5" 0
 run_test "EXT-079: 6*5*4/3" "6 5 * 4 * 3 /" "40" 0
 run_test "EXT-080: 5*4*3/2" "5 4 * 3 * 2 /" "30" 0
 run_test "EXT-081: 9*9/3+8*8/4" "9 9 * 3 / 8 8 * 4 / +" "43" 0
@@ -457,8 +426,8 @@ run_test "EXT-093: (6+6)*(7-1)/8" "6 6 + 7 1 - * 8 /" "9" 0
 run_test "EXT-094: (5+7)*(6-2)/6" "5 7 + 6 2 - * 6 /" "8" 0
 run_test "EXT-095: (4+8)*(5-1)/6" "4 8 + 5 1 - * 6 /" "8" 0
 run_test "EXT-096: 9*8*7/6/7" "9 8 * 7 * 6 / 7 /" "12" 0
-run_test "EXT-097: 8*7*6/5/6" "8 7 * 6 * 5 / 6 /" "11" 0
-run_test "EXT-098: 7*6*5/4/5" "7 6 * 5 * 4 / 5 /" "10" 0
+run_test "EXT-097: 8*7*6/5/6" "8 7 * 6 * 5 / 6 /" "11.2" 0
+run_test "EXT-098: 7*6*5/4/5" "7 6 * 5 * 4 / 5 /" "10.5" 0
 run_test "EXT-099: 6*5*4/3/4" "6 5 * 4 * 3 / 4 /" "10" 0
 run_test "EXT-100: 5*4*3/2/3" "5 4 * 3 * 2 / 3 /" "10" 0
 
@@ -468,62 +437,62 @@ echo
 echo -e "${BLUE}=== Overflow and Underflow Edge Cases (50 tests) ===${NC}"
 
 # Multiplication overflow cases (15 tests)
-run_test "OUF-001: 9*9*9*9*9*9*9*9*9" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 *" "Error: overflow" 1
-run_test "OUF-002: 8*8*8*8*8*8*8*8*8" "8 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 *" "Error: overflow" 1
-run_test "OUF-003: 7*7*7*7*7*7*7*7*7" "7 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 *" "Error: overflow" 1
-run_test "OUF-004: 6*6*6*6*6*6*6*6*6" "6 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 *" "Error: overflow" 1
-run_test "OUF-005: 5*5*5*5*5*5*5*5*5" "5 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 *" "Error: overflow" 1
-run_test "OUF-006: 9*9*9*9*9*9*9*9" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 *" "Error: overflow" 1
-run_test "OUF-007: 8*8*8*8*8*8*8*8" "8 8 * 8 * 8 * 8 * 8 * 8 * 8 *" "Error: overflow" 1
-run_test "OUF-008: 7*8*9*8*7*6*5*4" "7 8 * 9 * 8 * 7 * 6 * 5 * 4 *" "Error: overflow" 1
-run_test "OUF-009: 6*7*8*9*8*7*6*5" "6 7 * 8 * 9 * 8 * 7 * 6 * 5 *" "Error: overflow" 1
-run_test "OUF-010: 5*6*7*8*9*8*7*6" "5 6 * 7 * 8 * 9 * 8 * 7 * 6 *" "Error: overflow" 1
-run_test "OUF-011: 4*5*6*7*8*9*8*7" "4 5 * 6 * 7 * 8 * 9 * 8 * 7 *" "Error: overflow" 1
-run_test "OUF-012: 3*4*5*6*7*8*9*8" "3 4 * 5 * 6 * 7 * 8 * 9 * 8 *" "Error: overflow" 1
-run_test "OUF-013: 2*3*4*5*6*7*8*9" "2 3 * 4 * 5 * 6 * 7 * 8 * 9 *" "Error: overflow" 1
-run_test "OUF-014: 9*8*7*6*5*4*3*2*9" "9 8 * 7 * 6 * 5 * 4 * 3 * 2 * 9 *" "Error: overflow" 1
-run_test "OUF-015: 8*7*6*5*4*3*2*9*8" "8 7 * 6 * 5 * 4 * 3 * 2 * 9 * 8 *" "Error: overflow" 1
+run_test "OUF-001: 9*9*9*9*9*9*9*9*9" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 *" "3.8742e+08" 0
+run_test "OUF-002: 8*8*8*8*8*8*8*8*8" "8 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 *" "1.34218e+08" 0
+run_test "OUF-003: 7*7*7*7*7*7*7*7*7" "7 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 *" "4.03536e+07" 0
+run_test "OUF-004: 6*6*6*6*6*6*6*6*6" "6 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 *" "1.00777e+07" 0
+run_test "OUF-005: 5*5*5*5*5*5*5*5*5" "5 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 *" "1.95312e+06" 0
+run_test "OUF-006: 9*9*9*9*9*9*9*9" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 *" "4.30467e+07" 0
+run_test "OUF-007: 8*8*8*8*8*8*8*8" "8 8 * 8 * 8 * 8 * 8 * 8 * 8 *" "1.67772e+07" 0
+run_test "OUF-008: 7*8*9*8*7*6*5*4" "7 8 * 9 * 8 * 7 * 6 * 5 * 4 *" "3.38688e+06" 0
+run_test "OUF-009: 6*7*8*9*8*7*6*5" "6 7 * 8 * 9 * 8 * 7 * 6 * 5 *" "5.08032e+06" 0
+run_test "OUF-010: 5*6*7*8*9*8*7*6" "5 6 * 7 * 8 * 9 * 8 * 7 * 6 *" "5.08032e+06" 0
+run_test "OUF-011: 4*5*6*7*8*9*8*7" "4 5 * 6 * 7 * 8 * 9 * 8 * 7 *" "3.38688e+06" 0
+run_test "OUF-012: 3*4*5*6*7*8*9*8" "3 4 * 5 * 6 * 7 * 8 * 9 * 8 *" "1.45152e+06" 0
+run_test "OUF-013: 2*3*4*5*6*7*8*9" "2 3 * 4 * 5 * 6 * 7 * 8 * 9 *" "362880" 0
+run_test "OUF-014: Real overflow test 1" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 *" "Error: overflow" 1
+run_test "OUF-015: Real overflow test 2" "8 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 *" "Error: overflow" 1
 
 # Addition overflow cases (10 tests)
-run_test "OUF-016: Large addition chain" "9 9 9 * * 9 9 9 * * + 9 9 9 * * + 9 9 9 * * + 9 9 9 * * + 9 9 9 * * + 9 9 9 * * +" "Error: overflow" 1
-run_test "OUF-017: Cascading addition" "8 8 8 * * 8 8 8 * * + 8 8 8 * * + 8 8 8 * * + 8 8 8 * * + 8 8 8 * * +" "Error: overflow" 1
-run_test "OUF-018: Mixed large addition" "7 7 7 * * 8 8 8 * * + 9 9 9 * * + 8 8 8 * * + 7 7 7 * * +" "Error: overflow" 1
-run_test "OUF-019: Progressive addition" "6 6 6 * * 7 7 7 * * + 8 8 8 * * + 9 9 9 * * + 8 8 8 * * +" "Error: overflow" 1
-run_test "OUF-020: Exponential addition" "5 5 5 * * 6 6 6 * * + 7 7 7 * * + 8 8 8 * * + 9 9 9 * * +" "Error: overflow" 1
-run_test "OUF-021: Chain multiplication result addition" "9 9 9 * * 9 * 8 8 8 * * 8 * +" "Error: overflow" 1
-run_test "OUF-022: Large base addition" "8 8 8 * * 8 * 7 7 7 * * 7 * +" "Error: overflow" 1
-run_test "OUF-023: Factorial-like addition" "7 7 7 * * 7 * 6 6 6 * * 6 * +" "Error: overflow" 1
-run_test "OUF-024: Progressive multiplication addition" "6 6 6 * * 6 * 5 5 5 * * 5 * +" "Error: overflow" 1
-run_test "OUF-025: Geometric progression addition" "5 5 5 * * 5 * 4 4 4 * * 4 * +" "Error: overflow" 1
+run_test "OUF-016: Large addition chain" "9 9 9 * * 9 9 9 * * + 9 9 9 * * + 9 9 9 * * + 9 9 9 * * + 9 9 9 * * + 9 9 9 * * +" "5103" 0
+run_test "OUF-017: Cascading addition" "8 8 8 * * 8 8 8 * * + 8 8 8 * * + 8 8 8 * * + 8 8 8 * * + 8 8 8 * * +" "3072" 0
+run_test "OUF-018: Mixed large addition" "7 7 7 * * 8 8 8 * * + 9 9 9 * * + 8 8 8 * * + 7 7 7 * * +" "2439" 0
+run_test "OUF-019: Progressive addition" "6 6 6 * * 7 7 7 * * + 8 8 8 * * + 9 9 9 * * + 8 8 8 * * +" "2312" 0
+run_test "OUF-020: Exponential addition" "5 5 5 * * 6 6 6 * * + 7 7 7 * * + 8 8 8 * * + 9 9 9 * * +" "1925" 0
+run_test "OUF-021: Real overflow test" "9 9 9 * * 9 * 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * + 9 9 9 * * 9 * +" "91854" 0
+run_test "OUF-022: Another overflow test" "8 8 8 * * 8 * 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * + 8 8 8 * * 8 * +" "57344" 0
+run_test "OUF-023: Third overflow test" "7 7 7 * * 7 * 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * + 7 7 7 * * 7 * +" "33614" 0
+run_test "OUF-024: Fourth overflow test" "6 6 6 * * 6 * 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * + 6 6 6 * * 6 * +" "18144" 0
+run_test "OUF-025: Fifth overflow test" "5 5 5 * * 5 * 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * + 5 5 5 * * 5 * +" "8750" 0
 
 # Subtraction underflow cases (15 tests)
-run_test "OUF-026: Large negative result" "1 9 9 9 * * 9 * -" "Error: underflow" 1
-run_test "OUF-027: Zero minus large" "0 8 8 8 * * 8 * -" "Error: underflow" 1
-run_test "OUF-028: Small minus huge" "2 7 7 7 * * 7 * -" "Error: underflow" 1
-run_test "OUF-029: Three minus large" "3 6 6 6 * * 6 * -" "Error: underflow" 1
-run_test "OUF-030: Four minus large" "4 5 5 5 * * 5 * -" "Error: underflow" 1
-run_test "OUF-031: Cascading subtraction" "5 9 9 9 * * - 8 8 8 * * -" "Error: underflow" 1
-run_test "OUF-032: Progressive subtraction" "6 8 8 8 * * - 7 7 7 * * -" "Error: underflow" 1
-run_test "OUF-033: Chain subtraction" "7 7 7 7 * * - 6 6 6 * * -" "Error: underflow" 1
-run_test "OUF-034: Multiple large subtractions" "8 6 6 6 * * - 5 5 5 * * -" "Error: underflow" 1
-run_test "OUF-035: Geometric subtraction" "9 5 5 5 * * - 4 4 4 * * -" "Error: underflow" 1
-run_test "OUF-036: Zero base subtraction" "0 9 9 9 * * 9 * - 8 8 8 * * -" "Error: underflow" 1
-run_test "OUF-037: One base subtraction" "1 8 8 8 * * 8 * - 7 7 7 * * -" "Error: underflow" 1
-run_test "OUF-038: Two base subtraction" "2 7 7 7 * * 7 * - 6 6 6 * * -" "Error: underflow" 1
-run_test "OUF-039: Three base subtraction" "3 6 6 6 * * 6 * - 5 5 5 * * -" "Error: underflow" 1
-run_test "OUF-040: Mixed base subtraction" "4 9 9 9 * * - 8 8 8 * * - 7 7 7 * * -" "Error: underflow" 1
+run_test "OUF-026: Large negative result" "1 9 9 9 * * 9 * -" "-6560" 0
+run_test "OUF-027: Zero minus large" "0 8 8 8 * * 8 * -" "-4096" 0
+run_test "OUF-028: Small minus huge" "2 7 7 7 * * 7 * -" "-2399" 0
+run_test "OUF-029: Three minus large" "3 6 6 6 * * 6 * -" "-1293" 0
+run_test "OUF-030: Four minus large" "4 5 5 5 * * 5 * -" "-621" 0
+run_test "OUF-031: Real underflow test 1" "0 9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * -" "Error: overflow" 1
+run_test "OUF-032: Real underflow test 2" "1 8 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * -" "Error: overflow" 1
+run_test "OUF-033: Real underflow test 3" "2 7 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * -" "Error: overflow" 1
+run_test "OUF-034: Real underflow test 4" "3 6 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * -" "Error: overflow" 1
+run_test "OUF-035: Real underflow test 5" "4 5 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * -" "Error: overflow" 1
+run_test "OUF-036: Zero base subtraction" "0 9 9 9 * * 9 * - 8 8 8 * * -" "-7073" 0
+run_test "OUF-037: One base subtraction" "1 8 8 8 * * 8 * - 7 7 7 * * -" "-4438" 0
+run_test "OUF-038: Two base subtraction" "2 7 7 7 * * 7 * - 6 6 6 * * -" "-2615" 0
+run_test "OUF-039: Three base subtraction" "3 6 6 6 * * 6 * - 5 5 5 * * -" "-1418" 0
+run_test "OUF-040: Mixed base subtraction" "4 9 9 9 * * - 8 8 8 * * - 7 7 7 * * -" "-1580" 0
 
 # Mixed overflow/underflow operations (10 tests)
-run_test "OUF-041: Negative multiplication overflow" "1 9 9 9 * * 9 * - 9 9 9 * * 9 * *" "Error: underflow" 1
-run_test "OUF-042: Positive to negative overflow" "2 8 8 8 * * 8 * - 8 8 8 * * 8 * *" "Error: underflow" 1
-run_test "OUF-043: Large negative multiplication" "3 7 7 7 * * 7 * - 7 7 7 * * 7 * *" "Error: underflow" 1
-run_test "OUF-044: Underflow multiplication chain" "4 6 6 6 * * 6 * - 6 6 6 * * 6 * *" "Error: underflow" 1
-run_test "OUF-045: Mixed sign large operations" "5 5 5 5 * * 5 * - 5 5 5 * * 5 * *" "Error: underflow" 1
-run_test "OUF-046: Division overflow edge case" "9 9 9 * * 9 * 1 0 1 - / *" "Error: underflow" 1
-run_test "OUF-047: Complex overflow chain" "8 8 8 * * 8 * 1 0 1 - / *" "Error: underflow" 1
-run_test "OUF-048: Negative division overflow" "7 7 7 * * 7 * 1 0 1 - / *" "Error: underflow" 1
-run_test "OUF-049: Large negative division" "6 6 6 * * 6 * 1 0 1 - / *" "Error: underflow" 1
-run_test "OUF-050: Final overflow test" "9 9 9 * * 9 * 9 9 9 * * 9 * + 9 9 9 * * 9 * +" "Error: overflow" 1
+run_test "OUF-041: Multiplication overflow" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 *" "Error: overflow" 1
+run_test "OUF-042: Large multiplication overflow" "8 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 *" "Error: overflow" 1
+run_test "OUF-043: Multiplication underflow" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 0 6 - *" "Error: underflow" 1
+run_test "OUF-044: Addition overflow" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * + 9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * + 9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * + 9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * + 9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * + 9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * +" "Error: overflow" 1
+run_test "OUF-045: Negative multiplication underflow" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 0 7 - *" "Error: underflow" 1
+run_test "OUF-046: Chain multiplication overflow" "7 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 * 7 *" "Error: overflow" 1
+run_test "OUF-047: Subtraction underflow" "9 9 * 9 * 9 * 9 * 9 * 9 * 9 * 9 * 0 6 - * 2 - 0 1 - /" "Error: underflow" 1
+run_test "OUF-048: Sequential multiplication overflow" "6 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 * 6 *" "Error: overflow" 1
+run_test "OUF-049: Large negative multiplication" "8 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 8 * 0 4 - *" "Error: underflow" 1
+run_test "OUF-050: Mixed operation overflow" "5 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 *" "Error: overflow" 1
 
 echo
 

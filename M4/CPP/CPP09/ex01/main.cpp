@@ -9,7 +9,7 @@ int main (int a, char **v) {
 	
 	try {
 		std::stack<std::string> tokens = parseRPNTokens(v[1]);
-		int result = evaluateRPN(tokens); //Using a double again since, why not?
+		double result = evaluateRPN(tokens);
 		std::cout << result << std::endl;
 		
 	} catch (const std::exception& e) {
