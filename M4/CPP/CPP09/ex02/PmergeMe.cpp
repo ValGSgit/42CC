@@ -1,13 +1,11 @@
 #include "PmergeMe.hpp"
 
-PmergeMe::PmergeMe() : numofnums(0), _comps(0) {}
+PmergeMe::PmergeMe() : _comps(0) {}
 
 PmergeMe &PmergeMe::operator=(const PmergeMe &other) {
     if (this != &other) {
         _vectorContainer = other._vectorContainer;
         _dequeContainer = other._dequeContainer;
-        // loneNum = other.loneNum;
-        numofnums = other.numofnums;
         _comps = other._comps;
     }
     return *this;
@@ -16,8 +14,6 @@ PmergeMe &PmergeMe::operator=(const PmergeMe &other) {
 PmergeMe::PmergeMe(const PmergeMe& other) {
     _vectorContainer = other._vectorContainer;
     _dequeContainer = other._dequeContainer;
-    // loneNum = other.loneNum;
-    numofnums = other.numofnums;
     _comps = other._comps;
 }
 
@@ -67,84 +63,62 @@ void PmergeMe::parseArguments(int argc, char** argv) {
     if (_vectorContainer.empty()) {
         throw std::runtime_error("Error: No valid integers provided");
     }
-    
-    this->numofnums = argc - 1;
 }
 
 void PmergeMe::fordJohnsonSortVect(std::vector<int>& container) {
-    std::cout << "\n=== Ford-Johnson Algorithm (Vector) ===" << std::endl;
-    std::cout << "Input: ";
-    printContainer(container, "");
-    
-    // Use template specialization approach
     if (container.size() <= 1) {
         return;
     }
     
-    // Step 1: Create pairs
-    int unpaired;
-    bool hasUnpaired;
-    std::vector<std::pair<int, int> > pairs;
-    createPairsHelper(container, pairs, unpaired, hasUnpaired);
+    // Step 1: Create groups of 2 elements each (initially)
+    std::vector<int> ungrouped;
+    std::vector<std::vector<int> > groups;
+    createGroupsHelper(container, groups, ungrouped);
     
-    // Step 2: Recursively sort pairs by their larger elements
-    recursivePairSortVect(pairs);
+    // Step 2: Recursively sort groups using progressive grouping
+    recursiveGroupSort(groups);
     
     // Step 3: Build main chain and extract smaller elements
     std::vector<int> mainChain, smallerElements;
-    buildMainChain(pairs, mainChain, smallerElements);
+    buildMainChain(groups, mainChain, smallerElements);
     
     // Step 4: Insert smaller elements using Jacobsthal sequence
-    insertElementsWithJacobsthal(mainChain, smallerElements);
+    insertElementsWithJacobsthalVec(mainChain, smallerElements);
     
-    // Step 5: Insert unpaired element if exists
-    if (hasUnpaired) {
-        insertUnpairedElement(mainChain, unpaired);
+    // Step 5: Insert ungrouped elements if they exist
+    for (size_t i = 0; i < ungrouped.size(); i++) {
+        insertUnpairedElement(mainChain, ungrouped[i]);
     }
     
     container = mainChain;
-    
-    std::cout << "Final result: ";
-    printContainer(container, "");
-    std::cout << "Total comparisons: " << _comps << std::endl;
 }
 
 void PmergeMe::fordJohnsonSortDeque(std::deque<int>& container) {
-    std::cout << "\n=== Ford-Johnson Algorithm (Deque) ===" << std::endl;
-    std::cout << "Input: ";
-    printContainer(container, "");
-    
-    // Use template specialization approach
     if (container.size() <= 1) {
         return;
     }
     
-    // Step 1: Create pairs
-    int unpaired;
-    bool hasUnpaired;
-    std::deque<std::pair<int, int> > pairs;
-    createPairsHelper(container, pairs, unpaired, hasUnpaired);
+    // Step 1: Create groups of 2 elements each (initially)
+    std::deque<int> ungrouped;
+    std::deque<std::deque<int> > groups;
+    createGroupsHelper(container, groups, ungrouped);
     
-    // Step 2: Recursively sort pairs by their larger elements
-    recursivePairSortDeque(pairs);
+    // Step 2: Recursively sort groups using progressive grouping
+    recursiveGroupSort(groups);
     
     // Step 3: Build main chain and extract smaller elements
     std::deque<int> mainChain, smallerElements;
-    buildMainChain(pairs, mainChain, smallerElements);
+    buildMainChain(groups, mainChain, smallerElements);
     
     // Step 4: Insert smaller elements using Jacobsthal sequence
-    insertElementsWithJacobsthal(mainChain, smallerElements);
+    insertElementsWithJacobsthalDeque(mainChain, smallerElements);
     
-    // Step 5: Insert unpaired element if exists
-    if (hasUnpaired) {
-        insertUnpairedElement(mainChain, unpaired);
+    // Step 5: Insert ungrouped elements if they exist
+    for (size_t i = 0; i < ungrouped.size(); i++) {
+        insertUnpairedElement(mainChain, ungrouped[i]);
     }
     
     container = mainChain;
-    
-    std::cout << "Final result: ";
-    printContainer(container, "");
-    std::cout << "Total comparisons: " << _comps << std::endl;
 }
 
 double PmergeMe::getTimeInMs(struct timeval start, struct timeval end) {
@@ -156,33 +130,37 @@ void PmergeMe::processAndSort(int argc, char** argv) {
         parseArguments(argc, argv);
         printContainer(_vectorContainer, "Before: ");
         
-        // Process with vector
         _comps = 0;
         struct timeval start, end;
         gettimeofday(&start, NULL);
         fordJohnsonSortVect(_vectorContainer);
+        // printContainer(_vectorContainer, "After: ");
+        std::cout << "Total vector comparisons: " << _comps << std::endl;
         gettimeofday(&end, NULL);
         double vectorTime = getTimeInMs(start, end);
-        
-        // Process with deque
+
+
         _comps = 0;
         gettimeofday(&start, NULL);
+        // printContainer(_dequeContainer, "Before: ");
         fordJohnsonSortDeque(_dequeContainer);
+        std::cout << "Total deque comparisons: " << _comps << std::endl;
         gettimeofday(&end, NULL);
         double dequeTime = getTimeInMs(start, end);
         
+        // printContainer(_dequeContainer, "After: ");
         printContainer(_vectorContainer, "After: ");
         
+        
+        std::cout << std::fixed << std::setprecision(5);
+        std::cout << "Time to process a range of " << _vectorContainer.size() 
+            << " elements with std::vector : " << vectorTime << " us" << std::endl;
+        std::cout << "Time to process a range of " << _dequeContainer.size() 
+            << " elements with std::deque : " << dequeTime << " us" << std::endl;
         if (isSorted(_vectorContainer))
             std::cout << "Vector sorted successfully" << std::endl;
         if (isSorted(_dequeContainer))
             std::cout << "Deque sorted successfully" << std::endl;
-            
-        std::cout << std::fixed << std::setprecision(5);
-        std::cout << "Time to process a range of " << _vectorContainer.size() 
-                  << " elements with std::vector : " << vectorTime << " us" << std::endl;
-        std::cout << "Time to process a range of " << _dequeContainer.size() 
-                  << " elements with std::deque : " << dequeTime << " us" << std::endl;
         
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
