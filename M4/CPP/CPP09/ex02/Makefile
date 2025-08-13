@@ -1,60 +1,34 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::   #
-#    Makefile                                           :+:      :+:    :+:   #
-#                                                     +:+ +:+         +:+     #
-#    By: your_login <your_email@student.42.fr>      +#+  +:+       +#+        #
-#                                                 +#+#+#+#+#+   +#+           #
-#    Created: 2025/07/10 00:00:00 by your_login       #+#    #+#             #
-#    Updated: 2025/07/10 00:00:00 by your_login      ###   ########.fr       #
-#                                                                              #
-# **************************************************************************** #
-
 NAME = PmergeMe
-
-# Compiler and flags
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-# Source files
-SRCDIR = .
-SRCS = main.cpp PmergeMe.cpp
-OBJS = $(SRCS:.cpp=.o)
+ifdef COUNT_COMPARISONS
+	CXXFLAGS += -DCOUNT_COMPARISONS
+endif
 
-# Header dependencies
-HEADERS = PmergeMe.hpp
+SOURCES = main.cpp PmergeMe.cpp PmergeMeVector.cpp PmergeMeDeque.cpp
+OBJECTS = $(SOURCES:.cpp=.o)
 
-# Default target
 all: $(NAME)
 
-# Build target
-$(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
+$(NAME): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
 
-# Object file compilation with dependency tracking
-%.o: %.cpp $(HEADERS)
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Clean object files
-clean:
-	rm -f $(OBJS)
 
-# Clean everything
+count: clean
+	@echo "Building with comparison counting enabled..."
+	$(MAKE) COUNT_COMPARISONS=1
+	@echo "Build complete with comparison counting enabled"
+
+clean:
+	rm -f $(OBJECTS)
+
 fclean: clean
 	rm -f $(NAME)
 
-# Rebuild everything
 re: fclean all
 
-# Test targets for development
-test: $(NAME)
-	./$(NAME) 3 5 9 7 4
-
-test_error: $(NAME)
-	./$(NAME) "-1" "2"
-
-test_large: $(NAME)
-	./$(NAME) `seq 1 100 | shuf | head -20 | tr '\n' ' '`
-
-# Phony targets
-.PHONY: all clean fclean re test test_error test_large
+.PHONY: all clean fclean re count 

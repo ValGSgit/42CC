@@ -1,166 +1,114 @@
 #include "PmergeMe.hpp"
+#include <cstdlib>
+#include <algorithm>
 
-PmergeMe::PmergeMe() : _comps(0) {}
+PmergeMe::PmergeMe() : comps(0), countComparisons(true) {}
 
-PmergeMe &PmergeMe::operator=(const PmergeMe &other) {
+PmergeMe::PmergeMe(const PmergeMe& other) : _vector(other._vector),
+    _deque(other._deque), 
+    comps(other.comps), countComparisons(other.countComparisons) {}
+
+PmergeMe& PmergeMe::operator=(const PmergeMe& other) {
     if (this != &other) {
-        _vectorContainer = other._vectorContainer;
-        _dequeContainer = other._dequeContainer;
-        _comps = other._comps;
+        _vector = other._vector;
+        _deque = other._deque;
+        comps = other.comps;
+        countComparisons = other.countComparisons;
     }
     return *this;
 }
 
-PmergeMe::PmergeMe(const PmergeMe& other) {
-    _vectorContainer = other._vectorContainer;
-    _dequeContainer = other._dequeContainer;
-    _comps = other._comps;
-}
-
 PmergeMe::~PmergeMe() {}
 
+void PmergeMe::setCountComparisons(bool count) {
+    countComparisons = count;
+}
+
 bool PmergeMe::isValidInteger(const std::string& str) {
-    if (str.empty()) {
+    if (str.empty() || (str.length() > 1 && str[0] == '0')) {
         return false;
     }
-    if (str.length() > 1 && str[0] == '0') {
-        return false;
-    }
+    
     for (size_t i = 0; i < str.length(); ++i) {
-        if (!std::isdigit(str[i])) {
-            return false;
-        }
+        if (!std::isdigit(str[i])) return false;
     }
+    
     std::stringstream ss(str);
     long num;
     ss >> num;
-    if (ss.fail() || !ss.eof() || num < 0 || num > 2147483647) {
-        return false;
-    }
-    return true;
+    return !ss.fail() && ss.eof() && num >= 0 && num <= 2147483647;
 }
 
-void PmergeMe::parseArguments(int argc, char** argv) {
+void PmergeMe::parseInput(int argc, char** argv) {
     if (argc < 2) {
         throw std::runtime_error("Error: No arguments provided");
     }
     
-    for (int i = 1; i < argc; i++) {
+    for (int i = 1; i < argc; ++i) {
         std::string arg(argv[i]);
-        
         if (!isValidInteger(arg)) {
-            throw std::runtime_error("Error: Invalid argument");
+            throw std::runtime_error("Error: Invalid argument '" + arg + "'");
         }
         
-        std::stringstream ss(arg);
-        int num;
-        ss >> num;
-        
-        _vectorContainer.push_back(num);
-        _dequeContainer.push_back(num);
+        int num = atoi(arg.c_str());
+        _vector.push_back(num);
+        _deque.push_back(num);
     }
     
-    if (_vectorContainer.empty()) {
+    if (_vector.empty()) {
         throw std::runtime_error("Error: No valid integers provided");
     }
 }
 
-void PmergeMe::fordJohnsonSortVect(std::vector<int>& container) {
-    if (container.size() <= 1) {
-        return;
-    }
-    
-    // Step 1: Create groups of 2 elements each (initially)
-    std::vector<int> ungrouped;
-    std::vector<std::vector<int> > groups;
-    createGroupsHelper(container, groups, ungrouped);
-    
-    // Step 2: Recursively sort groups using progressive grouping
-    recursiveGroupSort(groups);
-    
-    // Step 3: Build main chain and extract smaller elements
-    std::vector<int> mainChain, smallerElements;
-    buildMainChain(groups, mainChain, smallerElements);
-    
-    // Step 4: Insert smaller elements using Jacobsthal sequence
-    insertElementsWithJacobsthalVec(mainChain, smallerElements);
-    
-    // Step 5: Insert ungrouped elements if they exist
-    for (size_t i = 0; i < ungrouped.size(); i++) {
-        insertUnpairedElement(mainChain, ungrouped[i]);
-    }
-    
-    container = mainChain;
-}
-
-void PmergeMe::fordJohnsonSortDeque(std::deque<int>& container) {
-    if (container.size() <= 1) {
-        return;
-    }
-    
-    // Step 1: Create groups of 2 elements each (initially)
-    std::deque<int> ungrouped;
-    std::deque<std::deque<int> > groups;
-    createGroupsHelper(container, groups, ungrouped);
-    
-    // Step 2: Recursively sort groups using progressive grouping
-    recursiveGroupSort(groups);
-    
-    // Step 3: Build main chain and extract smaller elements
-    std::deque<int> mainChain, smallerElements;
-    buildMainChain(groups, mainChain, smallerElements);
-    
-    // Step 4: Insert smaller elements using Jacobsthal sequence
-    insertElementsWithJacobsthalDeque(mainChain, smallerElements);
-    
-    // Step 5: Insert ungrouped elements if they exist
-    for (size_t i = 0; i < ungrouped.size(); i++) {
-        insertUnpairedElement(mainChain, ungrouped[i]);
-    }
-    
-    container = mainChain;
-}
-
-double PmergeMe::getTimeInMs(struct timeval start, struct timeval end) {
+double PmergeMe::getElapsedTime(struct timeval start, struct timeval end) {
     return (end.tv_sec - start.tv_sec) * 1000000.0 + (end.tv_usec - start.tv_usec);
 }
 
-void PmergeMe::processAndSort(int argc, char** argv) {
+void PmergeMe::process(int argc, char** argv) {
     try {
-        parseArguments(argc, argv);
-        printContainer(_vectorContainer, "Before: ");
+        parseInput(argc, argv);
         
-        _comps = 0;
+        printContainer(_vector, "Before: ");
+        
         struct timeval start, end;
+        
+        std::vector<int> vectorCopy = _vector;
         gettimeofday(&start, NULL);
-        fordJohnsonSortVect(_vectorContainer);
-        // printContainer(_vectorContainer, "After: ");
-        std::cout << "Total vector comparisons: " << _comps << std::endl;
+        fordJohnsonSortVector(vectorCopy);
         gettimeofday(&end, NULL);
-        double vectorTime = getTimeInMs(start, end);
-
-
-        _comps = 0;
+        double vectorTime = getElapsedTime(start, end);
+        int vectorComps = comps;
+        
+        std::deque<int> dequeCopy = _deque;
+        comps = 0;
         gettimeofday(&start, NULL);
-        // printContainer(_dequeContainer, "Before: ");
-        fordJohnsonSortDeque(_dequeContainer);
-        std::cout << "Total deque comparisons: " << _comps << std::endl;
+        fordJohnsonSortDeque(dequeCopy);
         gettimeofday(&end, NULL);
-        double dequeTime = getTimeInMs(start, end);
+        double dequeTime = getElapsedTime(start, end);
+        int dequeComps = comps;
         
-        // printContainer(_dequeContainer, "After: ");
-        printContainer(_vectorContainer, "After: ");
+        printContainer(vectorCopy, "After:  ");
+        printContainer(dequeCopy, "After deq:  ");
         
+        if (!isSorted(dequeCopy)) {
+            throw std::runtime_error("Error: Sorting failed for deque");
+        }
+        if (!isSorted(vectorCopy)) {
+            throw std::runtime_error("Error: Sorting failed for vector");
+        }
         
-        std::cout << std::fixed << std::setprecision(5);
-        std::cout << "Time to process a range of " << _vectorContainer.size() 
-            << " elements with std::vector : " << vectorTime << " us" << std::endl;
-        std::cout << "Time to process a range of " << _dequeContainer.size() 
-            << " elements with std::deque : " << dequeTime << " us" << std::endl;
-        if (isSorted(_vectorContainer))
-            std::cout << "Vector sorted successfully" << std::endl;
-        if (isSorted(_dequeContainer))
-            std::cout << "Deque sorted successfully" << std::endl;
+        if (countComparisons) {
+            std::cout << "comparisons with std::vector: " << vectorComps << std::endl;
+            std::cout << "comparisons with std::deque:  " << dequeComps << std::endl;
+        } else {
+            std::cout << "Comparison counting disabled" << std::endl;
+        }
+        std::cout << "Time to process a range of " << _vector.size() 
+                  << " elements with std::vector : " << std::fixed << std::setprecision(5) 
+                  << vectorTime << " us" << std::endl;
+        std::cout << "Time to process a range of " << _deque.size() 
+                  << " elements with std::deque  : " << std::fixed << std::setprecision(5) 
+                  << dequeTime << " us" << std::endl;
         
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
