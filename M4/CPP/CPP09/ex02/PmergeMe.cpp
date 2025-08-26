@@ -35,7 +35,7 @@ bool PmergeMe::isValidInteger(const std::string& str) {
     
     std::stringstream ss(str);
     long num;
-    ss >> num;
+    ss >> num; //ss.fail checks if extracting ss into a long failed
     return !ss.fail() && ss.eof() && num >= 0 && num <= 2147483647;
 }
 
