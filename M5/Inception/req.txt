@@ -1,0 +1,55 @@
+Core Requirements
+Infrastructure Setup:
+
+Use Docker Compose to orchestrate multiple services
+Each service runs in its own dedicated container
+Build custom Dockerfiles (no pulling from DockerHub except Alpine/Debian base images)
+Use Alpine or Debian as base images for performance
+Set up automatic container restart on crash
+
+Required Services:
+
+NGINX - Web server with TLS 1.2/1.3 only, port 443 entry point
+WordPress - With php-fpm (no nginx inside)
+MariaDB - Database server only
+Volumes - One for WordPress database, one for website files
+Network - Custom Docker network connecting containers
+
+Key Constraints:
+
+No network: host, --link, or prohibited commands like tail -f, sleep infinity
+No passwords in Dockerfiles - use environment variables and .env files
+Domain name: [your_login].42.fr pointing to localhost
+WordPress must have 2 users (admin username cannot contain 'admin/Admin/administrator')
+Volumes mounted to /home/[login]/data/
+
+Directory Structure
+project/
+├── Makefile
+├── secrets/
+│   ├── credentials.txt
+│   ├── db_password.txt
+│   └── db_root_password.txt
+└── srcs/
+    ├── docker-compose.yml
+    ├── .env
+    └── requirements/
+        ├── nginx/
+        │   ├── Dockerfile
+        │   ├── conf/
+        │   └── tools/
+        ├── wordpress/
+        │   ├── Dockerfile
+        │   ├── conf/
+        │   └── tools/
+        └── mariadb/
+            ├── Dockerfile
+            ├── conf/
+            └── tools/
+Bonus Options (Optional)
+
+Redis cache for WordPress
+FTP server
+Static website (non-PHP)
+Adminer
+Additional service of your choice
