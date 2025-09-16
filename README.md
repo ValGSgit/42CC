@@ -4,7 +4,7 @@
   
 ![School](https://img.shields.io/badge/42-School-000000?style=for-the-badge&logo=42&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-In%20Progress-yellow?style=for-the-badge)
-![Level](https://img.shields.io/badge/Level-5.29-blue?style=for-the-badge)
+![Level](https://img.shields.io/badge/Level-5.88-blue?style=for-the-badge)
 
 ### 💫 *"The journey of a thousand miles begins with a single step"*
 
@@ -144,12 +144,12 @@ Level: [███████░░░] 70% Complete
 | Skill | Proficiency | Projects |
 |-------|-------------|----------|
 | **C Programming** | ████████░░ 80% | Libft, Printf, Push_swap, Pipex |
-| **Graphics Programming** | ███████░░░ 70% | FdF, Cub3D |
-| **Threading & Concurrency** | ██████░░░░ 60% | Philosophers |
-| **System Programming** | ███████░░░ 70% | Minishell, Pipex |
-| **Object-Oriented (C++)** | █████░░░░░ 50% | CPP Modules |
+| **Graphics Programming** | ████████░░ 80% | FdF, Cub3D |
+| **Threading & Concurrency** | ███████░░░ 70% | Philosophers |
+| **System Programming** | █████████░ 90% | Minishell, Pipex |
+| **Object-Oriented (C++)** | ████████░░ 80% | CPP Modules |
 | **Web Development** | █████░░░░░ 50% | Webserv, Transcendence |
-| **DevOps** | ████░░░░░░ 40% | Inception, Born2beroot |
+| **DevOps** | ███████░░░ 70% | Inception, Born2beroot |
 
 </div>
 
@@ -211,6 +211,6 @@ graph LR
 
 **⭐ If you find my journey interesting, please give this repo a star!**
 
-*Last Updated: June 2025*
+*Last Updated: September 2025*
 
 </div>
