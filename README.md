@@ -133,11 +133,11 @@ Welcome to my **42 School adventure**! This repository is a living documentation
 ### 🎯 42 Cursus Progress
 
 ```
-Level: [███████░░░] 70% Complete
+Level: [████████░░] 80% Complete
 ```
 
-**Current Level:** 5.29%
-**Projects Completed:** 11/17    
+**Current Level:** 5.88%
+**Projects Completed:** 20/23    
 
 ### 📈 Skills Development
 
