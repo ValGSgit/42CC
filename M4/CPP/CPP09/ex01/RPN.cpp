@@ -67,6 +67,14 @@ std::stack<std::string> parseRPNTokens(const std::string& input) {
 	return tokens;
 }
 
+/**
+ * Numbers are pushed onto an evaluation stack, operators pop two numbers,
+ * perform the operation, and push the result back.
+ * Uses only std::stack as required by the exercise.
+ * @param tokens Stack of string tokens (numbers and operators) to evaluate
+ * @return The final result, might have to turn it into a long (?)
+ * @throws std::invalid_argument if division by zero or invalid RPN structure
+ */
 double evaluateRPN(std::stack<std::string> tokens) {
 	std::stack<double> numberStack;
 	std::stack<std::string> tempStack;
@@ -87,56 +95,56 @@ double evaluateRPN(std::stack<std::string> tokens) {
 				throw std::invalid_argument("Error: insufficient operands for operator");
 			}
 			// note: second operand is popped first
-			double num2 = numberStack.top();
+			double operand2 = numberStack.top();
 			numberStack.pop();
-			double num1 = numberStack.top();
+			double operand1 = numberStack.top();
 			numberStack.pop();
 			
 			double result = 0;
 			// * Proceeds to handle all overflow/underflow cases cuz why not*
 			if (token == "+") {
-				if (num1 > 0 && num2 > INT_MAX - num1) {
+				if (operand1 > 0 && operand2 > INT_MAX - operand1) {
 					throw std::invalid_argument("Error: overflow");
 				}
-				if (num1 < 0 && num2 < INT_MIN - num1) {
+				if (operand1 < 0 && operand2 < INT_MIN - operand1) {
 					throw std::invalid_argument("Error: underflow");
 				}
-				result = num1 + num2;
+				result = operand1 + operand2;
 			}
 			else if (token == "-") {
-				if (num1 > 0 && num2 < num1 - INT_MAX) {
+				if (operand1 > 0 && operand2 < operand1 - INT_MAX) {
 					throw std::invalid_argument("Error: overflow");
 				}
-				if (num1 < 0 && num2 > num1 - INT_MIN) {
+				if (operand1 < 0 && operand2 > operand1 - INT_MIN) {
 					throw std::invalid_argument("Error: underflow");
 				}
-				result = num1 - num2;
+				result = operand1 - operand2;
 			}
 			else if (token == "*") {
-				if (num1 != 0 && num2 != 0) {
-					if (num1 > 0 && num2 > 0 && num1 > INT_MAX / num2) {
+				if (operand1 != 0 && operand2 != 0) {
+					if (operand1 > 0 && operand2 > 0 && operand1 > INT_MAX / operand2) {
 						throw std::invalid_argument("Error: overflow");
 					}
-					if (num1 < 0 && num2 < 0 && num1 < INT_MAX / num2) {
+					if (operand1 < 0 && operand2 < 0 && operand1 < INT_MAX / operand2) {
 						throw std::invalid_argument("Error: overflow");
 					}
-					if (num1 > 0 && num2 < 0 && num2 < INT_MIN / num1) {
+					if (operand1 > 0 && operand2 < 0 && operand2 < INT_MIN / operand1) {
 						throw std::invalid_argument("Error: underflow");
 					}
-					if (num1 < 0 && num2 > 0 && num1 < INT_MIN / num2) {
+					if (operand1 < 0 && operand2 > 0 && operand1 < INT_MIN / operand2) {
 						throw std::invalid_argument("Error: underflow");
 					}
 				}
-				result = num1 * num2;
+				result = operand1 * operand2;
 			}
 			else if (token == "/") {
-				if (num2 == 0) {
+				if (operand2 == 0) {
 					throw std::invalid_argument("Error: division by zero");
 				}
-				if (num1 == INT_MIN && num2 == -1) {
+				if (operand1 == INT_MIN && operand2 == -1) {
 					throw std::invalid_argument("Error: overflow");
 				}
-				result = num1 / num2;
+				result = operand1 / operand2;
 			}
 			numberStack.push(result);
 		}

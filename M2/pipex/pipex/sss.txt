@@ -1,0 +1,8 @@
+total 32
+drwxr-xr-x 2 vagarcia 2024_vienna    21 Nov 20 16:40 includes
+-rwxr-xr-x 1 vagarcia 2024_vienna   543 Nov 26 11:24 Makefile
+drwxr-xr-x 2 vagarcia 2024_vienna    62 Nov 26 15:04 obj
+-rwxr-xr-x 1 vagarcia 2024_vienna 22032 Nov 26 15:04 pipex
+-rwxrwxrwx 1 vagarcia 2024_vienna   780 Nov 26 13:21 some.txt
+drwxr-xr-x 2 vagarcia 2024_vienna    92 Nov 26 12:10 src
+-rw-r--r-- 1 vagarcia 2024_vienna     0 Nov 26 15:29 sss.txt

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subnet Range Practice Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .question {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .subnet-info {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .option.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .submit-btn {
+            background: #667eea;
+            color: white;
+        }
+        
+        .submit-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .next-btn {
+            background: #28a745;
+            color: white;
+        }
+        
+        .next-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .difficulty-selector {
+            margin-bottom: 30px;
+        }
+        
+        .difficulty-btn {
+            margin: 0 10px;
+            padding: 10px 20px;
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #ddd;
+        }
+        
+        .difficulty-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .cheat-sheet {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .cheat-sheet h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        
+        .cheat-sheet-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🌐 Subnet Range Practice</h1>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="streak">0</div>
+                <div class="stat-label">Streak</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="accuracy">0%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+        </div>
+        
+        <div class="difficulty-selector">
+            <button class="difficulty-btn active" onclick="setDifficulty('easy')">Easy (/24-/26)</button>
+            <button class="difficulty-btn" onclick="setDifficulty('medium')">Medium (/27-/29)</button>
+            <button class="difficulty-btn" onclick="setDifficulty('hard')">Hard (/30)</button>
+            <button class="difficulty-btn" onclick="setDifficulty('mixed')">Mixed</button>
+        </div>
+        
+        <div class="question-card">
+            <div class="question" id="question">Loading...</div>
+            <div class="subnet-info" id="subnet-info"></div>
+            <div class="options" id="options"></div>
+            <div class="result" id="result" style="display: none;"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="submit-btn" id="submit-btn" onclick="submitAnswer()">Submit Answer</button>
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()" style="display: none;">Next Question</button>
+        </div>
+        
+        <div class="cheat-sheet">
+            <h3>Quick Reference</h3>
+            <div class="cheat-sheet-row">
+                <span>/24: 256 hosts</span>
+                <span>/25: 128 hosts (2 subnets)</span>
+                <span>/26: 64 hosts (4 subnets)</span>
+            </div>
+            <div class="cheat-sheet-row">
+                <span>/27: 32 hosts (8 subnets)</span>
+                <span>/28: 16 hosts (16 subnets)</span>
+                <span>/29: 8 hosts (32 subnets)</span>
+            </div>
+            <div class="cheat-sheet-row">
+                <span>/30: 4 hosts (64 subnets)</span>
+                <span>Remember: Subtract 2 for network and broadcast!</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = {};
+        let selectedAnswer = null;
+        let score = 0;
+        let streak = 0;
+        let totalQuestions = 0;
+        let correctAnswers = 0;
+        let difficulty = 'easy';
+        
+        const subnetData = {
+            '/24': { hosts: 254, subnets: 1, mask: '255.255.255.0' },
+            '/25': { hosts: 126, subnets: 2, mask: '255.255.255.128' },
+            '/26': { hosts: 62, subnets: 4, mask: '255.255.255.192' },
+            '/27': { hosts: 30, subnets: 8, mask: '255.255.255.224' },
+            '/28': { hosts: 14, subnets: 16, mask: '255.255.255.240' },
+            '/29': { hosts: 6, subnets: 32, mask: '255.255.255.248' },
+            '/30': { hosts: 2, subnets: 64, mask: '255.255.255.252' }
+        };
+        
+        const subnetRanges = {
+            '/25': [
+                { network: '0', range: '1-126', broadcast: '127' },
+                { network: '128', range: '129-254', broadcast: '255' }
+            ],
+            '/26': [
+                { network: '0', range: '1-62', broadcast: '63' },
+                { network: '64', range: '65-126', broadcast: '127' },
+                { network: '128', range: '129-190', broadcast: '191' },
+                { network: '192', range: '193-254', broadcast: '255' }
+            ],
+            '/27': [
+                { network: '0', range: '1-30', broadcast: '31' },
+                { network: '32', range: '33-62', broadcast: '63' },
+                { network: '64', range: '65-94', broadcast: '95' },
+                { network: '96', range: '97-126', broadcast: '127' },
+                { network: '128', range: '129-158', broadcast: '159' },
+                { network: '160', range: '161-190', broadcast: '191' },
+                { network: '192', range: '193-222', broadcast: '223' },
+                { network: '224', range: '225-254', broadcast: '255' }
+            ],
+            '/28': [
+                { network: '0', range: '1-14', broadcast: '15' },
+                { network: '16', range: '17-30', broadcast: '31' },
+                { network: '32', range: '33-46', broadcast: '47' },
+                { network: '48', range: '49-62', broadcast: '63' },
+                { network: '64', range: '65-78', broadcast: '79' },
+                { network: '80', range: '81-94', broadcast: '95' },
+                { network: '96', range: '97-110', broadcast: '111' },
+                { network: '112', range: '113-126', broadcast: '127' },
+                { network: '128', range: '129-142', broadcast: '143' },
+                { network: '144', range: '145-158', broadcast: '159' },
+                { network: '160', range: '161-174', broadcast: '175' },
+                { network: '176', range: '177-190', broadcast: '191' },
+                { network: '192', range: '193-206', broadcast: '207' },
+                { network: '208', range: '209-222', broadcast: '223' },
+                { network: '224', range: '225-238', broadcast: '239' },
+                { network: '240', range: '241-254', broadcast: '255' }
+            ],
+            '/29': [
+                { network: '0', range: '1-6', broadcast: '7' },
+                { network: '8', range: '9-14', broadcast: '15' },
+                { network: '16', range: '17-22', broadcast: '23' },
+                { network: '24', range: '25-30', broadcast: '31' },
+                { network: '32', range: '33-38', broadcast: '39' },
+                { network: '40', range: '41-46', broadcast: '47' },
+                { network: '48', range: '49-54', broadcast: '55' },
+                { network: '56', range: '57-62', broadcast: '63' }
+            ],
+            '/30': [
+                { network: '0', range: '1-2', broadcast: '3' },
+                { network: '4', range: '5-6', broadcast: '7' },
+                { network: '8', range: '9-10', broadcast: '11' },
+                { network: '12', range: '13-14', broadcast: '15' },
+                { network: '16', range: '17-18', broadcast: '19' },
+                { network: '20', range: '21-22', broadcast: '23' }
+            ]
+        };
+        
+        function setDifficulty(level) {
+            difficulty = level;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            generateQuestion();
+        }
+        
+        function getRandomSubnet() {
+            const subnetTypes = {
+                'easy': ['/24', '/25', '/26'],
+                'medium': ['/27', '/28', '/29'],
+                'hard': ['/30'],
+                'mixed': ['/24', '/25', '/26', '/27', '/28', '/29', '/30']
+            };
+            
+            const availableSubnets = subnetTypes[difficulty];
+            return availableSubnets[Math.floor(Math.random() * availableSubnets.length)];
+        }
+        
+        function generateQuestion() {
+            const subnet = getRandomSubnet();
+            const questionTypes = ['hosts', 'subnets', 'range', 'broadcast', 'network'];
+            const questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+            
+            currentQuestion = {
+                subnet: subnet,
+                type: questionType,
+                correctAnswer: null
+            };
+            
+            const baseNetwork = '192.168.1';
+            
+            switch (questionType) {
+                case 'hosts':
+                    currentQuestion.question = `How many usable host addresses are in a ${subnet} subnet?`;
+                    currentQuestion.correctAnswer = subnetData[subnet].hosts;
+                    currentQuestion.options = generateHostOptions(subnetData[subnet].hosts);
+                    break;
+                    
+                case 'subnets':
+                    currentQuestion.question = `How many subnets can be created with ${subnet} from a /24 network?`;
+                    currentQuestion.correctAnswer = subnetData[subnet].subnets;
+                    currentQuestion.options = generateSubnetOptions(subnetData[subnet].subnets);
+                    break;
+                    
+                case 'range':
+                    if (subnetRanges[subnet]) {
+                        const randomRange = subnetRanges[subnet][Math.floor(Math.random() * subnetRanges[subnet].length)];
+                        currentQuestion.question = `What is the usable IP range for the subnet ${baseNetwork}.${randomRange.network}${subnet}?`;
+                        currentQuestion.correctAnswer = `${baseNetwork}.${randomRange.range}`;
+                        currentQuestion.options = generateRangeOptions(baseNetwork, randomRange.range, subnet);
+                    } else {
+                        // Fallback to hosts question
+                        currentQuestion.question = `How many usable host addresses are in a ${subnet} subnet?`;
+                        currentQuestion.correctAnswer = subnetData[subnet].hosts;
+                        currentQuestion.options = generateHostOptions(subnetData[subnet].hosts);
+                    }
+                    break;
+                    
+                case 'broadcast':
+                    if (subnetRanges[subnet]) {
+                        const randomRange = subnetRanges[subnet][Math.floor(Math.random() * subnetRanges[subnet].length)];
+                        currentQuestion.question = `What is the broadcast address for the subnet ${baseNetwork}.${randomRange.network}${subnet}?`;
+                        currentQuestion.correctAnswer = `${baseNetwork}.${randomRange.broadcast}`;
+                        currentQuestion.options = generateBroadcastOptions(baseNetwork, randomRange.broadcast);
+                    } else {
+                        // Fallback to hosts question
+                        currentQuestion.question = `How many usable host addresses are in a ${subnet} subnet?`;
+                        currentQuestion.correctAnswer = subnetData[subnet].hosts;
+                        currentQuestion.options = generateHostOptions(subnetData[subnet].hosts);
+                    }
+                    break;
+                    
+                case 'network':
+                    currentQuestion.question = `What is the subnet mask for ${subnet}?`;
+                    currentQuestion.correctAnswer = subnetData[subnet].mask;
+                    currentQuestion.options = generateMaskOptions(subnetData[subnet].mask);
+                    break;
+            }
+            
+            displayQuestion();
+        }
+        
+        function generateHostOptions(correct) {
+            const options = [correct];
+            const possibleHosts = [2, 6, 14, 30, 62, 126, 254, 510, 1022];
+            
+            while (options.length < 4) {
+                const randomHost = possibleHosts[Math.floor(Math.random() * possibleHosts.length)];
+                if (!options.includes(randomHost)) {
+                    options.push(randomHost);
+                }
+            }
+            
+            return shuffleArray(options);
+        }
+        
+        function generateSubnetOptions(correct) {
+            const options = [correct];
+            const possibleSubnets = [1, 2, 4, 8, 16, 32, 64, 128];
+            
+            while (options.length < 4) {
+                const randomSubnet = possibleSubnets[Math.floor(Math.random() * possibleSubnets.length)];
+                if (!options.includes(randomSubnet)) {
+                    options.push(randomSubnet);
+                }
+            }
+            
+            return shuffleArray(options);
+        }
+        
+        function generateRangeOptions(baseNetwork, correctRange, subnet) {
+            const options = [`${baseNetwork}.${correctRange}`];
+            
+            // Generate some incorrect but plausible ranges
+            const parts = correctRange.split('-');
+            const start = parseInt(parts[0]);
+            const end = parseInt(parts[1]);
+            
+            // Generate variations
+            options.push(`${baseNetwork}.${start-1}-${end-1}`);
+            options.push(`${baseNetwork}.${start+1}-${end+1}`);
+            options.push(`${baseNetwork}.${start}-${end+1}`);
+            
+            return shuffleArray(options);
+        }
+        
+        function generateBroadcastOptions(baseNetwork, correctBroadcast) {
+            const options = [`${baseNetwork}.${correctBroadcast}`];
+            const broadcast = parseInt(correctBroadcast);
+            
+            options.push(`${baseNetwork}.${broadcast + 1}`);
+            options.push(`${baseNetwork}.${broadcast - 1}`);
+            options.push(`${baseNetwork}.${broadcast + 2}`);
+            
+            return shuffleArray(options);
+        }
+        
+        function generateMaskOptions(correct) {
+            const masks = [
+                '255.255.255.0',
+                '255.255.255.128',
+                '255.255.255.192',
+                '255.255.255.224',
+                '255.255.255.240',
+                '255.255.255.248',
+                '255.255.255.252'
+            ];
+            
+            const options = [correct];
+            
+            while (options.length < 4) {
+                const randomMask = masks[Math.floor(Math.random() * masks.length)];
+                if (!options.includes(randomMask)) {
+                    options.push(randomMask);
+                }
+            }
+            
+            return shuffleArray(options);
+        }
+        
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        function displayQuestion() {
+            document.getElementById('question').textContent = currentQuestion.question;
+            document.getElementById('subnet-info').textContent = `Subnet: ${currentQuestion.subnet} | Hosts: ${subnetData[currentQuestion.subnet].hosts} | Mask: ${subnetData[currentQuestion.subnet].mask}`;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectOption(index, optionDiv);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('submit-btn').style.display = 'inline-block';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('submit-btn').disabled = true;
+            selectedAnswer = null;
+        }
+        
+        function selectOption(index, element) {
+            // Remove previous selections
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            
+            // Select current option
+            element.classList.add('selected');
+            selectedAnswer = index;
+            document.getElementById('submit-btn').disabled = false;
+        }
+        
+        function submitAnswer() {
+            if (selectedAnswer === null) return;
+            
+            const selectedValue = currentQuestion.options[selectedAnswer];
+            const isCorrect = selectedValue === currentQuestion.correctAnswer;
+            
+            totalQuestions++;
+            
+            if (isCorrect) {
+                correctAnswers++;
+                score += 10;
+                streak++;
+                document.getElementById('result').textContent = '🎉 Correct! Well done!';
+                document.getElementById('result').className = 'result correct';
+                document.querySelectorAll('.option')[selectedAnswer].classList.add('correct');
+            } else {
+                streak = 0;
+                document.getElementById('result').textContent = `❌ Incorrect. The correct answer is: ${currentQuestion.correctAnswer}`;
+                document.getElementById('result').className = 'result incorrect';
+                document.querySelectorAll('.option')[selectedAnswer].classList.add('incorrect');
+                
+                // Highlight correct answer
+                currentQuestion.options.forEach((option, index) => {
+                    if (option === currentQuestion.correctAnswer) {
+                        document.querySelectorAll('.option')[index].classList.add('correct');
+                    }
+                });
+            }
+            
+            updateStats();
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('submit-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+        
+        function nextQuestion() {
+            generateQuestion();
+        }
+        
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+            document.getElementById('accuracy').textContent = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) + '%' : '0%';
+        }
+        
+        // Initialize the game
+        generateQuestion();
+    </script>
+</body>
+</html>

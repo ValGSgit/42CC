@@ -8,6 +8,7 @@ std::deque<size_t> PmergeMe::generateJacobsthalOrderDe(size_t n) {
     if (n == 0)
 		return order;
 
+    // Jacobsthal sequence starting from J0=0, J1=1
     std::deque<size_t> J;
     J.push_back(0);
     J.push_back(1);
@@ -15,19 +16,20 @@ std::deque<size_t> PmergeMe::generateJacobsthalOrderDe(size_t n) {
         size_t next = J.back() + 2 * J[J.size() - 2];
         J.push_back(next);
         if (next > n + 1)
-			break;  // n+1 is max original b-index cuz u gotta count the first smaller that was pushed
+			break;  // n+1 is max original b-index (b1 pre-inserted)
     }
 
-	size_t prevBound = 1;  // After pre-inserted b1
-	for (size_t jacIdx = 2; jacIdx < J.size(); ++jacIdx) {
-		size_t currJacobsthal = J[jacIdx];
-		size_t upperBound = std::min(currJacobsthal, n + 1);
-		for (size_t position = upperBound; position > prevBound; --position) {
-			size_t pendingIndex = position - 2;
-			order.push_back(pendingIndex);
-		}
-		prevBound = upperBound;
-	}
+    size_t prev = 1;  // After pre-inserted b1
+    for (size_t t = 2; t < J.size(); ++t) {  // Start from t=2 (J2=1), but effective groups from t=3
+        size_t curr = J[t];
+        size_t hi = std::min(curr, n + 1);
+        for (size_t k = hi; k > prev; --k) {
+            size_t pendIdx = k - 2;
+            order.push_back(pendIdx);
+        }
+        prev = hi;
+    }
+
     return order;
 }
 
@@ -61,23 +63,18 @@ void PmergeMe::fordJohnsonSortDeque(std::deque<int>& container) {
     
     fordJohnsonSortDeque(largerElements);
     
-    // Step 3: Reorder pairs based on sorted larger elements and mark as used
+    // Step 3: Reorder pairs based on sorted larger elements using optimized approach
     std::deque<std::pair<int, int> > sortedPairs;
-
-    // For each element in largerElements, find the matching pair
+    
     for (size_t i = 0; i < largerElements.size(); i++) {
-        int target = largerElements[i];
-        
         for (size_t j = 0; j < pairs.size(); j++) {
-            // Not comparing values, just rearranging pairs based on sorted larger elements xd
-            if (pairs[j].first != -1 && (pairs[j].first - target) == 0) {
+            if (pairs[j].first == largerElements[i] && pairs[j].first != -1) {
                 sortedPairs.push_back(pairs[j]);
                 pairs[j].first = -1;
                 break;
             }
         }
     }
-    
 	
     
     // Step 4: Create main chain starting with first smaller element and all larger elements
@@ -100,7 +97,7 @@ void PmergeMe::fordJohnsonSortDeque(std::deque<int>& container) {
 
     std::deque<size_t> largerPositions(sortedPairs.size());
     for (size_t i = 0; i < sortedPairs.size(); i++) {
-        largerPositions[i] = i + 1; // +1 because mainChain starts with first smaller
+        largerPositions[i] = i + 1; // +1 because mainChain starts with first smaller element
     }
 	
     if (!pendElements.empty()) {
@@ -132,20 +129,20 @@ void PmergeMe::fordJohnsonSortDeque(std::deque<int>& container) {
     container = mainChain;
 }
 
-size_t PmergeMe::binarySearchDeque(const std::deque<int>& chain, int value, size_t lowerBound, size_t upperBound) {
-    if (upperBound < lowerBound)
-		return lowerBound;
-    size_t left = lowerBound;
-    size_t right = upperBound;
-    while (left < right) {
-        // could be just (right - left) / 2 but this way i can prevent underflow
-        size_t mid = left + (right - left) / 2;
+size_t PmergeMe::binarySearchDeque(const std::deque<int>& chain, int value, size_t left, size_t right) {
+    if (right < left)
+		return left;
+
+    size_t l = left;
+	size_t r = right;
+    while (l < r) {
+        size_t mid = l + (r - l) / 2;
         if (countComparisons) comps++;
         if (chain[mid] < value) {
-            left = mid + 1;
+            l = mid + 1;
         } else {
-            right = mid;
+            r = mid;
         }
     }
-    return left;
+    return l;
 }

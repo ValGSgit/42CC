@@ -6,7 +6,7 @@
 /*   By: vagarcia <vagarcia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 11:54:20 by vagarcia          #+#    #+#             */
-/*   Updated: 2025/01/21 17:46:29 by vagarcia         ###   ########.fr       */
+/*   Updated: 2025/05/14 16:22:44 by vagarcia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,4 +126,39 @@ char	*get_next_line(int fd)
 	}
 	buf[fd] = nextline(buf[fd]);
 	return (line);
+}
+
+#include <stdio.h>
+#include <fcntl.h>
+
+int main(int ac, char **av)
+{
+	int fd1, fd2, fd3;
+	char	*line;
+
+	(void)ac;
+	fd1 = open(av[1], O_RDONLY);
+	fd2 = open(av[2], O_RDONLY);
+	fd3 = open(av[3], O_RDONLY);
+
+	line = get_next_line(fd1);
+	while (line)
+	{
+		free(line);
+		line = get_next_line(fd2);
+		printf("%s", line);
+        free(line);
+		line = get_next_line(fd3);
+		printf("%s", line);
+        free(line);
+		line = get_next_line(fd1);
+		if (!line)
+			return (close(fd1), close(fd2), close(fd3));
+		printf("%s", line);
+	}
+	if (fd1 > 0)
+		close(fd1);
+	if (line)
+		free(line);
+	return (0);
 }

@@ -2,32 +2,32 @@
 #include <string>
 
 /*
-    Part 1: Pairing and Initial Sorting
+    Phase 1: Pairing and Initial Sorting
 
     Groups elements into pairs
-    Sorts each pair individually
+    Sorts each pair individually (smaller element first)
     If there's an odd number of elements, the last element becomes unpaired
 
 
-    Part 2: Recursive Sorting of Larger Elements
+    Phase 2: Recursive Sorting of Larger Elements
 
     Takes the larger element from each pair
     Recursively sorts this sequence using the same Ford-Johnson algorithm
     This creates the main sorted chain
 
 
-    Part 3: Binary Insertion of Smaller Elements
+    Phase 3: Binary Insertion of Smaller Elements
 
     Uses the Jacob sequence (Jacobsthal numbers) to determine optimal insertion order
     For each smaller element from the pairs, performs binary search to find insertion point
     Inserts elements into the main chain maintaining sorted order
 
 
-    Part 4. Performance Measurement
+    4. Performance Measurement
     Records execution time for both container implementations measured in microseconds
 
     
-    Part 5. Output Display
+    5. Output Display
     The program outputs:
 
     Before: Original unsorted sequence
@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
     
     bool skipCountCheck = false;
     
+    // Set comparison counting based on compilation flag
 #ifdef COUNT_COMPARISONS
     if (!skipCountCheck) {
         sorter.setCountComparisons(true);

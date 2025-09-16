@@ -12,17 +12,17 @@
 
 #include "libft.h"
 
-// size_t	ft_strlen(const char *s)
-// {
-// 	size_t	i;
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
 
-// 	if (!s)
-// 		return (0);
-// 	i = 0;
-// 	while (s[i])
-// 		i++;
-// 	return (i);
-// }
+	if (!s)
+		return (0);
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
 
 void	*bytecheck(ssize_t bytes, char *buf, char *line)
 {
@@ -36,33 +36,33 @@ void	*bytecheck(ssize_t bytes, char *buf, char *line)
 	return (NULL);
 }
 
-// char	*ft_strjoin(const char *s1, const char *s2)
-// {
-// 	char	*newstr;
-// 	size_t	len1;
-// 	size_t	len2;
+char	*ft_strjoin(const char *s1, const char *s2)
+{
+	char	*newstr;
+	size_t	len1;
+	size_t	len2;
 
-// 	if (!s1 || !s2)
-// 		return (NULL);
-// 	newstr = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
-// 	if (!newstr)
-// 		return (NULL);
-// 	len1 = 0;
-// 	len2 = 0;
-// 	while (len1 < ft_strlen(s1))
-// 	{
-// 		newstr[len1] = s1[len1];
-// 		len1++;
-// 	}
-// 	while (len2 < ft_strlen(s2))
-// 	{
-// 		newstr[len1] = s2[len2];
-// 		len1++;
-// 		len2++;
-// 	}
-// 	newstr[len1] = '\0';
-// 	return (newstr);
-// }
+	if (!s1 || !s2)
+		return (NULL);
+	newstr = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	if (!newstr)
+		return (NULL);
+	len1 = 0;
+	len2 = 0;
+	while (len1 < ft_strlen(s1))
+	{
+		newstr[len1] = s1[len1];
+		len1++;
+	}
+	while (len2 < ft_strlen(s2))
+	{
+		newstr[len1] = s2[len2];
+		len1++;
+		len2++;
+	}
+	newstr[len1] = '\0';
+	return (newstr);
+}
 
 // char	*ft_strchr(const char *str, int car)
 // {

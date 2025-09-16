@@ -141,7 +141,7 @@ bool BitcoinExchange::validateDateStructure(const struct tm &dateStruct) const {
 	if (timeValue == -1)
 		return false;
 	
-	// if mktime changed any values should be invalid date
+	// Check if mktime changed any values (should be invalid date if different)
 	if (tempStruct.tm_year != originalYear ||
 		tempStruct.tm_mon != originalMonth ||
 		tempStruct.tm_mday != originalDay)
@@ -149,6 +149,7 @@ bool BitcoinExchange::validateDateStructure(const struct tm &dateStruct) const {
 
 	int actualYear = originalYear + 1900;
 	// Bitcoin's genesis block was created on January 2, 2009
+	// Reject any date before that
 	if (actualYear == 2009 && originalMonth == 0 && originalDay < 2)
 		return false;
 	if (actualYear < 2009 || actualYear > 2030)
@@ -224,7 +225,7 @@ void BitcoinExchange::processLine(const std::string& line) {
 		if (std::atof(valueStr.c_str()) < 0) {
 			std::cout << "Error: not a positive number." << std::endl;
 		} else {
-			std::cout << "Error: too large number." << std::endl;
+			std::cout << "Error: too large a number." << std::endl;
 		}
 		return;
 	}
@@ -237,8 +238,8 @@ void BitcoinExchange::processLine(const std::string& line) {
 	
 	double exchangeRate = _dataBase.find(closestDate)->second;
 	
-	double result = value * exchangeRate;
-
+	double result = value * exchangeRate; // Im going to stick with the double result since it automatically sets its value to inf if it reaches 1.7976931348623157 x 10^308
+	
 	std::cout << dateStr << " => " << value << " = " << result << std::endl;
 }
 
@@ -257,12 +258,6 @@ void BitcoinExchange::processInputFile(const std::string& filename) {
 	std::string line;
 	std::getline(file, line);
 	
-	size_t openFormat = line.find("date | value");
-	if (openFormat == std::string::npos) {
-		std::cout << "Unexpected format line =>" << line << std::endl;
-		return;
-	}
-
 	while (std::getline(file, line)) {
 		if (!line.empty()) {
 			processLine(line);

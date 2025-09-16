@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Subnet Practice Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .practice-modes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .mode-btn {
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            text-align: center;
+        }
+        
+        .mode-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .mode-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .mode-desc {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .difficulty-selector {
+            margin-bottom: 30px;
+        }
+        
+        .difficulty-btn {
+            margin: 0 10px;
+            padding: 12px 25px;
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .difficulty-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+            display: none;
+        }
+        
+        .question-card.active {
+            display: block;
+        }
+        
+        .question {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .subnet-display {
+            font-size: 1.2em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .option.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .submit-btn {
+            background: #667eea;
+            color: white;
+        }
+        
+        .submit-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .next-btn {
+            background: #28a745;
+            color: white;
+        }
+        
+        .next-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .hint-btn {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .hint-btn:hover {
+            background: #ffb300;
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .hint-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            display: none;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .hint-panel.visible {
+            display: block;
+        }
+        
+        .start-screen {
+            text-align: center;
+        }
+        
+        .start-screen h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .start-screen p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        @keyframes shake {
+            0%, 20%, 40%, 60%, 80%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🌐 Advanced Subnet Mastery</h1>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="streak">0</div>
+                <div class="stat-label">Streak</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="accuracy">0%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="hintsUsed">0</div>
+                <div class="stat-label">Hints Used</div>
+            </div>
+        </div>
+        
+        <div class="start-screen" id="start-screen">
+            <h2>Choose Your Practice Mode</h2>
+            <p>Select a specific area to focus on, or try mixed mode for a comprehensive challenge. No cheat sheets this time - test your true knowledge!</p>
+            
+            <div class="practice-modes">
+                <div class="mode-btn" onclick="selectMode('subnetting')">
+                    <div class="mode-title">🔢 Subnetting Basics</div>
+                    <div class="mode-desc">Hosts, subnets, and masks</div>
+                </div>
+                <div class="mode-btn" onclick="selectMode('ip-ranges')">
+                    <div class="mode-title">📍 IP Ranges</div>
+                    <div class="mode-desc">Usable IP address ranges</div>
+                </div>
+                <div class="mode-btn" onclick="selectMode('network-broadcast')">
+                    <div class="mode-title">📡 Network & Broadcast</div>
+                    <div class="mode-desc">Network and broadcast addresses</div>
+                </div>
+                <div class="mode-btn" onclick="selectMode('cidr-conversion')">
+                    <div class="mode-title">🔄 CIDR Conversion</div>
+                    <div class="mode-desc">CIDR to subnet mask conversion</div>
+                </div>
+                <div class="mode-btn" onclick="selectMode('advanced')">
+                    <div class="mode-title">🎯 Advanced Scenarios</div>
+                    <div class="mode-desc">Complex subnetting problems</div>
+                </div>
+                <div class="mode-btn" onclick="selectMode('mixed')">
+                    <div class="mode-title">🌟 Mixed Challenge</div>
+                    <div class="mode-desc">All topics combined</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="difficulty-selector" id="difficulty-selector" style="display: none;">
+            <button class="difficulty-btn active" onclick="setDifficulty('beginner')">Beginner (/24-/26)</button>
+            <button class="difficulty-btn" onclick="setDifficulty('intermediate')">Intermediate (/27-/29)</button>
+            <button class="difficulty-btn" onclick="setDifficulty('expert')">Expert (/30-/32)</button>
+            <button class="difficulty-btn" onclick="setDifficulty('random')">Random Mix</button>
+        </div>
+        
+        <div class="progress-bar" id="progress-container" style="display: none;">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        
+        <div class="question-card" id="question-card">
+            <div class="question" id="question">Loading...</div>
+            <div class="subnet-display" id="subnet-display"></div>
+            <div class="options" id="options"></div>
+            <div class="result" id="result" style="display: none;"></div>
+            <div class="hint-panel" id="hint-panel"></div>
+        </div>
+        
+        <div class="controls" id="controls" style="display: none;">
+            <button class="submit-btn" id="submit-btn" onclick="submitAnswer()">Submit Answer</button>
+            <button class="hint-btn" id="hint-btn" onclick="showHint()">💡 Hint (-5 pts)</button>
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()" style="display: none;">Next Question</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = {};
+        let selectedAnswer = null;
+        let score = 0;
+        let streak = 0;
+        let totalQuestions = 0;
+        let correctAnswers = 0;
+        let hintsUsed = 0;
+        let difficulty = 'beginner';
+        let practiceMode = '';
+        let questionsInSession = 0;
+        let targetQuestions = 10;
+        
+        // Hidden subnet data - no cheating!
+        const subnetData = {
+            '/24': { hosts: 254, subnets: 1, mask: '255.255.255.0', bits: 8 },
+            '/25': { hosts: 126, subnets: 2, mask: '255.255.255.128', bits: 7 },
+            '/26': { hosts: 62, subnets: 4, mask: '255.255.255.192', bits: 6 },
+            '/27': { hosts: 30, subnets: 8, mask: '255.255.255.224', bits: 5 },
+            '/28': { hosts: 14, subnets: 16, mask: '255.255.255.240', bits: 4 },
+            '/29': { hosts: 6, subnets: 32, mask: '255.255.255.248', bits: 3 },
+            '/30': { hosts: 2, subnets: 64, mask: '255.255.255.252', bits: 2 },
+            '/31': { hosts: 0, subnets: 128, mask: '255.255.255.254', bits: 1 },
+            '/32': { hosts: 0, subnets: 256, mask: '255.255.255.255', bits: 0 }
+        };
+        
+        const subnetRanges = {
+            '/25': [
+                { network: '0', range: '1-126', broadcast: '127' },
+                { network: '128', range: '129-254', broadcast: '255' }
+            ],
+            '/26': [
+                { network: '0', range: '1-62', broadcast: '63' },
+                { network: '64', range: '65-126', broadcast: '127' },
+                { network: '128', range: '129-190', broadcast: '191' },
+                { network: '192', range: '193-254', broadcast: '255' }
+            ],
+            '/27': [
+                { network: '0', range: '1-30', broadcast: '31' },
+                { network: '32', range: '33-62', broadcast: '63' },
+                { network: '64', range: '65-94', broadcast: '95' },
+                { network: '96', range: '97-126', broadcast: '127' },
+                { network: '128', range: '129-158', broadcast: '159' },
+                { network: '160', range: '161-190', broadcast: '191' },
+                { network: '192', range: '193-222', broadcast: '223' },
+                { network: '224', range: '225-254', broadcast: '255' }
+            ],
+            '/28': [
+                { network: '0', range: '1-14', broadcast: '15' },
+                { network: '16', range: '17-30', broadcast: '31' },
+                { network: '32', range: '33-46', broadcast: '47' },
+                { network: '48', range: '49-62', broadcast: '63' },
+                { network: '64', range: '65-78', broadcast: '79' },
+                { network: '80', range: '81-94', broadcast: '95' },
+                { network: '96', range: '97-110', broadcast: '111' },
+                { network: '112', range: '113-126', broadcast: '127' },
+                { network: '128', range: '129-142', broadcast: '143' },
+                { network: '144', range: '145-158', broadcast: '159' },
+                { network: '160', range: '161-174', broadcast: '175' },
+                { network: '176', range: '177-190', broadcast: '191' },
+                { network: '192', range: '193-206', broadcast: '207' },
+                { network: '208', range: '209-222', broadcast: '223' },
+                { network: '224', range: '225-238', broadcast: '239' },
+                { network: '240', range: '241-254', broadcast: '255' }
+            ],
+            '/29': [
+                { network: '0', range: '1-6', broadcast: '7' },
+                { network: '8', range: '9-14', broadcast: '15' },
+                { network: '16', range: '17-22', broadcast: '23' },
+                { network: '24', range: '25-30', broadcast: '31' },
+                { network: '32', range: '33-38', broadcast: '39' },
+                { network: '40', range: '41-46', broadcast: '47' },
+                { network: '48', range: '49-54', broadcast: '55' },
+                { network: '56', range: '57-62', broadcast: '63' },
+                { network: '64', range: '65-70', broadcast: '71' },
+                { network: '72', range: '73-78', broadcast: '79' },
+                { network: '80', range: '81-86', broadcast: '87' },
+                { network: '88', range: '89-94', broadcast: '95' },
+                { network: '96', range: '97-102', broadcast: '103' },
+                { network: '104', range: '105-110', broadcast: '111' },
+                { network: '112', range: '113-118', broadcast: '119' },
+                { network: '120', range: '121-126', broadcast: '127' },
+                { network: '128', range: '129-134', broadcast: '135' },
+                { network: '136', range: '137-142', broadcast: '143' },
+                { network: '144', range: '145-150', broadcast: '151' },
+                { network: '152', range: '153-158', broadcast: '159' },
+                { network: '160', range: '161-166', broadcast: '167' },
+                { network: '168', range: '169-174', broadcast: '175' },
+                { network: '176', range: '177-182', broadcast: '183' },
+                { network: '184', range: '185-190', broadcast: '191' },
+                { network: '192', range: '193-198', broadcast: '199' },
+                { network: '200', range: '201-206', broadcast: '207' },
+                { network: '208', range: '209-214', broadcast: '215' },
+                { network: '216', range: '217-222', broadcast: '223' },
+                { network: '224', range: '225-230', broadcast: '231' },
+                { network: '232', range: '233-238', broadcast: '239' },
+                { network: '240', range: '241-246', broadcast: '247' },
+                { network: '248', range: '249-254', broadcast: '255' }
+            ],
+            '/30': Array.from({length: 64}, (_, i) => ({
+                network: (i * 4).toString(),
+                range: `${i * 4 + 1}-${i * 4 + 2}`,
+                broadcast: (i * 4 + 3).toString()
+            }))
+        };
+        
+        function selectMode(mode) {
+            practiceMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.mode-btn').classList.add('active');
+            
+            setTimeout(() => {
+                document.getElementById('start-screen').style.display = 'none';
+                document.getElementById('difficulty-selector').style.display = 'block';
+                document.getElementById('progress-container').style.display = 'block';
+                document.getElementById('question-card').classList.add('active');
+                document.getElementById('controls').style.display = 'flex';
+                generateQuestion();
+            }, 500);
+        }
+        
+        function setDifficulty(level) {
+            difficulty = level;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            resetSession();
+            generateQuestion();
+        }
+        
+        function resetSession() {
+            questionsInSession = 0;
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const progress = (questionsInSession / targetQuestions) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+        
+        function getRandomSubnet() {
+            const subnetTypes = {
+                'beginner': ['/24', '/25', '/26'],
+                'intermediate': ['/27', '/28', '/29'],
+                'expert': ['/30', '/31', '/32'],
+                'random': ['/24', '/25', '/26', '/27', '/28', '/29', '/30']
+            };
+            
+            const availableSubnets = subnetTypes[difficulty];
+            return availableSubnets[Math.floor(Math.random() * availableSubnets.length)];
+        }
+        
+        function generateQuestion() {
+            const subnet = getRandomSubnet();
+            let questionTypes = [];
+            
+            // Determine question types based on practice mode
+            switch(practiceMode) {
+                case 'subnetting':
+                    questionTypes = ['hosts', 'subnets', 'mask'];
+                    break;
+                case 'ip-ranges':
+                    questionTypes = ['range', 'first-host', 'last-host'];
+                    break;
+                case 'network-broadcast':
+                    questionTypes = ['network', 'broadcast'];
+                    break;
+                case 'cidr-conversion':
+                    questionTypes = ['mask', 'cidr-to-decimal', 'wildcard'];
+                    break;
+                case 'advanced':
+                    questionTypes = ['subnet-count', 'overlap', 'summarization'];
+                    break;
+                case 'mixed':
+                    questionTypes = ['hosts', 'subnets', 'range', 'broadcast', 'network', 'mask'];
+                    break;
+            }
+            
+            const questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+            
+            currentQuestion = {
+                subnet: subnet,
+                type: questionType,
+                correctAnswer: null,
+                hint: ''
+            };
+            
+            const baseNetwork = getRandomNetwork();
+            
+            generateQuestionByType(questionType, subnet, baseNetwork);
+            displayQuestion();
+        }
+        
+        function getRandomNetwork() {
+            const networks = ['10.0.1', '192.168.1', '192.168.10', '172.16.1', '10.1.1'];
+            return networks[Math.floor(Math.random() * networks.length)];
+        }
+        
+        function generateQuestionByType(type, subnet, baseNetwork) {
+            switch (type) {
+                case 'hosts':
+                    currentQuestion.question = `How many usable host addresses are available in a ${subnet} subnet?`;
+                    currentQuestion.correctAnswer = subnetData[subnet].hosts;
+                    currentQuestion.options = generateHostOptions(subnetData[subnet].hosts);
+                    currentQuestion.hint = `Remember: Total addresses = 2^(host bits) - 2 (network + broadcast)`;
+                    break;
+                    
+                case 'subnets':
+                    currentQuestion.question = `How many ${subnet} subnets can be created from a /24 network?`;
+                    currentQuestion.correctAnswer = subnetData[subnet].subnets;
+                    currentQuestion.options = generateSubnetOptions(subnetData[subnet].subnets);
+                    currentQuestion.hint = `Subnets = 2^(borrowed bits). /24 to ${subnet} borrows ${24 - parseInt(subnet.slice(1))} bits`;
+                    break;
+                    
+                case 'range':
+                    if (subnetRanges[subnet]) {
+                        const randomRange = subnetRanges[subnet][Math.floor(Math.random() * subnetRanges[subnet].length)];
+                        currentQuestion.question = `What is the usable IP range for ${baseNetwork}.${randomRange.network}${subnet}?`;
+                        currentQuestion.correctAnswer = `${baseNetwork}.${randomRange.range}`;
+                        currentQuestion.options = generateRangeOptions(baseNetwork, randomRange.range, subnet);
+                        currentQuestion.hint = `Usable IPs are between network address + 1 and broadcast address - 1`;
+                    } else {
+                        generateQuestionByType('hosts', subnet, baseNetwork);
+                    }
+                    break;
+                    
+                case 'broadcast':
+                    if (subnetRanges[subnet]) {
+                        const randomRange = subnetRanges[subnet][Math.floor(Math.random() * subnetRanges[subnet].length)];
+                        currentQuestion.question = `What is the broadcast address for ${baseNetwork}.${randomRange.network}${subnet}?`;
+                        currentQuestion.correctAnswer = `${baseNetwork}.${randomRange.broadcast}`;
+                        currentQuestion.options = generateBroadcastOptions(baseNetwork, randomRange.broadcast);
+                        currentQuestion.hint = `Broadcast address is the last address in the subnet range`;
+                    } else {
+                        generateQuestionByType('hosts', subnet, baseNetwork);
+                    }
+                    break;
+                    
+                case 'network':
+                    if (subnetRanges[subnet]) {
+                        const randomRange = subnetRanges[subnet][Math.floor(Math.random() * subnetRanges[subnet].length)];
+                        currentQuestion.question = `What is the network address for an IP ${baseNetwork}.${parseInt(randomRange.network) + Math.floor(Math.random() * subnetData[subnet].hosts/2)}${subnet}?`;
+                        currentQuestion.correctAnswer = `${baseNetwork}.${randomRange.network}`;
+                        currentQuestion.options = generateNetworkOptions(baseNetwork, randomRange.network, subnet);
+                        currentQuestion.hint = `Network address has all host bits set to 0`;
+                    } else {
+                        generateQuestionByType('mask', subnet, baseNetwork);
+                    }
+                    break;
+                    
+                case 'mask':
+                    currentQuestion.question = `What is the subnet mask for ${subnet}?`;
+                    currentQuestion.correctAnswer = subnetData[subnet].mask;
+                    currentQuestion.options = generateMaskOptions(subnetData[subnet].mask);
+                    currentQuestion.hint = `${subnet} means ${subnet.slice(1)} network bits out of 32 total bits`;
+                    break;
+                    
+                case 'first-host':
+                    if (subnetRanges[subnet]) {
+                        const randomRange = subnetRanges[subnet][Math.floor(Math.random() * subnetRanges[subnet].length)];
+                        const firstHost = randomRange.range.split('-')[0];
+                        currentQuestion.question = `What is the first usable host IP in subnet ${baseNetwork}.${randomRange.network}${subnet}?`;
+                        currentQuestion.correctAnswer = `${baseNetwork}.${firstHost}`;
+                        currentQuestion.options = generateFirstHostOptions(baseNetwork, firstHost);
+                        currentQuestion.hint = `First usable host = Network address + 1`;
+                    } else {
+                        generateQuestionByType('hosts', subnet, baseNetwork);
+                    }
+                    break;
+                    
+                case 'last-host':
+                    if (subnetRanges[subnet]) {
+                        const randomRange = subnetRanges[subnet][Math.floor(Math.random() * subnetRanges[subnet].length)];
+                        const lastHost = randomRange.range.split('-')[1];
+                        currentQuestion.question = `What is the last usable host IP in subnet ${baseNetwork}.${randomRange.network}${subnet}?`;
+                        currentQuestion.correctAnswer = `${baseNetwork}.${lastHost}`;
+                        currentQuestion.options = generateLastHostOptions(baseNetwork, lastHost);
+                        currentQuestion.hint = `Last usable host = Broadcast address - 1`;
+                    } else {
+                        generateQuestionByType('hosts', subnet, baseNetwork);
+                    }
+                    break;
+                    
+                default:
+                    generateQuestionByType('hosts', subnet, baseNetwork);
+            }
+        }
+        
+        function generateHostOptions(correct) {
+            const options = [correct];
+            const possibleHosts = [2, 6, 14, 30, 62, 126, 254, 510, 1022, 2046];
+            
+            while (options.length < 4) {
+                const randomHost = possibleHosts[Math.floor(Math.random() * possibleHosts.length)];
+                if (!options.includes(randomHost)) {
+                    options.push(randomHost);
+                }
+            }
+            
+            return shuffleArray(options);
+        }
+        
+        function generateSubnetOptions(correct) {
+            const options = [correct];
+            const possibleSubnets = [1, 2, 4, 8, 16, 32, 64, 128, 256];
+            
+            while (options.length < 4) {
+                const randomSubnet = possibleSubnets[Math.floor(Math.random() * possibleSubnets.length)];
+                if (!options.includes(randomSubnet)) {
+                    options.push(randomSubnet);
+                }
+            }
+            
+            return shuffleArray(options);
+        }
+        
+        function generateRangeOptions(baseNetwork, correctRange, subnet) {
+            const options = [`${baseNetwork}.${correctRange}`];
+            const parts = correctRange.split('-');
+            const start = parseInt(parts[0]);
+            const end = parseInt(parts[1]);
+            const increment = end - start + 1;
+            
+            options.push(`${baseNetwork}.${start

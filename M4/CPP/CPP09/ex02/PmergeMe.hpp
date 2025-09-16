@@ -24,12 +24,12 @@ private:
     
     // Vector functions
     void fordJohnsonSortVector(std::vector<int>& container);
-    size_t binarySearchVector(const std::vector<int>& chain, int value, size_t lowerBound, size_t upperBound);
+    size_t binarySearchVector(const std::vector<int>& chain, int value, size_t left, size_t right);
     std::vector<size_t> generateJacobsthalOrder(size_t n);
     
     // Deque functions  
     void fordJohnsonSortDeque(std::deque<int>& container);
-    size_t binarySearchDeque(const std::deque<int>& chain, int value, size_t lowerBound, size_t upperBound);
+    size_t binarySearchDeque(const std::deque<int>& chain, int value, size_t left, size_t right);
     std::deque<size_t> generateJacobsthalOrderDe(size_t n);
 
     double getElapsedTime(struct timeval start, struct timeval end);

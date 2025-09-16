@@ -1,0 +1,207 @@
+cc -Wall -Werror -Wextra
+
+$(NAME), all, clean, fclean, re
+
+files = Makefile, *.c, *.h
+
+Arguments = file1 cmd1 cmd2 file2
+
+AllowedFuncs= open, close, read, write, malloc, free, perror, strerror,
+	      access, dup, dup2, execve, exit, fork, pipe, unlink, wait,
+	      waitpid, ft_printf && gnl;
+	      Libft Allowed.
+
+Execution = "< file1 cmd1 | cmd2 file2"
+Example   = "./pipex infile "ls -l" "wc -l" outfile"
+or "./pipex infile "grep a1" "wc -w" outfile"
+
+No unexpected exit or leaks;
+
+if error, handle like < file1 cmd1 | cmd2 > file2
+
+fork: fork()  creates  a new process by duplicating the calling process.  The
+       new process is referred to as the child process.  The  calling  process
+       is referred to as the parent process.
+
+       The child process and the parent process run in separate memory spaces.
+       At the time of fork() both memory spaces have the same content.  Memory
+       writes,  file  mappings (mmap(2)), and unmappings (munmap(2)) performed
+       by one of the processes do not affect the other.
+
+       The child process is an exact duplicate of the  parent  process  except
+       for the following points:
+
+       *  The child has its own unique process ID, and this PID does not match
+          the ID of any existing process group (setpgid(2)) or session.
+
+       *  The child's parent process ID is the same as  the  parent's  process
+          ID.
+
+       *  The  child  does  not  inherit  its parent's memory locks (mlock(2),
+          mlockall(2)).
+
+       *  Process resource utilizations (getrusage(2)) and CPU  time  counters
+          (times(2)) are reset to zero in the child.
+
+       *  The  child's  set  of  pending  signals is initially empty (sigpend‐
+          ing(2)).
+
+       *  The child does not inherit semaphore  adjustments  from  its  parent
+          (semop(2)).
+
+       *  The  child does not inherit process-associated record locks from its
+          parent (fcntl(2)).  (On the other hand,  it  does  inherit  fcntl(2)
+          open file description locks and flock(2) locks from its parent.)
+
+       *  The  child  does  not  inherit timers from its parent (setitimer(2),
+          alarm(2), timer_create(2)).
+
+       *  The child does not inherit outstanding asynchronous  I/O  operations
+          from its parent (aio_read(3), aio_write(3)), nor does it inherit any
+          asynchronous I/O contexts from its parent (see io_setup(2))
+       *  The child does not inherit directory change notifications  (dnotify)
+          from its parent (see the description of F_NOTIFY in fcntl(2)).
+
+       *  The  prctl(2)  PR_SET_PDEATHSIG  setting  is reset so that the child
+          does not receive a signal when its parent terminates.
+
+       *  The default timer slack value is set to the parent's  current  timer
+          slack value.  See the description of PR_SET_TIMERSLACK in prctl(2).
+
+       *  Memory mappings that have been marked with the madvise(2) MADV_DONT‐
+          FORK flag are not inherited across a fork().
+
+       *  Memory in address ranges that have been marked with  the  madvise(2)
+          MADV_WIPEONFORK  flag  is  zeroed in the child after a fork().  (The
+          MADV_WIPEONFORK setting remains in place for those address ranges in
+          the child.)
+
+       *  The   termination  signal  of  the  child  is  always  SIGCHLD  (see
+          clone(2)).
+
+       *  The port access permission bits set by ioperm(2) are  not  inherited
+          by the child; the child must turn on any bits that it requires using
+          ioperm(2).
+	 Note the following further points:
+
+       *  The child process is created  with  a  single  thread—the  one  that
+          called  fork().   The  entire virtual address space of the parent is
+          replicated in the child, including the states of mutexes,  condition
+          variables,  and other pthreads objects; the use of pthread_atfork(3)
+          may be helpful for dealing with problems that this can cause.
+
+       *  After a fork() in a multithreaded program, the child can safely call
+          only  async-signal-safe  functions (see signal-safety(7)) until such
+          time as it calls execve(2).
+
+       *  The child inherits copies of the parent's set of open file  descrip‐
+          tors.   Each  file  descriptor  in the child refers to the same open
+          file description (see open(2)) as the corresponding file  descriptor
+          in  the parent.  This means that the two file descriptors share open
+          file status flags, file offset,  and  signal-driven  I/O  attributes
+          (see the description of F_SETOWN and F_SETSIG in fcntl(2)).
+
+       *  The  child inherits copies of the parent's set of open message queue
+          descriptors (see mq_overview(7)).  Each file descriptor in the child
+          refers to the same open message queue description as the correspond‐
+          ing file descriptor in the parent.  This means that the two file de‐
+          scriptors share the same flags (mq_flags).
+
+       *  The  child  inherits  copies  of  the parent's set of open directory
+          streams (see opendir(3)).  POSIX.1 says that the  corresponding  di‐
+          rectory  streams  in  the  parent  and child may share the directory
+          stream positioning; on Linux/glibc they do not.
+
+RETURN VALUE
+       On success, the PID of the child process is returned in the parent, and
+       0  is returned in the child.  On failure, -1 is returned in the parent,
+       no child process is created, and errno is set appropriately
+       
+-----------------------------------------------------------------------------------------
+
+pipe()  creates  a pipe, a unidirectional data channel that can be used for in‐
+       terprocess communication.  The array pipefd is used to return two file descrip‐
+       tors  referring  to  the ends of the pipe.  pipefd[0] refers to the read end of
+       the pipe.  pipefd[1] refers to the write end of the pipe.  Data written to  the
+       write  end of the pipe is buffered by the kernel until it is read from the read
+       end of the pipe.  For further details, see pipe(7).
+
+       If flags is 0, then pipe2() is the same as pipe().  The following values can be
+       bitwise ORed in flags to obtain different behavior:
+
+       O_CLOEXEC
+              Set the close-on-exec (FD_CLOEXEC) flag on the two new file descriptors.
+              See the description of the same flag in open(2) for reasons why this may
+              be useful.
+
+       O_DIRECT (since Linux 3.4)
+              Create  a pipe that performs I/O in "packet" mode.  Each write(2) to the
+              pipe is dealt with as a separate packet, and read(2)s from the pipe will
+              read one packet at a time.  Note the following points:
+
+              *  Writes  of  greater  than  PIPE_BUF bytes (see pipe(7)) will be split
+                 into multiple packets.  The constant PIPE_BUF  is  defined  in  <lim‐
+                 its.h>.
+
+              *  If  a  read(2)  specifies a buffer size that is smaller than the next
+                 packet, then the requested number of bytes are read, and  the  excess
+                 bytes  in  the  packet  are  discarded.   Specifying a buffer size of
+                 PIPE_BUF will be sufficient to read the largest possible packets (see
+                 the previous point).
+
+              *  Zero-length  packets  are not supported.  (A read(2) that specifies a
+                 buffer size of zero is a no-op, and returns 0.)
+
+              Older kernels that do not support this flag will indicate  this  via  an
+              EINVAL error.
+
+              Since Linux 4.5, it is possible to change the O_DIRECT setting of a pipe
+              file descriptor using fcntl(2).
+
+RETURN VALUE
+       On success, zero is returned.  On error, -1 is returned, errno is set appropri‐
+       ately, and pipefd is left unchanged.
+
+       On  Linux (and other systems), pipe() does not modify pipefd on failure.  A re‐
+       quirement standardizing this behavior  was  added  in  POSIX.1-2008  TC2.   The
+       Linux-specific pipe2() system call likewise does not modify pipefd on failure.
+      
+int access(const char *pathname, int mode);
+access() checks whether the program can access the file pathname. 
+
+The mode specifies the accessibility check(s) to be performed, 
+and is either the value F_OK, or a mask consisting of the bitwise OR of one or more of 
+R_OK, W_OK, and X_OK. F_OK tests for the existence of the file. R_OK, W_OK, and X_OK 
+test whether the file exists and grants read, write, and execute permissions, respectively.
+
+On success (all requested permissions granted), zero is returned. 
+On error (at least one bit in mode asked for a permission that is denied, or some other error occurred), 
+-1 is returned, and errno is set appropriately.
+
+int dup2(int oldfd, int newfd);
+dup2() makes newfd be the copy of oldfd, closing newfd first if necessary, but note the following:
+
+If oldfd is not a valid file descriptor, then the call fails, and newfd is not closed.
+
+If oldfd is a valid file descriptor, and newfd has the same value as oldfd, then dup2() does nothing, and returns newfd.
+
+After a successful return from dup2(), the old and new file descriptor may be used interchangeably. 
+They refer to the same open file description and thus share file offset and file status flags; 
+for example, if the file offset is modified by using lseek() on one of the descriptors,
+the offset is also changed for the other.
+On error, the dup2() function returns -1.
+
+waitpid()
+pid_t waitpid(pid_t pid, int *status, int options);
+The waitpid() system call suspends execution of the calling process until a child specified by pid argument has changed state.
+By default, waitpid() waits only for terminated children.
+
+int unlink(const char *pathname);
+unlink() deletes a name from the file system. 
+If that name was the last link to a file and no processes have the file open
+the file is deleted and the space it was using is made available for reuse.
+
+If the name was the last link to a file but any processes still have the file open the file 
+will remain in existence until the last file descriptor referring to it is closed.
+
+On success, 0 is returned. On error, -1 is returned, and errno is set appropriately.
