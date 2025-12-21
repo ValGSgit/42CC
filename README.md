@@ -143,13 +143,13 @@ Level: [████████░░] 80% Complete
 
 | Skill | Proficiency | Projects |
 |-------|-------------|----------|
-| **C Programming** | ████████░░ 80% | Libft, Printf, Push_swap, Pipex |
-| **Graphics Programming** | ████████░░ 80% | FdF, Cub3D |
-| **Threading & Concurrency** | ███████░░░ 70% | Philosophers |
-| **System Programming** | █████████░ 90% | Minishell, Pipex |
-| **Object-Oriented (C++)** | ████████░░ 80% | CPP Modules |
-| **Web Development** | █████░░░░░ 50% | Webserv, Transcendence |
-| **DevOps** | ███████░░░ 70% | Inception, Born2beroot |
+| **C Programming** | ██████████ 1000% | Libft, Printf, Push_swap, Pipex |
+| **Graphics Programming** | ██████████ 100% | FdF, Cub3D |
+| **Threading & Concurrency** | ██████████ 100% | Philosophers |
+| **System Programming** | █████████░ 90% | Minishell, Pipex, Minitalk |
+| **Object-Oriented (C++)** | ██████████ 100% | CPP Modules |
+| **Web Development** | ████████░░ 80% | Webserv, Transcendence |
+| **DevOps** | ██████████ 100% | Inception, Born2beroot |
 
 </div>
 
@@ -211,6 +211,6 @@ graph LR
 
 **⭐ If you find my journey interesting, please give this repo a star!**
 
-*Last Updated: September 2025*
+*Last Updated: December 2025*
 
 </div>
