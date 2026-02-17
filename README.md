@@ -4,7 +4,7 @@
   
 ![School](https://img.shields.io/badge/42-School-000000?style=for-the-badge&logo=42&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-In%50Progress-yellow?style=for-the-badge)
-![Level](https://img.shields.io/badge/Level-9.16-blue?style=for-the-badge)
+![Level](https://img.shields.io/badge/Level-9.38-blue?style=for-the-badge)
 
 ### 💫 *"The journey of a thousand miles begins with a single step"*
 
@@ -136,7 +136,7 @@ Welcome to my **42 School adventure**! This repository is a living documentation
 Level: [█████████░] 90% Complete
 ```
 
-**Current Level:** 9.16%
+**Current Level:** 9.38%
 **Projects Completed:** 21/23    
 
 ### 📈 Skills Development
@@ -211,6 +211,6 @@ graph LR
 
 **⭐ If you find my journey interesting, please give this repo a star!**
 
-*Last Updated: December 2025*
+*Last Updated: February 2026*
 
 </div>
