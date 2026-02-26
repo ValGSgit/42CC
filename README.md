@@ -141,9 +141,9 @@ Level: [█████████░] 90% Complete
 
 ### 📈 Skills Development
 
-| Skill | Proficiency | Projects |
+| Skill | Completion | Projects |
 |-------|-------------|----------|
-| **C Programming** | ██████████ 1000% | Libft, Printf, Push_swap, Pipex |
+| **C Programming** | ██████████ 100% | Libft, Printf, Push_swap, Pipex |
 | **Graphics Programming** | ██████████ 100% | FdF, Cub3D |
 | **Threading & Concurrency** | ██████████ 100% | Philosophers |
 | **System Programming** | █████████░ 90% | Minishell, Pipex, Minitalk |
