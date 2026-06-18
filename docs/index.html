@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Valentino Garcia Susini — 42 Common Core</title>
+<meta name="description" content="Valentino Garcia Susini · 42 Common Core completed · Level 11.81. An archive of every project from libft to ft_transcendence." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#07080c;
+    --bg-2:#0a0c12;
+    --surface:#10131c;
+    --surface-2:#151926;
+    --border:rgba(255,255,255,.08);
+    --border-strong:rgba(255,255,255,.16);
+    --text:#f3f5fa;
+    --muted:#9aa4b6;
+    --muted-2:#6b7585;
+    --accent:#c2f74a;
+    --accent-dim:#9bc93a;
+    --accent-glow:rgba(194,247,74,.45);
+    --violet:#7b6bff;
+    --font-display:'Space Grotesk',system-ui,sans-serif;
+    --font-body:'Manrope',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,monospace;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:var(--font-body);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.05;margin:0;letter-spacing:-.02em;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--accent);color:#0a0a0a;}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px;}
+
+  /* ---------- background canvas ---------- */
+  #bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .bg-glow{position:fixed;z-index:0;pointer-events:none;border-radius:50%;filter:blur(120px);opacity:.5;}
+  .bg-glow.a{top:-12%;left:-8%;width:46vw;height:46vw;background:radial-gradient(circle,rgba(194,247,74,.16),transparent 70%);}
+  .bg-glow.b{bottom:-15%;right:-10%;width:52vw;height:52vw;background:radial-gradient(circle,rgba(123,107,255,.16),transparent 70%);}
+  .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  .wrap{position:relative;z-index:2;}
+  .container{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+
+  /* ---------- skip link ---------- */
+  .skip{position:absolute;left:12px;top:-60px;background:var(--accent);color:#0a0a0a;padding:10px 16px;border-radius:8px;font-weight:700;z-index:200;transition:top .2s;}
+  .skip:focus{top:12px;}
+
+  /* ---------- header ---------- */
+  header.nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(14px);
+    background:linear-gradient(to bottom,rgba(7,8,12,.82),rgba(7,8,12,.5));
+    border-bottom:1px solid transparent;transition:border-color .3s,background .3s;}
+  header.nav.scrolled{border-bottom-color:var(--border);background:rgba(7,8,12,.9);}
+  .nav-inner{display:flex;align-items:center;gap:20px;height:68px;}
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--font-mono);font-weight:700;font-size:15px;letter-spacing:-.01em;}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent-glow);flex:none;}
+  .brand .lvl{font-family:var(--font-mono);font-size:11px;color:var(--accent);border:1px solid var(--border-strong);
+    padding:3px 8px;border-radius:999px;font-weight:500;}
+  .nav-links{margin-left:auto;display:flex;align-items:center;gap:4px;}
+  .nav-links a.navlink{font-size:14px;color:var(--muted);padding:8px 12px;border-radius:8px;transition:color .2s,background .2s;font-weight:500;}
+  .nav-links a.navlink:hover{color:var(--text);background:var(--surface);}
+  .socials{display:flex;align-items:center;gap:6px;margin-left:8px;padding-left:14px;border-left:1px solid var(--border);}
+  .socials a{display:grid;place-items:center;width:38px;height:38px;border-radius:9px;color:var(--muted);
+    border:1px solid var(--border);transition:.2s;}
+  .socials a:hover{color:var(--accent);border-color:var(--accent-dim);transform:translateY(-2px);background:var(--surface);}
+  .socials svg{width:18px;height:18px;}
+  .nav-toggle{display:none;}
+  @media(max-width:860px){
+    .nav-links{display:none;}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding:clamp(80px,16vh,160px) 0 clamp(60px,10vh,110px);}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:13px;
+    color:var(--accent);border:1px solid var(--border-strong);background:rgba(194,247,74,.05);
+    padding:7px 14px;border-radius:999px;margin-bottom:28px;letter-spacing:.02em;}
+  .eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent-glow);animation:pulse 2.4s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 var(--accent-glow);}70%{box-shadow:0 0 0 10px rgba(194,247,74,0);}100%{box-shadow:0 0 0 0 rgba(194,247,74,0);}}
+  .hero h1{font-size:clamp(44px,8.5vw,104px);font-weight:700;line-height:.98;margin-bottom:10px;}
+  .hero h1 .grad{background:linear-gradient(110deg,#fff 10%,var(--accent) 55%,var(--accent-dim) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .hero .role{font-family:var(--font-mono);font-size:clamp(14px,2.2vw,19px);color:var(--muted);margin-bottom:30px;font-weight:400;}
+  .hero .role .b{color:var(--text);}
+  .hero .lede{max-width:620px;font-size:clamp(16px,2.2vw,19px);color:var(--muted);margin-bottom:40px;text-wrap:pretty;}
+  .cta-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;}
+  .btn{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:15px;padding:14px 22px;border-radius:11px;
+    transition:transform .2s,box-shadow .2s,background .2s;cursor:pointer;border:1px solid transparent;font-family:var(--font-body);}
+  .btn.primary{background:var(--accent);color:#0a0d05;box-shadow:0 0 0 0 var(--accent-glow);}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 14px 40px -8px var(--accent-glow);}
+  .btn.ghost{background:transparent;color:var(--text);border-color:var(--border-strong);}
+  .btn.ghost:hover{transform:translateY(-2px);border-color:var(--accent-dim);color:var(--accent);}
+  .btn svg{width:18px;height:18px;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:64px;
+    background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+  .stat{background:var(--bg-2);padding:24px 20px;}
+  .stat .num{font-family:var(--font-display);font-size:clamp(28px,4vw,40px);font-weight:700;line-height:1;color:var(--text);}
+  .stat .num .u{color:var(--accent);}
+  .stat .lab{font-size:13px;color:var(--muted-2);margin-top:8px;font-family:var(--font-mono);letter-spacing:.02em;}
+  @media(max-width:680px){.stats{grid-template-columns:repeat(2,1fr);}}
+
+  /* ---------- reveal ---------- */
+  [data-reveal]{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);}
+  [data-reveal].in{opacity:1;transform:none;}
+
+  /* ---------- section ---------- */
+  section.block{padding:clamp(56px,9vh,100px) 0;position:relative;}
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:44px;flex-wrap:wrap;}
+  .sec-kicker{font-family:var(--font-mono);font-size:13px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+  .sec-kicker::before{content:"";width:28px;height:1px;background:var(--accent);display:inline-block;}
+  .sec-title{font-size:clamp(28px,4.4vw,46px);font-weight:700;}
+  .sec-sub{color:var(--muted);max-width:460px;font-size:15px;text-wrap:pretty;}
+
+  /* ---------- timeline ---------- */
+  .timeline{position:relative;margin-top:10px;}
+  .tl-track{display:grid;grid-template-columns:repeat(6,1fr);gap:0;position:relative;}
+  .tl-line{position:absolute;top:18px;left:0;right:0;height:2px;background:var(--border);overflow:hidden;}
+  .tl-line .fill{position:absolute;inset:0;width:0;background:linear-gradient(90deg,var(--accent-dim),var(--accent));box-shadow:0 0 12px var(--accent-glow);transition:width 1.4s cubic-bezier(.4,0,.1,1);}
+  .tl-node{position:relative;padding-right:18px;}
+  .tl-dot{width:38px;height:38px;border-radius:50%;background:var(--surface);border:2px solid var(--border-strong);
+    display:grid;place-items:center;font-family:var(--font-mono);font-weight:700;font-size:13px;color:var(--muted);
+    position:relative;z-index:2;transition:.5s;}
+  .tl-node.lit .tl-dot{border-color:var(--accent);color:var(--accent);background:rgba(194,247,74,.08);box-shadow:0 0 22px -2px var(--accent-glow);}
+  .tl-meta{margin-top:18px;}
+  .tl-meta .m{font-family:var(--font-mono);font-size:12px;color:var(--muted-2);}
+  .tl-meta .t{font-family:var(--font-display);font-weight:600;font-size:clamp(14px,1.4vw,17px);margin-top:4px;color:var(--text);transition:color .3s;}
+  .tl-node:hover .t{color:var(--accent);}
+  .tl-meta .c{font-size:12px;color:var(--muted);margin-top:4px;}
+  @media(max-width:760px){
+    .tl-track{grid-template-columns:1fr;gap:0;}
+    .tl-line{left:18px;right:auto;top:0;bottom:0;width:2px;height:auto;}
+    .tl-line .fill{width:2px!important;height:0;left:0;top:0;background:linear-gradient(180deg,var(--accent-dim),var(--accent));}
+    .tl-node{display:grid;grid-template-columns:38px 1fr;gap:18px;padding:0 0 28px 0;align-items:start;}
+    .tl-meta{margin-top:5px;}
+  }
+
+  /* ---------- filters ---------- */
+  .filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px;}
+  .chip{font-family:var(--font-mono);font-size:13px;color:var(--muted);background:var(--surface);
+    border:1px solid var(--border);padding:9px 16px;border-radius:999px;cursor:pointer;transition:.2s;font-weight:500;display:inline-flex;align-items:center;gap:8px;}
+  .chip:hover{color:var(--text);border-color:var(--border-strong);}
+  .chip[aria-pressed="true"]{background:var(--accent);color:#0a0d05;border-color:var(--accent);font-weight:700;}
+  .chip .ct{opacity:.6;font-size:11px;}
+  .chip[aria-pressed="true"] .ct{opacity:.7;}
+
+  /* ---------- module group ---------- */
+  .mod-group{margin-bottom:48px;}
+  .mod-group.hidden{display:none;}
+  .mod-label{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+  .mod-label .tag{font-family:var(--font-mono);font-weight:700;font-size:13px;padding:5px 11px;border-radius:8px;
+    background:var(--surface-2);border:1px solid var(--border-strong);color:var(--accent);}
+  .mod-label .name{font-family:var(--font-display);font-weight:600;font-size:18px;color:var(--text);}
+  .mod-label .rule{flex:1;height:1px;background:var(--border);}
+
+  /* ---------- grid + cards ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;}
+  .card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px 24px 22px;
+    overflow:hidden;transition:transform .3s cubic-bezier(.2,.7,.2,1),border-color .3s,background .3s;display:flex;flex-direction:column;min-height:188px;}
+  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(194,247,74,.10),transparent 65%);opacity:0;transition:opacity .35s;pointer-events:none;}
+  .card:hover{transform:translateY(-5px);border-color:var(--border-strong);background:var(--surface-2);}
+  .card:hover::before{opacity:1;}
+  .card.hidden{display:none;}
+  .card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+  .card .ix{font-family:var(--font-mono);font-size:12px;color:var(--muted-2);}
+  .card .mtag{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--border-strong);padding:3px 8px;border-radius:6px;}
+  .card h3{font-size:21px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:9px;}
+  .card h3 .arrow{opacity:0;transform:translateX(-6px);transition:.25s;color:var(--accent);}
+  .card:hover h3 .arrow{opacity:1;transform:none;}
+  .card .desc{color:var(--muted);font-size:14.5px;flex:1;text-wrap:pretty;}
+  .badges{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px;}
+  .badge{font-family:var(--font-mono);font-size:11px;color:var(--muted);background:rgba(255,255,255,.04);
+    border:1px solid var(--border);padding:4px 9px;border-radius:6px;display:inline-flex;align-items:center;gap:6px;}
+  .badge .bd{width:7px;height:7px;border-radius:50%;flex:none;}
+  .card-link{position:absolute;inset:0;z-index:3;}
+  .view-code{margin-top:16px;display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:12.5px;color:var(--muted-2);transition:color .2s;}
+  .card:hover .view-code{color:var(--accent);}
+  .view-code svg{width:14px;height:14px;}
+
+  /* ---------- capstone ---------- */
+  .capstone{position:relative;border:1px solid var(--border-strong);border-radius:24px;overflow:hidden;
+    background:linear-gradient(160deg,var(--surface-2),var(--bg-2) 65%);padding:clamp(30px,5vw,60px);}
+  .capstone::before{content:"";position:absolute;top:-40%;right:-10%;width:60%;height:140%;
+    background:radial-gradient(circle,rgba(123,107,255,.16),transparent 65%);pointer-events:none;}
+  .capstone::after{content:"";position:absolute;bottom:-50%;left:-10%;width:55%;height:140%;
+    background:radial-gradient(circle,rgba(194,247,74,.1),transparent 65%);pointer-events:none;}
+  .cap-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;}
+  @media(max-width:880px){.cap-inner{grid-template-columns:1fr;gap:34px;}}
+  .cap-badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-mono);font-size:12px;font-weight:700;
+    color:var(--violet);border:1px solid rgba(123,107,255,.4);background:rgba(123,107,255,.08);padding:6px 13px;border-radius:999px;letter-spacing:.04em;margin-bottom:22px;}
+  .capstone h2{font-size:clamp(34px,5.2vw,60px);font-weight:700;line-height:.98;margin-bottom:6px;}
+  .capstone .alias{font-family:var(--font-mono);color:var(--accent);font-size:clamp(15px,2vw,19px);margin-bottom:20px;}
+  .capstone .cap-lede{color:var(--muted);font-size:16.5px;max-width:560px;margin-bottom:28px;text-wrap:pretty;}
+  .feat-list{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px;margin-bottom:30px;}
+  @media(max-width:520px){.feat-list{grid-template-columns:1fr;}}
+  .feat{display:flex;gap:11px;align-items:flex-start;font-size:14.5px;color:var(--text);}
+  .feat .ic{flex:none;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:rgba(194,247,74,.1);border:1px solid var(--border);color:var(--accent);margin-top:1px;}
+  .feat .ic svg{width:14px;height:14px;}
+  .feat span.ft{display:block;}
+  .feat span.ft small{display:block;color:var(--muted-2);font-size:12.5px;font-weight:400;margin-top:1px;}
+  .cap-aside{position:relative;}
+  .cap-card{background:rgba(8,10,16,.6);border:1px solid var(--border);border-radius:16px;padding:24px;backdrop-filter:blur(8px);}
+  .cap-card .row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border);font-size:14px;}
+  .cap-card .row:last-child{border-bottom:0;}
+  .cap-card .row .k{color:var(--muted);font-family:var(--font-mono);font-size:12.5px;}
+  .cap-card .row .v{color:var(--text);font-weight:600;font-size:13.5px;}
+  .cap-badges{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px;}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--border);padding:60px 0 40px;margin-top:40px;position:relative;z-index:2;}
+  .foot-grid{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;align-items:flex-start;}
+  .foot-brand .n{font-family:var(--font-display);font-weight:700;font-size:22px;margin-bottom:8px;}
+  .foot-brand p{color:var(--muted);font-size:14px;max-width:300px;}
+  .foot-links{display:flex;gap:54px;flex-wrap:wrap;}
+  .foot-col h4{font-family:var(--font-mono);font-size:12px;color:var(--muted-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;font-weight:500;}
+  .foot-col a{display:block;color:var(--muted);font-size:14px;padding:5px 0;transition:color .2s;}
+  .foot-col a:hover{color:var(--accent);}
+  .foot-bottom{margin-top:48px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    font-family:var(--font-mono);font-size:12.5px;color:var(--muted-2);}
+  .foot-bottom a{color:var(--muted);}
+  .foot-bottom a:hover{color:var(--accent);}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}
+    [data-reveal]{opacity:1!important;transform:none!important;}
+  }
+</style>
+</head>
+<body>
+<a href="#projects" class="skip">Skip to projects</a>
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+<div class="bg-glow a" aria-hidden="true"></div>
+<div class="bg-glow b" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="wrap">
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top" aria-label="Valentino Garcia Susini — home">
+      <span class="dot" aria-hidden="true"></span>
+      <span>vagarcia</span>
+      <span class="lvl">Lv 11.81</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="navlink" href="#timeline">Timeline</a>
+      <a class="navlink" href="#projects">Projects</a>
+      <a class="navlink" href="#capstone">Capstone</a>
+    </nav>
+    <div class="socials" aria-label="Social links">
+      <a href="https://github.com/ValGSgit" target="_blank" rel="noopener" aria-label="GitHub profile">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/valentinogs/" target="_blank" rel="noopener" aria-label="LinkedIn profile">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5V8h3v11zM6.5 6.7a1.8 1.8 0 1 1 0-3.5 1.8 1.8 0 0 1 0 3.5zM19 19h-3v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V19H9V8h2.8v1.5h.1c.4-.8 1.4-1.6 2.9-1.6 3.1 0 3.7 2 3.7 4.7V19z"/></svg>
+      </a>
+      <a href="https://profile.intra.42.fr/users/vagarcia" target="_blank" rel="noopener" aria-label="42 intra profile">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 14.7 11 3v7.6H2v4.1zM13 21V13.4l-6.6 7.6H13zm0-10.4L20.6 2H13v8.6zm2 .4v10H22v-7.6h-3.7L22 9.9h-7z"/></svg>
+      </a>
+      <a href="mailto:entinosusini@gmail.com" aria-label="Email Valentino">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="container">
+      <span class="eyebrow intro" style="--d:0"><span class="pulse" aria-hidden="true"></span>42 Common Core · Completed</span>
+      <h1 class="intro" style="--d:1">Valentino<br><span class="grad">Garcia Susini</span></h1>
+      <p class="role intro" style="--d:2"><span class="b">Software engineer</span> &nbsp;·&nbsp; 42 cadet <span class="b">vagarcia</span> &nbsp;·&nbsp; C / C++ / Full-stack</p>
+      <p class="lede intro" style="--d:3">A complete archive of my 42 Common Core — every project, from a hand-written C standard library all the way to a full-stack social gaming platform. Peer-to-peer, project-driven, no lectures.</p>
+      <div class="cta-row intro" style="--d:4">
+        <a class="btn primary" href="#projects">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          Explore the work
+        </a>
+        <a class="btn ghost" href="https://github.com/ValGSgit/42CC" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z"/></svg>
+          View the repo
+        </a>
+      </div>
+
+      <div class="stats intro" style="--d:5" role="list" aria-label="Highlights">
+        <div class="stat" role="listitem"><div class="num" data-count="11.81" data-dec="2">0</div><div class="lab">// final level</div></div>
+        <div class="stat" role="listitem"><div class="num" data-count="6">0</div><div class="lab">// modules M1–M6</div></div>
+        <div class="stat" role="listitem"><div class="num" data-count="15">0</div><div class="lab">// projects shipped</div></div>
+        <div class="stat" role="listitem"><div class="num" data-count="100">0</div><div class="lab">// % core complete</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TIMELINE ============ -->
+  <section class="block" id="timeline">
+    <div class="container">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="sec-kicker">The journey</div>
+          <h2 class="sec-title">M1 → M6, in order</h2>
+        </div>
+        <p class="sec-sub">Six modules tracing the climb from low-level C and memory management to concurrency, C++, networking, sysadmin, and a full-stack capstone.</p>
+      </div>
+      <div class="timeline" data-reveal>
+        <div class="tl-track" id="tlTrack">
+          <div class="tl-line"><div class="fill" id="tlFill"></div></div>
+          <!-- nodes injected -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROJECTS ============ -->
+  <section class="block" id="projects">
+    <div class="container">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="sec-kicker">The portfolio</div>
+          <h2 class="sec-title">Every project</h2>
+        </div>
+        <p class="sec-sub">Grouped by module. Filter by language to scan a slice — each card links straight to its folder on GitHub.</p>
+      </div>
+      <div class="filters" id="filters" role="group" aria-label="Filter projects by language" data-reveal></div>
+      <div id="modules"></div>
+    </div>
+  </section>
+
+  <!-- ============ CAPSTONE ============ -->
+  <section class="block" id="capstone">
+    <div class="container">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="sec-kicker">M6 · The capstone</div>
+          <h2 class="sec-title">The final boss</h2>
+        </div>
+        <p class="sec-sub">A team-built, full-stack platform that ties everything together — real-time, 3D, AI-assisted and fully containerized.</p>
+      </div>
+
+      <div class="capstone" data-reveal>
+        <div class="cap-inner">
+          <div>
+            <span class="cap-badge"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1-6.3-4.6L5.7 21 8 13.9 2 9.4h7.6z"/></svg>Final project · team of 4</span>
+            <h2>ft_transcendence</h2>
+            <p class="alias">// "AlpacaParty"</p>
+            <p class="cap-lede">A full-stack social gaming platform. A Three.js 3D alpaca farm at its center, two real-time multiplayer mini-games around it, plus the social layer — chat, a feed, and an AI help desk — all served behind NGINX over HTTPS and orchestrated with Docker Compose.</p>
+
+            <div class="feat-list">
+              <div class="feat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span><span class="ft">3D alpaca farm<small>Three.js real-time scene</small></span></div>
+              <div class="feat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h4m-2-2v4M15 11h.01M18 13h.01"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg></span><span class="ft">Real-time mini-games<small>Two multiplayer modes</small></span></div>
+              <div class="feat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span class="ft">Chat &amp; social feed<small>Direct messaging</small></span></div>
+              <div class="feat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2m10-10 2-2"/></svg></span><span class="ft">Groq AI help desk<small>LLM-powered support</small></span></div>
+              <div class="feat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span><span class="ft">Public REST API<small>Documented with Swagger</small></span></div>
+              <div class="feat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg></span><span class="ft">NGINX + HTTPS<small>Docker Compose deploy</small></span></div>
+            </div>
+
+            <div class="cta-row">
+              <a class="btn primary" href="https://42alpaca.party" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                Launch live app
+              </a>
+              <a class="btn ghost" href="https://github.com/ValGSgit/42CC/tree/main/M6/ft_transcendence" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z"/></svg>
+                View the capstone code
+              </a>
+            </div>
+          </div>
+
+          <aside class="cap-aside">
+            <div class="cap-card">
+              <div class="row"><span class="k">module</span><span class="v">M6 · Final</span></div>
+              <div class="row"><span class="k">type</span><span class="v">Full-stack web</span></div>
+              <div class="row"><span class="k">team</span><span class="v">4 members</span></div>
+              <div class="row"><span class="k">frontend</span><span class="v">Vue + Three.js</span></div>
+              <div class="row"><span class="k">backend</span><span class="v">Express + PostgreSQL</span></div>
+              <div class="row"><span class="k">infra</span><span class="v">Docker · NGINX · HTTPS</span></div>
+              <div class="row"><span class="k">live</span><a class="v" href="https://42alpaca.party" target="_blank" rel="noopener" style="color:var(--accent)">42alpaca.party ↗</a></div>
+              <div class="cap-badges">
+                <span class="badge"><span class="bd" style="background:#4FC08D"></span>Vue</span>
+                <span class="badge"><span class="bd" style="background:#fff"></span>Three.js</span>
+                <span class="badge"><span class="bd" style="background:#8aa0b6"></span>Express</span>
+                <span class="badge"><span class="bd" style="background:#4169E1"></span>PostgreSQL</span>
+                <span class="badge"><span class="bd" style="background:#2496ED"></span>Docker</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="n">Valentino Garcia Susini</div>
+        <p>42 Common Core completed — Level 11.81. One repo to rule them all, from <span style="font-family:var(--font-mono);color:var(--accent)">libft</span> to <span style="font-family:var(--font-mono);color:var(--accent)">ft_transcendence</span>.</p>
+      </div>
+      <div class="foot-links">
+        <div class="foot-col">
+          <h4>Navigate</h4>
+          <a href="#timeline">Timeline</a>
+          <a href="#projects">Projects</a>
+          <a href="#capstone">Capstone</a>
+        </div>
+        <div class="foot-col">
+          <h4>Connect</h4>
+          <a href="https://github.com/ValGSgit" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.linkedin.com/in/valentinogs/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://profile.intra.42.fr/users/vagarcia" target="_blank" rel="noopener">42 Intra</a>
+          <a href="mailto:entinosusini@gmail.com">Email</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Valentino Garcia Susini · Built with vanilla HTML, CSS &amp; JS.</span>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- DATA ---------- */
+  var REPO = "https://github.com/ValGSgit/42CC/tree/main/";
+  var TECH = {
+    C:{c:"#5599c7"}, "C++":{c:"#6f9ad3"}, JS:{c:"#f7df1e"}, MiniLibX:{c:"#5586A4"},
+    pthreads:{c:"#ff7a7a"}, Bash:{c:"#4EAA25"}, Docker:{c:"#2496ED"}, NGINX:{c:"#009639"},
+    HTTP:{c:"#E34F26"}, "TCP/IP":{c:"#1572B6"}, Vue:{c:"#4FC08D"}, "Three.js":{c:"#dfe6ef"},
+    Express:{c:"#8aa0b6"}, PostgreSQL:{c:"#4169E1"}
+  };
+  var MODULES = [
+    {id:"M1", name:"Foundations of C", caption:"libft · ft_printf · gnl"},
+    {id:"M2", name:"Algorithms & Unix", caption:"push_swap · pipex · FdF"},
+    {id:"M3", name:"Concurrency & Shell", caption:"philosophers · minishell"},
+    {id:"M4", name:"C++ · Graphics · Net", caption:"CPP 00–09 · cub3D"},
+    {id:"M5", name:"Sysadmin & Web", caption:"Inception · webserv"},
+    {id:"M6", name:"Capstone", caption:"ft_transcendence"}
+  ];
+  var PROJECTS = [
+    {m:"M1", t:"libft", desc:"My own C standard library — a libc reimplementation plus linked-list utilities.", tech:["C"], path:"M1/UltimateLibft"},
+    {m:"M1", t:"ft_printf", desc:"A from-scratch printf with variadic arguments and full format parsing.", tech:["C"], path:"M1/Ft_Printf"},
+    {m:"M1", t:"get_next_line", desc:"Read a file line-by-line using static buffers, with bonus multi-fd support.", tech:["C"], path:"M1/Get_next_line"},
+    {m:"M2", t:"push_swap", desc:"Sort a stack using a limited instruction set in as few moves as possible.", tech:["C"], path:"M2/Push_swap"},
+    {m:"M2", t:"pipex", desc:"Reproduce shell pipes and redirections with fork, execve and dup2.", tech:["C"], path:"M2/pipex"},
+    {m:"M2", t:"minitalk", desc:"Client/server messaging built entirely on UNIX signals (SIGUSR1/2).", tech:["C"], path:"M2/Minitalk"},
+    {m:"M2", t:"FdF", desc:"A 3D wireframe renderer for heightmaps using isometric projection.", tech:["C","MiniLibX"], path:"M2/Fdf"},
+    {m:"M3", t:"philosophers", desc:"The dining philosophers problem solved with threads, mutexes and deadlock avoidance.", tech:["C","pthreads"], path:"M3/Philosophers"},
+    {m:"M3", t:"minishell", desc:"A working shell — parsing, pipes, redirects, env, builtins and signals.", tech:["C","Bash"], path:"M3/Minishell"},
+    {m:"M4", t:"CPP Modules 00–09", desc:"Ten modules covering OOP, templates, the STL, containers and more.", tech:["C++"], path:"M4/CPP"},
+    {m:"M4", t:"cub3D", desc:"A Wolfenstein-style raycasting engine with textures and sprites.", tech:["C","MiniLibX"], path:"M4/Cub3D"},
+    {m:"M4", t:"NetPractice", desc:"TCP/IP subnetting and routing configuration exercises.", tech:["TCP/IP"], path:"M4/NetPractice"},
+    {m:"M5", t:"Inception", desc:"Multi-service infrastructure from scratch — NGINX, WordPress and MariaDB via Docker Compose.", tech:["Docker","NGINX"], path:"M5/Inception"},
+    {m:"M5", t:"webserv", desc:"An HTTP/1.1 server in C++ with config parsing, CGI and non-blocking I/O.", tech:["C++","HTTP"], path:"M5/webserv"},
+    {m:"M6", t:"ft_transcendence", desc:"Full-stack social gaming platform — 3D farm, real-time mini-games, chat & an AI help desk.", tech:["Vue","Three.js","Express","Docker"], path:"M6/ft_transcendence", capstone:true}
+  ];
+
+  function el(tag, cls, html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+  function badge(name){
+    var t=TECH[name]||{c:"#888"};
+    return '<span class="badge"><span class="bd" style="background:'+t.c+'"></span>'+name+'</span>';
+  }
+  var codeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6M15 18l-6-6 6-6" opacity="0"/><path d="m8 16-4-4 4-4M16 8l4 4-4 4"/></svg>';
+  var arrowIcon = '<svg class="arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>';
+
+  /* ---------- TIMELINE NODES ---------- */
+  var track = document.getElementById('tlTrack');
+  MODULES.forEach(function(mod, i){
+    var node = el('a', 'tl-node');
+    node.href = (mod.id==="M6") ? "#capstone" : "#projects";
+    node.setAttribute('aria-label', mod.id+' — '+mod.name);
+    node.innerHTML =
+      '<div class="tl-dot">'+mod.id+'</div>'+
+      '<div class="tl-meta"><div class="m">'+mod.id+'</div><div class="t">'+mod.name+'</div><div class="c">'+mod.caption+'</div></div>';
+    track.appendChild(node);
+  });
+
+  /* ---------- MODULE GROUPS + CARDS ---------- */
+  var modulesWrap = document.getElementById('modules');
+  var idx = 0;
+  MODULES.forEach(function(mod){
+    var items = PROJECTS.filter(function(p){return p.m===mod.id;});
+    if(!items.length) return;
+    var group = el('div','mod-group');
+    group.setAttribute('data-module', mod.id);
+    group.innerHTML = '<div class="mod-label"><span class="tag">'+mod.id+'</span><span class="name">'+mod.name+'</span><span class="rule"></span></div>';
+    var grid = el('div','grid');
+    items.forEach(function(p){
+      idx++;
+      var n = ('0'+idx).slice(-2);
+      var card = el('article','card');
+      card.setAttribute('data-reveal','');
+      card.setAttribute('data-tech', p.tech.join(','));
+      card.innerHTML =
+        '<a class="card-link" href="'+REPO+p.path+'" target="_blank" rel="noopener" aria-label="View '+p.t+' code on GitHub"></a>'+
+        '<div class="card-top"><span class="ix">'+n+'</span><span class="mtag">'+p.m+(p.capstone?' · capstone':'')+'</span></div>'+
+        '<h3>'+p.t+arrowIcon+'</h3>'+
+        '<p class="desc">'+p.desc+'</p>'+
+        '<div class="badges">'+p.tech.map(badge).join('')+'</div>'+
+        '<span class="view-code">'+codeIcon+'View code on GitHub</span>';
+      grid.appendChild(card);
+    });
+    group.appendChild(grid);
+    modulesWrap.appendChild(group);
+  });
+
+  /* ---------- FILTERS ---------- */
+  var langs = ["All"];
+  PROJECTS.forEach(function(p){p.tech.forEach(function(t){if(langs.indexOf(t)<0 && t!=="pthreads" && t!=="Bash" && t!=="HTTP") langs.push(t);});});
+  // keep a curated, useful filter set
+  langs = ["All","C","C++","JS","MiniLibX","Docker","TCP/IP","Vue"];
+  function countFor(l){
+    if(l==="All") return PROJECTS.length;
+    if(l==="JS") return PROJECTS.filter(function(p){return p.tech.indexOf("Vue")>=0||p.tech.indexOf("Three.js")>=0||p.tech.indexOf("Express")>=0;}).length;
+    return PROJECTS.filter(function(p){return p.tech.indexOf(l)>=0;}).length;
+  }
+  var filtersWrap = document.getElementById('filters');
+  langs.forEach(function(l, i){
+    if(countFor(l)===0 && l!=="All") return;
+    var b = el('button','chip', l+' <span class="ct">'+countFor(l)+'</span>');
+    b.type='button';
+    b.setAttribute('aria-pressed', i===0?'true':'false');
+    b.setAttribute('data-lang', l);
+    b.addEventListener('click', function(){ applyFilter(l, b); });
+    filtersWrap.appendChild(b);
+  });
+  function matches(card, lang){
+    if(lang==="All") return true;
+    var tech = card.getAttribute('data-tech');
+    if(lang==="JS") return /Vue|Three\.js|Express/.test(tech);
+    return tech.split(',').indexOf(lang)>=0;
+  }
+  function applyFilter(lang, btn){
+    Array.prototype.forEach.call(filtersWrap.children, function(c){c.setAttribute('aria-pressed','false');});
+    btn.setAttribute('aria-pressed','true');
+    Array.prototype.forEach.call(document.querySelectorAll('.card'), function(card){
+      card.classList.toggle('hidden', !matches(card, lang));
+    });
+    // hide empty module groups
+    Array.prototype.forEach.call(document.querySelectorAll('.mod-group'), function(g){
+      var visible = g.querySelectorAll('.card:not(.hidden)').length;
+      g.classList.toggle('hidden', visible===0);
+    });
+  }
+
+  /* ---------- SCROLL REVEAL ---------- */
+  var reveals = document.querySelectorAll('[data-reveal]');
+  if(reduce){
+    Array.prototype.forEach.call(reveals, function(r){r.classList.add('in');});
+  } else if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, {threshold:.12, rootMargin:"0px 0px -8% 0px"});
+    Array.prototype.forEach.call(reveals, function(r){io.observe(r);});
+  } else {
+    Array.prototype.forEach.call(reveals, function(r){r.classList.add('in');});
+  }
+
+  /* ---------- TIMELINE FILL ON VIEW ---------- */
+  var tlSection = document.getElementById('timeline');
+  var tlFill = document.getElementById('tlFill');
+  var tlNodes = document.querySelectorAll('.tl-node');
+  var isMobileTL = window.matchMedia('(max-width:760px)').matches;
+  function litTimeline(){
+    tlFill.style.width = '100%';
+    if(isMobileTL) tlFill.style.height = '100%';
+    tlNodes.forEach(function(n, i){
+      setTimeout(function(){ n.classList.add('lit'); }, reduce?0:180*i);
+    });
+  }
+  if('IntersectionObserver' in window){
+    var tlo = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ litTimeline(); tlo.disconnect(); }});
+    }, {threshold:.35});
+    tlo.observe(tlSection);
+  } else { litTimeline(); }
+
+  /* ---------- COUNTERS ---------- */
+  function animateCount(node){
+    var target = parseFloat(node.getAttribute('data-count'));
+    var dec = parseInt(node.getAttribute('data-dec')||"0",10);
+    if(reduce){ node.textContent = dec? target.toFixed(dec): target; return; }
+    var start = null, dur = 1300;
+    function step(ts){
+      if(!start) start = ts;
+      var p = Math.min((ts-start)/dur, 1);
+      var eased = 1-Math.pow(1-p,3);
+      var val = target*eased;
+      node.textContent = dec? val.toFixed(dec) : Math.round(val);
+      if(p<1) requestAnimationFrame(step);
+      else node.textContent = dec? target.toFixed(dec): target;
+    }
+    requestAnimationFrame(step);
+  }
+  var counters = document.querySelectorAll('[data-count]');
+  if('IntersectionObserver' in window){
+    var co = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ animateCount(e.target); co.unobserve(e.target);} });
+    }, {threshold:.6});
+    Array.prototype.forEach.call(counters, function(c){co.observe(c);});
+  } else {
+    Array.prototype.forEach.call(counters, function(c){animateCount(c);});
+  }
+
+  /* ---------- CARD GLOW FOLLOW ---------- */
+  if(!reduce){
+    document.addEventListener('pointermove', function(e){
+      var card = e.target.closest && e.target.closest('.card');
+      if(!card) return;
+      var r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX-r.left)+'px');
+      card.style.setProperty('--my', (e.clientY-r.top)+'px');
+    }, {passive:true});
+  }
+
+  /* ---------- NAV SHADOW ---------- */
+  var nav = document.getElementById('nav');
+  window.addEventListener('scroll', function(){
+    nav.classList.toggle('scrolled', window.scrollY>10);
+  }, {passive:true});
+
+  /* ---------- HERO INTRO ---------- */
+  if(!reduce){
+    var style = document.createElement('style');
+    style.textContent =
+      '.intro{opacity:0;transform:translateY(22px);filter:blur(6px);animation:introUp .9s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(var(--d)*.12s + .1s);}'+
+      '@keyframes introUp{to{opacity:1;transform:none;filter:blur(0);}}';
+    document.head.appendChild(style);
+  }
+
+  /* ---------- BACKGROUND PARTICLE NETWORK ---------- */
+  (function(){
+    var canvas = document.getElementById('bg-canvas');
+    if(!canvas || reduce){ if(canvas) canvas.style.display='none'; return; }
+    var ctx = canvas.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    var W, H, pts=[], raf, running=true;
+    function resize(){
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.style.width = W+'px'; canvas.style.height = H+'px';
+      canvas.width = W*dpr; canvas.height = H*dpr;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      var area = W*H;
+      var count = Math.max(28, Math.min(72, Math.round(area/26000)));
+      pts = [];
+      for(var i=0;i<count;i++){
+        pts.push({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.28, vy:(Math.random()-.5)*.28, r:Math.random()*1.6+.6});
+      }
+    }
+    function frame(){
+      if(!running) return;
+      ctx.clearRect(0,0,W,H);
+      for(var i=0;i<pts.length;i++){
+        var p=pts[i];
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0||p.x>W) p.vx*=-1;
+        if(p.y<0||p.y>H) p.vy*=-1;
+        for(var j=i+1;j<pts.length;j++){
+          var q=pts[j], dx=p.x-q.x, dy=p.y-q.y, d=dx*dx+dy*dy;
+          if(d<19000){
+            var a=(1-d/19000)*.22;
+            ctx.strokeStyle='rgba(194,247,74,'+a+')';
+            ctx.lineWidth=1;
+            ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.stroke();
+          }
+        }
+      }
+      for(var k=0;k<pts.length;k++){
+        var pt=pts[k];
+        ctx.fillStyle='rgba(194,247,74,.5)';
+        ctx.beginPath();ctx.arc(pt.x,pt.y,pt.r,0,6.283);ctx.fill();
+      }
+      raf=requestAnimationFrame(frame);
+    }
+    resize(); frame();
+    var rt;
+    window.addEventListener('resize', function(){clearTimeout(rt);rt=setTimeout(resize,180);}, {passive:true});
+    document.addEventListener('visibilitychange', function(){
+      running = !document.hidden;
+      if(running){ frame(); } else { cancelAnimationFrame(raf); }
+    });
+  })();
+})();
+</script>
+</body>
+</html>
