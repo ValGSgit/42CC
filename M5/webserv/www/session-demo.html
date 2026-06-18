@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Management Demo - WebServ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: float 15s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .info-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #333;
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .info-value {
+            color: #666;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .status {
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge.logged-in {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge.logged-out {
+            background: #dc3545;
+            color: white;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            background: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .back-button {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">← Back to Home</a>
+    
+    <div class="container">
+        <h1>🔐 Session Management Demo</h1>
+        <p class="subtitle">WebServ Cookie & Session Implementation</p>
+
+        <div id="status-message" class="status hidden"></div>
+
+        <!-- Login Section -->
+        <div id="login-section" class="section">
+            <h2>🚀 Get Started</h2>
+            <p style="margin-bottom: 15px; color: #666;">
+                Create a new session to test the WebServ session management system.
+                You'll be prompted to choose your username.
+            </p>
+            <div class="button-group">
+                <button onclick="login()">🔑 Create New Session</button>
+                <button onclick="refreshServerStats()">📊 Refresh Stats</button>
+            </div>
+        </div>
+
+        <!-- Profile Section (Hidden by default) -->
+        <div id="profile-section" class="section hidden">
+            <h2>👤 User Profile <span id="session-badge" class="badge logged-in">● Active</span></h2>
+            <div class="info-box">
+                <div style="margin-bottom: 10px;">
+                    <span class="info-label">Username:</span> 
+                    <span id="username" class="info-value" style="font-weight: 600; color: #667eea;">-</span>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <span class="info-label">Role:</span> 
+                    <span id="role" class="info-value">-</span>
+                </div>
+                <div>
+                    <span class="info-label">Session ID:</span> 
+                    <span id="session-id" class="info-value" style="font-size: 0.85em; font-family: monospace; word-break: break-all;">-</span>
+                </div>
+            </div>
+            <p style="text-align: center; color: #666; font-size: 0.9em; margin: 15px 0;">
+                💡 Your session is active. Navigate to other pages and your login state will persist.
+            </p>
+            <div class="button-group">
+                <button onclick="refreshProfile()">🔄 Refresh Profile</button>
+                <button onclick="logout()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">🚪 Logout</button>
+            </div>
+        </div>
+
+        <!-- Server Stats Section -->
+        <div class="section">
+            <h2>📊 Server Statistics</h2>
+            <div class="stats">
+                <p style="margin: 5px 0;">
+                    <strong>Active Sessions:</strong> 
+                    <span id="active-sessions" style="color: #667eea; font-size: 1.3em; font-weight: bold;">-</span>
+                </p>
+                <p style="margin-top: 10px; font-size: 0.85em; color: #888;">
+                    Auto-refreshing every 5 seconds
+                </p>
+            </div>
+        </div>
+
+        <!-- API Endpoints Documentation -->
+        <div class="section">
+            <h2>🔌 API Endpoints</h2>
+            <div style="font-size: 13px; color: #555; line-height: 2;">
+                <div style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <strong style="color: #10b981;">POST</strong> 
+                    <code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-family: monospace;">/api/session/login</code> 
+                    - Create a new session
+                </div>
+                <div style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <strong style="color: #3b82f6;">GET</strong> 
+                    <code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-family: monospace;">/api/session/profile</code> 
+                    - Get current user profile
+                </div>
+                <div style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <strong style="color: #10b981;">POST</strong> 
+                    <code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-family: monospace;">/api/session/logout</code> 
+                    - Destroy session
+                </div>
+                <div style="padding: 8px 0;">
+                    <strong style="color: #3b82f6;">GET</strong> 
+                    <code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-family: monospace;">/api/session/info</code> 
+                    - Get server session stats
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+            <p style="color: #888; font-size: 0.9em; margin: 5px 0;">
+                🚀 Powered by <strong style="color: #667eea;">WebServ</strong>
+            </p>
+            <p style="color: #999; font-size: 0.8em;">
+                C++98 HTTP/1.1 Server with Session Management
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let currentSessionId = null;
+
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status-message');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + type;
+            statusEl.classList.remove('hidden');
+            setTimeout(() => statusEl.classList.add('hidden'), 5000);
+        }
+
+        function showLoginSection() {
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('profile-section').classList.add('hidden');
+        }
+
+        function showProfileSection() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('profile-section').classList.remove('hidden');
+        }
+
+        async function login() {
+            // Prompt for username
+            const username = prompt('Enter your username:', 'user_' + Math.floor(Math.random() * 1000));
+            
+            if (!username || username.trim() === '') {
+                showStatus('✗ Login cancelled', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/session/login', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username: username.trim() })
+                });
+                const data = await response.json();
+
+                // Check for 409 Conflict (user already logged in)
+                if (response.status === 409) {
+                    showStatus('⚠️ ' + data.message, 'error');
+                    return;
+                }
+
+                if (data.success) {
+                    currentSessionId = data.session_id;
+                    document.getElementById('session-id').textContent = currentSessionId;
+                    document.getElementById('username').textContent = data.username || username;
+                    showStatus('✓ Login successful! Session created for ' + (data.username || username), 'success');
+                    await refreshProfile();
+                    showProfileSection();
+                    refreshServerStats();
+                } else {
+                    showStatus('✗ Login failed: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showStatus('✗ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function refreshProfile() {
+            try {
+                const response = await fetch('/api/session/profile', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('username').textContent = data.username || '-';
+                    document.getElementById('role').textContent = data.role || '-';
+                    showStatus('✓ Profile refreshed', 'success');
+                } else {
+                    showStatus('✗ ' + data.message, 'error');
+                    showLoginSection();
+                }
+            } catch (error) {
+                showStatus('✗ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('/api/session/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSessionId = null;
+                    document.getElementById('session-id').textContent = '-';
+                    document.getElementById('username').textContent = '-';
+                    document.getElementById('role').textContent = '-';
+                    showStatus('✓ Logged out successfully. Session destroyed.', 'success');
+                    showLoginSection();
+                    refreshServerStats();
+                } else {
+                    showStatus('✗ Logout failed', 'error');
+                }
+            } catch (error) {
+                showStatus('✗ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function refreshServerStats() {
+            try {
+                const response = await fetch('/api/session/info');
+                const data = await response.json();
+                document.getElementById('active-sessions').textContent = data.active_sessions || 0;
+            } catch (error) {
+                console.error('Failed to fetch server stats:', error);
+            }
+        }
+
+        async function checkSession() {
+            try {
+                const response = await fetch('/api/session/profile', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSessionId = 'existing-session';
+                    document.getElementById('username').textContent = data.username || '-';
+                    document.getElementById('role').textContent = data.role || '-';
+                    document.getElementById('session-id').textContent = currentSessionId;
+                    showProfileSection();
+                    showStatus('✓ Existing session found! Welcome back, ' + (data.username || 'User'), 'success');
+                } else {
+                    showLoginSection();
+                }
+            } catch (error) {
+                showLoginSection();
+            }
+            // Always refresh stats
+            refreshServerStats();
+        }
+
+        // Check session on page load and periodically
+        window.addEventListener('load', () => {
+            checkSession();
+            
+            // Auto-refresh every 5 seconds to detect changes from other pages
+            setInterval(() => {
+                if (document.getElementById('profile-section').classList.contains('hidden')) {
+                    // If logged out, check if we have a session now
+                    checkSession();
+                } else {
+                    // If logged in, verify session is still valid
+                    refreshProfile();
+                }
+                refreshServerStats();
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

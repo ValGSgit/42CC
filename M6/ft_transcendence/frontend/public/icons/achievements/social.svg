@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Left person -->
+  <circle cx="11" cy="10" r="4" stroke="#da77f2" stroke-width="2"/>
+  <path d="M4 26c0-4.418 3.134-8 7-8" stroke="#da77f2" stroke-width="2" stroke-linecap="round"/>
+  <!-- Right person -->
+  <circle cx="21" cy="10" r="4" stroke="#da77f2" stroke-width="2"/>
+  <path d="M28 26c0-4.418-3.134-8-7-8" stroke="#da77f2" stroke-width="2" stroke-linecap="round"/>
+  <!-- Connection heart -->
+  <path d="M16 21s-3-2-3-4a2 2 0 0 1 3-1.5A2 2 0 0 1 19 17c0 2-3 4-3 4z" fill="#da77f2" opacity="0.8"/>
+</svg>

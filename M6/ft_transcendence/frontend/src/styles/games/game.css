@@ -1,0 +1,824 @@
+/* ========================================= */
+/* BASE LAYOUT                               */
+/* ========================================= */
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+.lock-screen {
+  overflow: hidden !important;
+}
+
+.scene-container {
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.shop-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.hud-hp {
+  position: absolute;
+  top: 20px;
+  left: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.stat {
+  width: 100px;
+  height: 50px;
+  font-size: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat.overlay {
+  transform: scale(1.1);
+  z-index: 300;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.edit-mode {
+  position: fixed;
+  inset: 0;
+  padding-top: 90px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.hud-container {
+  position: absolute;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+  /* Let clicks pass through to game */
+}
+
+.hud-left {
+  left: 20px;
+}
+
+.hud-right {
+  right: 20px;
+}
+
+.hud-coins {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 6px;
+}
+
+.hud-coins-val {
+  margin-left: auto;
+}
+
+/* The shared .stat box is a fixed 100px, which clips long coin balances
+   (big sales, debug coins). Let the coin HUD specifically grow with its
+   value — 100px stays the floor so a single-digit balance still looks right,
+   and padding keeps the number off the border. */
+#coin-hud {
+  width: auto;
+  min-width: 100px;
+  max-width: 260px;
+  padding: 0 12px;
+}
+
+/* ========================================= */
+/* SHARED COMPONENT STYLES (Consolidated!)   */
+/* ========================================= */
+
+.hud-btn,
+.stat-btn,
+.close-btn,
+.shop-btn,
+.stat {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, background 0.1s;
+}
+
+/* Button specific behaviors */
+.hud-btn,
+.stat-btn,
+.close-btn,
+.shop-btn {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Ready state (Green) */
+.shop-btn.is-ready {
+  background-color: #2ecc71;
+  /* Green */
+}
+
+.hud-btn:hover,
+.stat-btn:hover,
+.close-btn:hover,
+.shop-btn:hover,
+.itemshop-card:hover {
+  transform: scale(1.05);
+  border-color: #4abdff;
+  background: rgba(100, 200, 255, 0.5);
+}
+
+/* Individual Sizing Overrides */
+.hud-btn {
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+}
+
+.stat-btn {
+  width: 30px;
+  height: 30px;
+  font-size: 24px;
+}
+
+.close-btn {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+}
+
+.stat {
+  width: 100px;
+  height: 50px;
+  font-size: 24px;
+  cursor: default;
+  pointer-events: auto;
+}
+
+.shop-btn {
+  width: clamp(220px, 30vw, 300px);
+  height: 50px;
+  font-size: clamp(22px, 1vw, 28px);
+  background: rgba(255, 255, 255, 0.3);
+  border-width: 2px;
+}
+
+/* ========================================= */
+/* MODAL CONTENT & FORMS                     */
+/* ========================================= */
+
+.shop-title {
+  font-size: clamp(30px, 2vw, 45px);
+  font-weight: bold;
+  color: #FFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.input-group label,
+.input-group input[type="range"] {
+  font-size: 25px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.input-group input[type="text"] {
+  padding: 8px 12px;
+  font-size: 20px;
+  border-radius: 6px;
+  border: 2px solid #8a8a8a;
+  outline: none;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Custom Color Picker */
+.custom-color-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.custom-picker {
+  -webkit-appearance: none;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+}
+
+.custom-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.custom-picker::-webkit-color-swatch {
+  border: 2px solid #ccc;
+  border-radius: 8px;
+}
+
+/* ========================================= */
+/* ITEM SHOP GRID                            */
+/* ========================================= */
+
+.itemshop-grid {
+  max-width: 650px;
+  max-height: 60vh;
+  padding: 15px;
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.itemshop-grid::-webkit-scrollbar {
+  width: 12px;
+}
+
+.itemshop-grid::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
+.itemshop-grid::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.5);
+  border-radius: 8px;
+}
+
+.itemshop-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.8);
+}
+
+.title {
+  font-size: 24px;
+  padding-top: 90px;
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: top;
+  justify-content: center;
+  z-index: 100;
+}
+
+.edit-mode-light {
+  padding-top: 90px;
+  pointer-events: auto;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: top;
+  justify-content: center;
+  z-index: 100;
+}
+
+.close-btn {
+  pointer-events: auto;
+  /* Buttons must be clickable */
+  width: 30px;
+  height: 30px;
+  font-size: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+}
+
+.itemshop-card {
+  background: rgba(28, 42, 58, 0.8);
+  border: 3px solid #3a4a5a;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  pointer-events: auto;
+  transition: transform 0.1s, border-color 0.1s;
+}
+
+.itemshop-card:hover {
+  transform: scale(1.05);
+  border-color: #4abdff;
+  background: #1c2a3a;
+}
+
+.icon-container {
+  font-size: 55px;
+  width: 100px;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  /* Cost text anchors here */
+}
+
+.item-icon {
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+  bottom: 5px;
+  left: -2px;
+  object-fit: contain;
+}
+
+.item-cost {
+  position: absolute;
+  bottom: -12px;
+  right: -23px;
+  color: #ffd700;
+  font-size: 32px;
+  font-weight: bold;
+  padding: 2px 6px;
+}
+
+.item-name {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: bold;
+  padding-bottom: 8px;
+  text-align: center;
+}
+
+/* ========================================= */
+/* STATS MODAL & TOGGLES                     */
+/* ========================================= */
+
+.stats-content {
+  text-align: left;
+  padding: 10px;
+  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5em;
+  gap: 8px;
+}
+
+.speed-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.editable-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: rgba(51, 51, 51, 0.8);
+  border: 2px solid #555;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  color: white;
+  transition: 0.1s;
+}
+
+.icon-btn:hover {
+  background: rgba(0, 128, 128, 0.8);
+  border-color: #00ffff;
+}
+
+.name-input {
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid #333;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 18px;
+  color: #333;
+  width: 150px;
+  outline: none;
+}
+
+.name-input:focus {
+  border-color: #5CBF61;
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.info-text {
+  font-size: 24px;
+  color: #FFF;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 54px;
+  height: 30px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background-color: #555;
+  border: 2px solid #888;
+  border-radius: 30px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #FFF;
+  border-radius: 50%;
+  transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+input:checked+.slider {
+  background-color: #5CBF61;
+  border-color: #3e8e41;
+}
+
+input:checked+.slider:before {
+  transform: translateX(24px);
+  background-color: #000;
+}
+
+.game-select-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin: 5px 0;
+}
+
+.player-selector {
+  padding: 8px;
+  border-radius: 5px;
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+  cursor: pointer;
+  height: 100%;
+}
+
+/* ========================================= */
+/* FLOATING ANIMATIONS                       */
+/* ========================================= */
+
+.floating-text-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 500;
+}
+
+/* SHARED FLOATING TEXT */
+.floating-text,
+.floating-text-coins,
+.floating-text-hearts {
+  position: absolute;
+  font-size: 28px;
+  font-weight: 900;
+  pointer-events: none;
+  animation: floatUp 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.floating-text {
+  color: var(--primary);
+  margin-top: -100px;
+  text-shadow: 1px 3px 0px #007780, 0px 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.floating-text-coins {
+  color: #ffd700;
+  margin-top: -40px;
+  margin-left: 20px;
+  text-shadow: 1px 3px 0px #b8860b, 0px 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.floating-text-hearts {
+  color: #ff0000;
+  text-shadow: 1px 3px 0px #491010, 0px 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translate(-100%, -50%) translateY(0) scale(0.5);
+  }
+
+  30% {
+    transform: translate(-100%, -50%) translateY(-20px) scale(1.5);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-100%, -50%) translateY(-80px) scale(1);
+  }
+}
+
+/* ========================================= */
+/* EDIT MODE CONTROLS HINT                   */
+/* ========================================= */
+
+.controls-hint {
+  position: absolute;
+  bottom: clamp(135px, 5vw, 20px);
+  left: 25px;
+
+  background: rgba(28, 42, 58, 0.8);
+  border: 2px solid #3a4a5a;
+  border-radius: 8px;
+  padding: clamp(8px, 1.5vw, 15px);
+
+  color: #FFF;
+  z-index: 100;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 1vw, 10px);
+  backdrop-filter: blur(4px);
+}
+
+.controls-hint h4 {
+  margin: 0;
+  padding-bottom: clamp(3px, 0.5vw, 5px);
+
+  /* Title font size: Min 14px, Scales at 2vw, Max 20px */
+  font-size: clamp(14px, 2vw, 20px);
+
+  color: #ffd700;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.control-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  /* Horizontal space between icon/text and the action text */
+  gap: clamp(15px, 3vw, 30px);
+
+  /* Row text font size: Min 10px, Scales at 1.5vw, Max 16px */
+  font-size: clamp(10px, 1.5vw, 16px);
+  font-weight: bold;
+}
+
+.control-row span:last-child {
+  color: #4abdff;
+}
+
+.edit-actions {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.edit-mode .close-btn {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  z-index: 100;
+}
+
+.edit-mode .close-btn:hover {
+  transform: translateX(-50%) scale(1.05);
+}
+
+/* ========================================= */
+/* Multiplayer                               */
+/* ========================================= */
+
+.action-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: center;
+}
+
+.multiplayer-row {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 20px;
+  justify-content: flex-start;
+  min-width: 350px;
+}
+
+.p-name {
+  width: 100px;
+  flex-shrink: 0;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  gap: 20px;
+}
+
+.p-hp {
+  width: 75px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-align: center;
+  gap: 20px;
+}
+
+.p-point {
+  width: 60px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0 3rem;
+}
+
+.feature-card {
+  background: var(--bg-secondary, var(--bg-secondary));
+  border: 1px solid var(--border-color, var(--border-color));
+  border-radius: 12px;
+  padding: 1.75rem 1.25rem;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.feature-card:hover {
+  border-color: var(--primary, var(--primary));
+  transform: translateY(-3px);
+}
+
+.feature-card h3 {
+  margin: 0.75rem 0 0.5rem;
+  font-size: 1.1rem;
+  color: #eee;
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: #888;
+  line-height: 1.5;
+}
+
+.flying-coin {
+  position: fixed;
+  font-size: 2rem;
+  z-index: 9999;
+  pointer-events: none;
+  transition:
+    left 1.2s cubic-bezier(0.1, -0.1, 0.2, 0),
+    top 1.2s cubic-bezier(0.2, var(--arc-factor, 1.2), 0.3, 0),
+    opacity 1s ease-in,
+    transform 1s ease-in;
+  opacity: 1;
+}
+
+.flying-coin.is-flying {
+  transform: translate(-50%, -50%) scale(0.5);
+  opacity: 0.5;
+}
+
+@keyframes hud-pop {
+  0% {
+    transform: scale(1.1);
+  }
+
+  50% {
+    transform: scale(1.7);
+    color: #ffd700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    border: 1px solid rgba(255, 215, 0, 0.8);
+  }
+
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse {
+  animation: hud-pop 0.2s ease-out;
+}
+
+/* ========================================= */
+/* Alpaca Road                               */
+/* ========================================= */
+
+.announcement {
+  position: fixed;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 1000;
+  white-space: nowrap;
+
+  animation: announcement-sequence 2s ease-out forwards;
+}
+
+@keyframes announcement-sequence {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -30%) scale(0.5);
+  }
+
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  25% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -80%) scale(1.5);
+  }
+}

@@ -1,0 +1,311 @@
+/* ── Tokens ─────────────────────────────────────────────────── */
+.lb-panel {
+  --cyan:     var(--primary);
+  --border-1: rgba(255,255,255,.06);
+  --border-2: rgba(255,255,255,.10);
+}
+
+/* ── Panel shell ─────────────────────────────────────────────── */
+.lb-panel {
+  background: linear-gradient(180deg, #15151f 0%, #11111a 100%);
+  border: 1px solid var(--border-1);
+  border-radius: 14px;
+  overflow: hidden;
+  font-size: 0.875rem;
+}
+
+/* ── Header ──────────────────────────────────────────────────── */
+.lb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-1);
+}
+
+.lb-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.4px;
+  color: var(--text-primary);
+}
+
+.lb-live {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #3a3a4a;
+  transition: color 0.3s;
+}
+.lb-live--on { color: #4ade80; }
+
+.lb-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.lb-live--on .lb-dot { animation: pulse 1.5s ease-in-out infinite; }
+
+/* ── Tabs ────────────────────────────────────────────────────── */
+.lb-tabs {
+  display: flex;
+  gap: 3px;
+  padding: 5px;
+  background: #0c0c14;
+  border-bottom: 1px solid var(--border-1);
+}
+
+.lb-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0.45rem 0.5rem;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: #555;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  position: relative;
+}
+.lb-tab:hover { color: var(--text-secondary); }
+
+.lb-tab--active {
+  background: #15151f;
+  color: var(--text-primary);
+  border-color: var(--border-2);
+  box-shadow:
+    inset 0 0 0 1px var(--border-2),
+    0 0 0 1px rgba(0,240,255,.15),
+    0 6px 18px -10px rgba(0,240,255,.5);
+}
+.lb-tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 22%; right: 22%;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--cyan);
+  opacity: 0.65;
+}
+
+/* Per-tab icon accent colors when active */
+.lb-tabs[data-tab="kills"]     .lb-tab[data-id="kills"]     svg { color: var(--magenta); }
+.lb-tabs[data-tab="obstacles"] .lb-tab[data-id="obstacles"] svg { color: var(--cyan); }
+.lb-tabs[data-tab="coins"]     .lb-tab[data-id="coins"]     svg { color: var(--gold); }
+
+@media (max-width: 480px) {
+  .tab-label { display: none; }
+  .lb-tab    { padding: 0.55rem; }
+}
+
+/* ── Loading / empty ─────────────────────────────────────────── */
+.lb-loading, .lb-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: #555;
+  font-size: 0.82rem;
+}
+
+/* ── List ────────────────────────────────────────────────────── */
+.lb-list { display: flex; flex-direction: column; }
+
+.lb-entry {
+  display: grid;
+  grid-template-columns: 30px 32px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--border-1);
+  transition: background 0.12s, transform 0.12s;
+  position: relative;
+}
+.lb-entry:last-child { border-bottom: none; }
+.lb-entry:hover      { background: rgba(255,255,255,.025); transform: translateX(1px); }
+
+/* Top-3 medal rows */
+.lb-entry--gold   { background: rgba(255,215,0,.04); }
+.lb-entry--silver { background: rgba(192,192,192,.03); }
+.lb-entry--bronze { background: rgba(205,127,50,.03); }
+
+/* "You" highlight */
+.lb-entry--you {
+  background: rgba(0,240,255,.04);
+  border-color: rgba(0,240,255,.14);
+}
+.lb-entry--you::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--cyan);
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── Rank cell ───────────────────────────────────────────────── */
+.lb-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trophy-icon {
+  color: #f5c842;
+  filter: drop-shadow(0 0 5px rgba(245,200,66,.65));
+}
+
+.medal-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+.medal-pill--silver {
+  background: radial-gradient(circle at 38% 32%, #d4d4d4, #888);
+  color: #fff;
+  box-shadow: 0 0 7px rgba(192,192,192,.4);
+}
+.medal-pill--bronze {
+  background: radial-gradient(circle at 38% 32%, #e8a87c, #a0522d);
+  color: #fff;
+  box-shadow: 0 0 7px rgba(205,127,50,.4);
+}
+
+.lb-rank-num {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #555;
+}
+
+/* ── Avatar ──────────────────────────────────────────────────── */
+.lb-avatar-wrap { display: flex; align-items: center; }
+
+.lb-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-2);
+  flex-shrink: 0;
+}
+.lb-avatar--initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ── Info ────────────────────────────────────────────────────── */
+.lb-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.lb-username {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lb-record {
+  font-size: 0.7rem;
+  color: #555;
+}
+
+.you-tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--cyan);
+  background: rgba(0,240,255,.12);
+  border: 1px solid rgba(0,240,255,.22);
+  border-radius: 4px;
+  padding: 1px 4px;
+  letter-spacing: 0.2px;
+  flex-shrink: 0;
+}
+
+/* ── Score ───────────────────────────────────────────────────── */
+.lb-score {
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: color 0.2s;
+}
+.lb-score--kills  { color: var(--magenta); }
+.lb-score--stages { color: var(--cyan); }
+.lb-score--coins  { color: var(--gold); }
+
+.lb-score--fresh { animation: slide-in 0.3s ease-out, flash 1.4s ease-out; }
+
+.coin-glyph { color: inherit; opacity: 0.85; }
+
+/* ── Footer ──────────────────────────────────────────────────── */
+.lb-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--border-1);
+  color: #3a3a4a;
+  font-size: 0.7rem;
+}
+
+.lb-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border-2);
+  border-radius: 6px;
+  color: #555;
+  padding: 0.22rem 0.45rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.lb-refresh:hover          { color: var(--cyan); border-color: var(--cyan); }
+.lb-refresh:disabled       { opacity: 0.4; cursor: default; }
+.lb-refresh--spinning svg  { animation: spin 0.7s linear infinite; }
+
+/* ── Keyframes ───────────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(5px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes flash {
+  0%   { background: rgba(0,240,255,.14); }
+  100% { background: transparent; }
+}
+

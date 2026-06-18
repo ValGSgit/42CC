@@ -1,0 +1,37 @@
+# Docker Compose — AlpacaParty
+#
+# Single compose definition for the whole stack. Usage: `make` (or
+# `docker compose up -d --build`). Ports come from .env (see .env.example).
+
+include:
+  - ./backend/compose.yaml
+  - ./frontend/compose.yaml
+  - ./nginx/compose.yaml
+  - ./database/compose.yaml
+
+volumes:
+  pg_data:
+    driver: local
+  backend_uploads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./backend/uploads
+  backend_migrations:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./backend/prisma/migrations
+  ssl:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./ssl
+
+networks:
+  alpacaparty_net:
+    name: alpacaparty_net
+    driver: bridge

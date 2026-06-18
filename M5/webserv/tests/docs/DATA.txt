@@ -1,0 +1,127 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    WEBSERV TEST SUITE - QUICK REFERENCE                  ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+📋 SETUP (One Time)
+───────────────────────────────────────────────────────────────────────────
+  chmod +x *.py *.sh
+
+🚀 BASIC USAGE
+───────────────────────────────────────────────────────────────────────────
+  ./webserv config/default.conf          # Start server (terminal 1)
+  ./run_all_tests.sh                     # Run all tests (terminal 2)
+
+🧪 INDIVIDUAL TEST SUITES
+───────────────────────────────────────────────────────────────────────────
+  ./test_webserv.py      →  Main tests (45+ tests, ~30s)
+  ./test_cgi.py          →  CGI tests (12 tests, ~20s)
+  ./stress_test.py       →  Stress tests (6 suites, 2-5min)
+  ./manual_tests.sh      →  Manual curl tests (~1min)
+
+⚙️  OPTIONS
+───────────────────────────────────────────────────────────────────────────
+  --host HOST            →  Server hostname (default: localhost)
+  --port PORT            →  Server port (default: 8080)
+  --config FILE          →  Config file (default: config/default.conf)
+
+  Example: ./test_webserv.py --host localhost --port 8081
+
+📚 DOCUMENTATION
+───────────────────────────────────────────────────────────────────────────
+  README_TESTS.md        →  Main index (start here!)
+  QUICKSTART.md          →  Quick reference
+  TESTING.md             →  Comprehensive guide
+  TEST_SUITE_SUMMARY.md  →  Complete overview
+
+🎯 TEST COVERAGE
+───────────────────────────────────────────────────────────────────────────
+  ✓ HTTP Methods         GET, POST, DELETE
+  ✓ Status Codes         200, 404, 405, 413, 500, etc.
+  ✓ Static Files         HTML, images, CSS, JS
+  ✓ CGI                  .py, .php, .pl, .rb, .sh
+  ✓ File Upload          Multipart, size limits
+  ✓ Configuration        Ports, routes, methods
+  ✓ Error Handling       400, 404, 405, 413, 500
+  ✓ Performance          Concurrent, sustained load
+  ✓ Edge Cases           Malformed, timeouts, limits
+
+✅ SUCCESS CRITERIA
+───────────────────────────────────────────────────────────────────────────
+  Functionality Tests    →  95%+ pass rate
+  CGI Tests              →  90%+ pass rate
+  Stress Tests           →  80%+ pass rate
+  No Crashes             →  All tests complete
+  No Memory Leaks        →  Valgrind clean
+
+🔧 TROUBLESHOOTING
+───────────────────────────────────────────────────────────────────────────
+  Server not running     →  ./webserv config/default.conf
+  Port in use            →  killall webserv
+  CGI fails              →  chmod +x www/cgi-bin/*
+  Upload fails           →  mkdir -p www/uploads && chmod 755 www/uploads
+  Permission denied      →  chmod +x *.py *.sh
+
+💡 QUICK COMMANDS
+───────────────────────────────────────────────────────────────────────────
+  # Run all tests
+  ./run_all_tests.sh
+
+  # Test specific port
+  ./test_webserv.py --port 8081
+
+  # Save results
+  ./test_webserv.py 2>&1 | tee results.log
+
+  # Test with valgrind
+  valgrind --leak-check=full ./webserv config/default.conf
+
+  # Monitor resources
+  htop
+
+  # Check what's using port
+  lsof -i :8080
+
+🎓 SUBJECT REQUIREMENTS
+───────────────────────────────────────────────────────────────────────────
+  [✓] Non-blocking I/O
+  [✓] Single poll/select/epoll/kqueue
+  [✓] GET, POST, DELETE methods
+  [✓] Static file serving
+  [✓] CGI execution
+  [✓] File uploads
+  [✓] Multiple ports
+  [✓] Configuration file
+  [✓] Error pages
+  [✓] Max body size
+  [✓] Route rules
+  [✓] HTTP redirections
+  [✓] Directory listing
+  [✓] Timeout handling
+
+📊 FILE SUMMARY
+───────────────────────────────────────────────────────────────────────────
+  Test Scripts (6):
+    • test_webserv.py       37KB  ⭐ Main tests
+    • test_cgi.py           16KB     CGI tests
+    • stress_test.py        18KB     Load tests
+    • run_all_tests.sh      3.7KB    Orchestrator
+    • manual_tests.sh       3.7KB    Manual tests
+    • example_custom_test.py 3.8KB   Template
+
+  Documentation (4):
+    • README_TESTS.md       9.6KB  ⭐ Start here
+    • QUICKSTART.md         4.4KB    Quick ref
+    • TESTING.md            8.2KB    Full guide
+    • TEST_SUITE_SUMMARY.md 7.0KB    Overview
+
+🎯 NEXT STEPS
+───────────────────────────────────────────────────────────────────────────
+  1. Read README_TESTS.md or QUICKSTART.md
+  2. Start your server: ./webserv config/default.conf
+  3. Run tests: ./run_all_tests.sh
+  4. Fix any failures
+  5. Run stress tests
+  6. Check with Valgrind
+  7. Test with browser
+  8. Compare with NGINX
+

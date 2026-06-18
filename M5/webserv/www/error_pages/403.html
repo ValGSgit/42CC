@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>403 Forbidden</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .error-container {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 60px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: containerPulse 3s ease-in-out infinite;
+            position: relative;
+        }
+        
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #ff4757, #ff6b6b, #ff4757);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s ease-in-out infinite, warning 2s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        .error-title {
+            font-size: 32px;
+            margin: 20px 0;
+            font-weight: 300;
+            letter-spacing: 2px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+        
+        .error-message {
+            font-size: 18px;
+            margin: 25px 0;
+            opacity: 0.9;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.7s both;
+        }
+        
+        .lock-icon {
+            font-size: 60px;
+            margin: 20px 0;
+            animation: lockShake 2s ease-in-out infinite, fadeInUp 1s ease-out 0.3s both;
+        }
+        
+        .home-link {
+            display: inline-block;
+            color: #ff4757;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 15px 30px;
+            border: 2px solid #ff4757;
+            border-radius: 30px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out 0.9s both;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .home-link:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,71,87,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .home-link:hover:before {
+            left: 100%;
+        }
+        
+        .home-link:hover {
+            background: #ff4757;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,71,87,0.4);
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 30s infinite linear;
+        }
+        
+        .shape:nth-child(1) {
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 25s;
+        }
+        
+        .shape:nth-child(2) {
+            left: 25%;
+            animation-delay: 5s;
+            animation-duration: 20s;
+        }
+        
+        .shape:nth-child(3) {
+            left: 65%;
+            animation-delay: 10s;
+            animation-duration: 28s;
+        }
+        
+        .shape:nth-child(4) {
+            left: 85%;
+            animation-delay: 15s;
+            animation-duration: 22s;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            opacity: 0.7;
+            animation: fadeInUp 1s ease-out 1.1s both;
+        }
+        
+        @keyframes containerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes warning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes lockShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 40px 20px;
+                margin: 20px;
+            }
+            
+            .error-code {
+                font-size: 80px;
+            }
+            
+            .error-title {
+                font-size: 24px;
+            }
+            
+            .error-message {
+                font-size: 16px;
+            }
+            
+            .lock-icon {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape">🔒</div>
+        <div class="shape">🚫</div>
+        <div class="shape">⛔</div>
+        <div class="shape">🔐</div>
+    </div>
+    
+    <div class="error-container">
+        <div class="lock-icon">🔒</div>
+        <div class="error-code">403</div>
+        <h1 class="error-title">Access Forbidden</h1>
+        <p class="error-message">
+            You don't have permission to access this resource.<br>
+            Please contact the administrator if you believe this is an error.
+        </p>
+        <a href="/" class="home-link">
+            ← Return Home
+        </a>
+        <div class="footer">
+            <small>WebServ/1.0 • Powered by C++</small>
+        </div>
+    </div>
+</body>
+</html>

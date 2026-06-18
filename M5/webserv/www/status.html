@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Status - WebServ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        h1 { color: #1f2937; margin-bottom: 20px; }
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .status-online {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        .server-list {
+            list-style: none;
+        }
+        .server-item {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #10b981;
+        }
+        .server-item h3 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .server-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .info-item {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        .info-item strong {
+            color: #374151;
+        }
+        .config-section {
+            background: #1f2937;
+            color: #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+        
+        <div class="card">
+            <h1>📊 Server Status <span class="status-online" id="statusBadge">● ONLINE</span></h1>
+            <p>Real-time monitoring and statistics for WebServ</p>
+            
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value" id="activeServers">3</div>
+                    <div class="stat-label">Active Servers</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="totalRequests">0</div>
+                    <div class="stat-label">Total Requests</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="uptime">0:00:00</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="maxUpload">100MB</div>
+                    <div class="stat-label">Max Upload</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 style="color: #1f2937; margin-bottom: 20px;">📈 Performance Metrics (Values are random but it looks nice right?)</h2>
+            <div style="margin: 20px 0;">
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>CPU Usage</span>
+                        <span id="cpuValue">25%</span>
+                    </div>
+                    <div style="background: #e5e7eb; height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div id="cpuBar" style="background: linear-gradient(90deg, #2563eb, #10b981); height: 100%; width: 25%; transition: width 0.5s;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Memory Usage</span>
+                        <span id="memValue">45%</span>
+                    </div>
+                    <div style="background: #e5e7eb; height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div id="memBar" style="background: linear-gradient(90deg, #f59e0b, #ef4444); height: 100%; width: 45%; transition: width 0.5s;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Network I/O</span>
+                        <span id="netValue">60%</span>
+                    </div>
+                    <div style="background: #e5e7eb; height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div id="netBar" style="background: linear-gradient(90deg, #10b981, #059669); height: 100%; width: 60%; transition: width 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 style="color: #1f2937; margin-bottom: 20px;">🖥️ Server Instances</h2>
+            <ul class="server-list">
+                <li class="server-item">
+                    <h3>Main Server - Port 8080</h3>
+                    <div class="server-info">
+                        <div class="info-item"><strong>Host:</strong> localhost</div>
+                        <div class="info-item"><strong>Port:</strong> 8080</div>
+                        <div class="info-item"><strong>Root:</strong> ./www</div>
+                        <div class="info-item"><strong>Index:</strong> index.html</div>
+                        <div class="info-item"><strong>Upload Limit:</strong> 100MB</div>
+                        <div class="info-item"><strong>Locations:</strong> 12</div>
+                    </div>
+                </li>
+                
+                <li class="server-item">
+                    <h3>Development Server - Port 8081</h3>
+                    <div class="server-info">
+                        <div class="info-item"><strong>Host:</strong> localhost</div>
+                        <div class="info-item"><strong>Port:</strong> 8081</div>
+                        <div class="info-item"><strong>Root:</strong> ./www-dev</div>
+                        <div class="info-item"><strong>Index:</strong> index.html</div>
+                        <div class="info-item"><strong>Upload Limit:</strong> 50MB</div>
+                        <div class="info-item"><strong>Locations:</strong> 3</div>
+                    </div>
+                </li>
+                
+                <li class="server-item">
+                    <h3>API Server - Port 8082</h3>
+                    <div class="server-info">
+                        <div class="info-item"><strong>Host:</strong> localhost</div>
+                        <div class="info-item"><strong>Port:</strong> 8082</div>
+                        <div class="info-item"><strong>Root:</strong> ./www/api</div>
+                        <div class="info-item"><strong>Index:</strong> index.html</div>
+                        <div class="info-item"><strong>Upload Limit:</strong> 10MB</div>
+                        <div class="info-item"><strong>Locations:</strong> 2</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h2 style="color: #1f2937; margin-bottom: 15px;">⚙️ Configuration Summary</h2>
+            <div class="config-section">
+# WebServ Configuration
+# Using webserv.conf
+
+Servers:           3
+Methods:           GET, POST, DELETE
+CGI Extensions:    .py, .php, .pl, .rb, .sh, .cgi
+Error Pages:       400, 403, 404, 405, 500
+Autoindex:         Enabled for /browse
+Redirects:         /redirect, /github, /old-page
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 style="color: #1f2937; margin-bottom: 15px;">🔧 Quick Actions</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <button onclick="location.href='/browse/'" style="padding: 15px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Browse Files</button>
+                <button onclick="location.href='/upload.html'" style="padding: 15px; background: #059669; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Upload File</button>
+                <button onclick="location.href='/cgi-demo.html'" style="padding: 15px; background: #7c3aed; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Test CGI</button>
+                <button onclick="location.reload()" style="padding: 15px; background: #dc2626; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Refresh Status</button>
+                <button onclick="location.href='/games.html'" style="padding: 15px; background: #f59e0b; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Play Games</button>
+                <button onclick="location.href='/test.html'" style="padding: 15px; background: #06b6d4; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Run Tests</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Simulate live stats
+        let startTime = Date.now();
+        let requestCount = 0;
+        
+        function updateUptime() {
+            const elapsed = Date.now() - startTime;
+            const hours = Math.floor(elapsed / 3600000);
+            const minutes = Math.floor((elapsed % 3600000) / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            document.getElementById('uptime').textContent = `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+        
+        function updateMetrics() {
+            // Simulate varying metrics
+            const cpu = Math.floor(Math.random() * 30) + 20;
+            const mem = Math.floor(Math.random() * 20) + 40;
+            const net = Math.floor(Math.random() * 40) + 30;
+            
+            document.getElementById('cpuValue').textContent = cpu + '%';
+            document.getElementById('cpuBar').style.width = cpu + '%';
+            
+            document.getElementById('memValue').textContent = mem + '%';
+            document.getElementById('memBar').style.width = mem + '%';
+            
+            document.getElementById('netValue').textContent = net + '%';
+            document.getElementById('netBar').style.width = net + '%';
+            
+            // Update request count
+            requestCount += Math.floor(Math.random() * 5) + 1;
+            document.getElementById('totalRequests').textContent = requestCount;
+        }
+        
+        // Update every second
+        setInterval(updateUptime, 1000);
+        setInterval(updateMetrics, 2000);
+        
+        // Initial update
+        updateUptime();
+        updateMetrics();
+    </script>
+</body>
+</html>

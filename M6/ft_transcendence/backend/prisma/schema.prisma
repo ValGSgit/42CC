@@ -1,0 +1,380 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Users ────────────────────────────────────────────────────────────────
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique @db.VarChar(32)
+  email     String    @unique @db.VarChar(255)
+  avatar    String?   @default("/avatars/default.svg") @db.VarChar(512)
+  bio       String?   @default("") @db.Text
+  status    String?   @default("Hey there! I am using AlpacaParty") @db.VarChar(255)
+  isOnline  Boolean?  @default(false) @map("is_online")
+  lastSeen  DateTime? @default(now()) @map("last_seen") @db.Timestamptz
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  sentFriendRequests     FriendRequest[]      @relation("sentRequests")
+  receivedFriendRequests FriendRequest[]      @relation("receivedRequests")
+  friends                Friend[]             @relation("userFriends")
+  friendedBy             Friend[]             @relation("friendUsers")
+  blockedUsers           BlockedUser[]        @relation("userBlocked")
+  blockedBy              BlockedUser[]        @relation("blockedByUser")
+  sentMessages           Message[]            @relation("sentMessages")
+  receivedMessages       Message[]            @relation("receivedMessages")
+  wonGames               Game[]               @relation("winner")
+  gameStats              GameStat[]
+  achievements           UserAchievement[]
+  // dailyChallenges        UserDailyChallenge[]
+  notifications          Notification[]
+  posts                  Post[]
+  postLikes              PostLike[]
+  uploadedFiles          File[]
+  alpacaFarm             AlpacaFarm?
+  dataRequests           DataRequest[]
+  userAuth               UserAuth?
+  userStats              UserStats?
+  userSettings           UserSettings?
+  comments               Comment[]
+  publicApi              PublicApi?
+
+  @@map("user")
+}
+
+model UserAuth {
+  id           Int     @id @default(autoincrement())
+  passwordHash String? @db.VarChar(255)
+
+  // Relations
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @unique
+
+  @@map("user_auth")
+}
+
+model PublicApi {
+  id     Int    @id @default(autoincrement())
+  apiKey String @unique @map("api_key") @db.Text
+
+  // Relations
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @unique
+
+  @@map("public_api")
+}
+
+model UserStats {
+  userId         Int       @id @map("user_id")
+  xp             Int?      @default(0)
+  level          Int?      @default(0)
+  winStreak      Int?      @default(0) @map("win_streak")
+  loginStreak    Int?      @default(0) @map("login_streak")
+  lastLoginDate  DateTime? @map("last_login_date")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_stats")
+}
+
+model UserSettings {
+  isPublic Boolean? @default(true) @map("is_public")
+
+  // Relations
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @unique
+
+  @@index([isPublic])
+  @@map("user_settings")
+}
+
+// ── Friend Requests ──────────────────────────────────────────────────────
+model FriendRequest {
+  id         Int      @id @default(autoincrement())
+  senderId   Int      @map("sender_id")
+  receiverId Int      @map("receiver_id")
+  status     String?  @default("pending") @db.VarChar(10) // Note: Prisma handles CHECK constraints via the DB, or use enums
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  sender   User @relation("sentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("receivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@index([receiverId])
+  @@map("friend_request")
+}
+
+// ── Friends ──────────────────────────────────────────────────────────────
+model Friend {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  friendId  Int      @map("friend_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user   User @relation("userFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friend User @relation("friendUsers", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@map("friend")
+}
+
+// ── Blocked Users ────────────────────────────────────────────────────────
+model BlockedUser {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  blockedUserId Int      @map("blocked_user_id")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user        User @relation("userBlocked", fields: [userId], references: [id], onDelete: Cascade)
+  blockedUser User @relation("blockedByUser", fields: [blockedUserId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, blockedUserId])
+  @@map("blocked_user")
+}
+
+// ── Chat Messages (DM) ──────────────────────────────────────────────────
+model Message {
+  id         Int      @id @default(autoincrement())
+  senderId   Int      @map("sender_id")
+  receiverId Int      @map("receiver_id")
+  content    String   @db.Text
+  isRead     Boolean? @default(false) @map("is_read")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  sender   User @relation("sentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("receivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId])
+  @@index([receiverId])
+  // Compound index for conversation queries (fetch msgs between two users)
+  @@index([senderId, receiverId])
+  @@map("message")
+}
+
+// ── Games ────────────────────────────────────────────────────────────────
+model Game {
+  id           Int       @id @default(autoincrement())
+  player1Id    Int       @map("player1_id")
+  player2Id    Int?      @map("player2_id")
+  winnerId     Int?      @map("winner_id")
+  player1Score Int?      @default(0) @map("player1_score")
+  player2Score Int?      @default(0) @map("player2_score")
+  status       String?   @default("waiting") @db.VarChar(20)
+  gameType     String?   @default("pong") @map("game_type") @db.VarChar(30)
+  gameData     Json?     @default("{}") @map("game_data")
+  startedAt    DateTime? @map("started_at") @db.Timestamptz
+  finishedAt   DateTime? @map("finished_at") @db.Timestamptz
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz
+
+  winner  User? @relation("winner", fields: [winnerId], references: [id], onDelete: SetNull)
+
+  @@index([player1Id])
+  @@index([player2Id])
+  @@map("game")
+}
+
+// ── Game Statistics ──────────────────────────────────────────────────────
+model GameStat {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  gameType  String   @default("pong") @map("game_type") @db.VarChar(30)
+  wins      Int?     @default(0)
+  losses    Int?     @default(0)
+  draws     Int?     @default(0)
+  kills     Int?     @default(0)
+  obstacles Int?     @default(0)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, gameType])
+  @@index([userId])
+  @@map("game_stat")
+}
+
+// ── Achievements / Badges ────────────────────────────────────────────────
+model Achievement {
+  id          Int     @id @default(autoincrement())
+  key         String  @unique @db.VarChar(60)
+  name        String  @db.VarChar(120)
+  description String? @default("") @db.Text
+  icon        String? @default("") @db.VarChar(512)
+  xpReward    Int?    @default(0) @map("xp_reward")
+
+  users UserAchievement[]
+
+  @@map("achievement")
+}
+
+model UserAchievement {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  achievementId Int      @map("achievement_id")
+  unlockedAt    DateTime @default(now()) @map("unlocked_at") @db.Timestamptz
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievement")
+}
+
+// // ── Daily Challenges ─────────────────────────────────────────────────────
+// model DailyChallenge {
+//   id          Int      @id @default(autoincrement())
+//   title       String   @db.VarChar(120)
+//   description String?  @default("") @db.Text
+//   xpReward    Int?     @default(0) @map("xp_reward")
+//   activeDate  DateTime @default(now()) @map("active_date") @db.Date
+
+//   userChallenges UserDailyChallenge[]
+
+//   @@map("daily_challenge")
+// }
+
+// model UserDailyChallenge {
+//   id          Int       @id @default(autoincrement())
+//   userId      Int       @map("user_id")
+//   challengeId Int       @map("challenge_id")
+//   completed   Boolean?  @default(false)
+//   completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+//   user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   challenge DailyChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+//   @@unique([userId, challengeId])
+//   @@map("user_daily_challenge")
+// }
+
+// ── Notifications ────────────────────────────────────────────────────────
+model Notification {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  type          String   @db.VarChar(50)
+  title         String   @default("") @db.VarChar(255)
+  message       String   @db.Text
+  isRead        Boolean? @default(false) @map("is_read")
+  referenceType String?  @map("reference_type") @db.VarChar(50)
+  referenceId   Int?     @map("reference_id")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  // Compound index for unread count queries (WHERE userId = ? AND isRead = false)
+  @@index([userId, isRead])
+  @@map("notification")
+}
+
+// ── Posts / Feed ─────────────────────────────────────────────────────────
+model Post {
+  id            Int      @id @default(autoincrement())
+  authorId      Int      @map("author_id")
+  content       String   @db.Text
+  imageUrl      String?  @map("image_url") @db.VarChar(512)
+  isPublic      Boolean? @default(true) @map("is_public")
+  likesCount    Int?     @default(0) @map("likes_count")
+  commentsCount Int?     @default(0) @map("comments_count")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  author   User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes    PostLike[]
+  comments Comment[]
+
+  @@index([authorId])
+  @@map("post")
+}
+
+// ── Comments ─────────────────────────────────────────────────────────────
+model Comment {
+  id        Int       @id @default(autoincrement())
+  postId    Int?      @map("post_id")
+  authorId  Int       @map("author_id")
+  content   String    @db.Text
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@map("comment")
+}
+
+
+
+model PostLike {
+  id        Int      @id @default(autoincrement())
+  postId    Int      @map("post_id")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  // Index for querying which posts a user has liked (used in getFeed viewer checks)
+  @@index([userId])
+  @@map("post_like")
+}
+
+// ── Files / Uploads ──────────────────────────────────────────────────────
+model File {
+  id           Int      @id @default(autoincrement())
+  uploaderId   Int      @map("uploader_id")
+  originalName String   @map("original_name") @db.VarChar(512)
+  storedName   String   @map("stored_name") @db.VarChar(512)
+  mimeType     String   @map("mime_type") @db.VarChar(100)
+  sizeBytes    BigInt   @map("size_bytes")
+  url          String   @db.VarChar(1024)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  uploader User @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  @@index([uploaderId])
+  @@map("file")
+}
+
+// ── Alpaca Farm ──────────────────────────────────────────────────────────
+model AlpacaFarm {
+  id        Int      @id @default(autoincrement())
+  items     Json?    @default("[]")
+  alpacas   Json?    @default("[]")
+  coins     Int?     @default(10)
+  upgrades  Int?     @default(0)
+  herdsize  Int?     @default(0)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @unique @map("user_id")
+
+  @@map("alpaca_farm")
+}
+
+// ── GDPR Data Requests ──────────────────────────────────────────────────
+model DataRequest {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  type        String    @db.VarChar(20)
+  status      String?   @default("pending") @db.VarChar(20)
+  fileUrl     String?   @map("file_url") @db.VarChar(1024)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("data_request")
+}

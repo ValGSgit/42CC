@@ -1,0 +1,344 @@
+================================================================================
+WebServ Security Vulnerability Assessment Report
+================================================================================
+
+Test Date: 2025-10-27 11:35:42
+Duration: 45.21 seconds
+Total Tests: 7
+
+SUMMARY
+--------------------------------------------------------------------------------
+Passed:  2
+Failed:  5
+Errors:  0
+Skipped: 0
+
+DETAILED RESULTS
+--------------------------------------------------------------------------------
+
+Test: test_path_traversal.py
+Status: PASS
+Return Code: 0
+
+Output:
+
+[94m============================================================[0m
+[94mPath Traversal Vulnerability Tests[0m
+[94m============================================================[0m
+
+[92m[PASS][0m Basic Path Traversal
+      Path traversal blocked
+[92m[PASS][0m Encoded Path Traversal
+      Encoded traversal blocked
+[92m[PASS][0m Absolute Path Access
+      Absolute paths blocked
+[92m[PASS][0m Null Byte Injection
+      Null byte injection blocked
+[92m[PASS][0m Backslash Traversal
+      Backslash traversal blocked
+[92m[PASS][0m Unicode Encoding
+      Unicode encoding blocked
+[93m[SKIP][0m Symlink Traversal
+      Requires manual setup (create symlink in web root)
+[92m[PASS][0m CGI Path Traversal
+      CGI path traversal blocked
+[92m[PASS][0m Path Normalization
+      Path normalization working
+[92m[PASS][0m Config File Access
+      Config files protected
+[92m[PASS][0m Source Code Access
+      Source code protected
+
+[94m============================================================[0m
+Total: 11 | [92mPassed: 11[0m | [91mFailed: 0[0m
+[94m============================================================[0m
+
+[92m✓ All path traversal tests passed![0m
+
+
+
+--------------------------------------------------------------------------------
+
+Test: test_file_operations.py
+Status: FAIL
+Return Code: 1
+
+Output:
+
+[94m============================================================[0m
+[94mFile Operations Vulnerability Tests[0m
+[94m============================================================[0m
+
+[92m[PASS][0m DELETE Path Traversal
+      Path traversal in DELETE blocked
+[92m[PASS][0m DELETE Without Validation
+      Server properly handles nonexistent files (status: 404)
+[92m[PASS][0m Upload Path Traversal
+      Path traversal in filenames blocked
+[92m[PASS][0m Upload Malicious Extensions
+      Dangerous file types blocked
+[93m[SKIP][0m Upload Overwrite
+      Initial upload failed
+[93m[ERROR][0m Upload Large File
+      ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+[92m[PASS][0m Upload No Filename
+      Server handled missing filename gracefully (status: 403)
+[93m[SKIP][0m Upload Directory Listing
+      Upload failed
+[93m[WARN][0m Upload Race Condition
+      2 simultaneous uploads succeeded (potential race condition)
+[92m[PASS][0m Multipart Boundary Injection
+      Server handled boundary injection (status: 201)
+[93m[INFO][0m DELETE Timing Attack
+      Timing analysis not implemented in this test
+
+[94m============================================================[0m
+Total: 11 | [92mPassed: 10[0m | [91mFailed: 1[0m
+[94m============================================================[0m
+
+[91m⚠️  SECURITY WARNING: 1 file operation vulnerabilities detected![0m
+
+
+
+--------------------------------------------------------------------------------
+
+Test: test_cgi_injection.py
+Status: FAIL
+Return Code: 1
+
+Output:
+
+[94m============================================================[0m
+[94mCGI Injection Vulnerability Tests[0m
+[94m============================================================[0m
+
+[92m[PASS][0m CGI Query Injection
+      Query string injection blocked
+[92m[PASS][0m CGI Header Injection
+      Header injection blocked
+[92m[PASS][0m CGI POST Injection
+      POST injection blocked
+[92m[PASS][0m CGI CRLF Injection
+      CRLF injection blocked
+[93m[INFO][0m CGI Environment Pollution
+      Server handled custom headers (status: 200)
+[92m[PASS][0m CGI Null Byte Injection
+      Null byte injection blocked
+[93m[WARN][0m CGI Script Timeout
+      Script completed (timeout may not be enforced)
+[93m[WARN][0m CGI Execution Limit
+      All 50 CGI processes completed in 0.7s (no limit enforced)
+[92m[PASS][0m CGI PATH_INFO
+      PATH_INFO manipulation blocked
+[92m[PASS][0m CGI Interpreter Injection
+      CGI path validation working
+[91m[FAIL][0m CGI Shell Metachar: '&'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '|'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: ';'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '
+'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '$()'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '``'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '>'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '<'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '*'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '?'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '['
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: ']'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '{'
+      Shell metacharacter injection succeeded!
+[91m[FAIL][0m CGI Shell Metachar: '}'
+      Shell metacharacter injection succeeded!
+
+[94m============================================================[0m
+Total: 11 | [92mPassed: 10[0m | [91mFailed: 1[0m
+[94m============================================================[0m
+
+[91m⚠️  SECURITY WARNING: 1 CGI injection vulnerabilities detected![0m
+
+
+
+--------------------------------------------------------------------------------
+
+Test: test_dos_attacks.py
+Status: FAIL
+Return Code: 1
+
+Output:
+
+[94m============================================================[0m
+[94mDenial of Service Vulnerability Tests[0m
+[94m============================================================[0m
+
+[93mWARNING: These tests may temporarily affect server performance[0m
+
+[93m[WARN][0m Slowloris Attack
+      Server didn't respond (may be vulnerable)
+[93m[WARN][0m Connection Exhaustion
+      Server accepted 100+ connections (no limit detected)
+[93m[WARN][0m Request Flooding
+      Server handled 100 requests in 0.12s (no rate limiting)
+[92m[PASS][0m Large Header DoS
+      Server rejected large header (status: 431)
+[92m[PASS][0m Many Headers DoS
+      Server handled many headers (status: 431)
+[93m[INFO][0m POST Without Body
+      Server response: 403 (waited for body)
+[93m[ERROR][0m Slow POST Attack
+      [Errno 32] Broken pipe
+[92m[PASS][0m Recursive Directory
+      Handled recursive path efficiently (0.00s)
+[93m[SKIP][0m Zip Bomb
+      Requires auto-decompression support
+[92m[PASS][0m ReDoS
+      No ReDoS vulnerabilities detected
+[93m[INFO][0m Parallel Large Uploads
+      1/10 uploads succeeded in 0.2s
+
+[94m============================================================[0m
+Total: 11 | [92mPassed: 10[0m | [91mFailed: 1[0m
+[94m============================================================[0m
+
+[91m⚠️  SECURITY WARNING: 1 DoS vulnerabilities detected![0m
+
+
+
+--------------------------------------------------------------------------------
+
+Test: test_input_validation.py
+Status: FAIL
+Return Code: 1
+
+Output:
+
+[94m============================================================[0m
+[94mInput Validation Vulnerability Tests[0m
+[94m============================================================[0m
+
+[92m[PASS][0m Invalid HTTP Version
+      Invalid versions rejected
+[92m[PASS][0m Invalid HTTP Method
+      Invalid methods rejected
+[91m[FAIL][0m Malformed Request Line
+      Server accepted malformed request
+[93m[WARN][0m Missing Host Header
+      Server accepted request without Host header
+[92m[PASS][0m Duplicate Content-Length
+      Server rejected duplicate headers
+[92m[PASS][0m Negative Content-Length
+      Server rejected negative Content-Length
+[92m[PASS][0m Huge Content-Length
+      Server rejected with 413
+[93m[WARN][0m Header With Spaces
+      Server accepted header name with spaces
+[92m[PASS][0m CRLF Injection
+      CRLF injection blocked
+[92m[PASS][0m Unicode in URI
+      Unicode handling tested
+[92m[PASS][0m Extremely Long URI
+      Server rejected (status: 431)
+
+[94m============================================================[0m
+Total: 11 | [92mPassed: 10[0m | [91mFailed: 1[0m
+[94m============================================================[0m
+
+[91m⚠️  SECURITY WARNING: 1 input validation vulnerabilities detected![0m
+
+
+
+--------------------------------------------------------------------------------
+
+Test: test_http_smuggling.py
+Status: FAIL
+Return Code: 1
+
+Output:
+
+[94m============================================================[0m
+[94mHTTP Request Smuggling Tests[0m
+[94m============================================================[0m
+
+[92m[PASS][0m CL-TE Smuggling
+      Request smuggling blocked
+[92m[PASS][0m TE-CL Smuggling
+      Reverse smuggling blocked
+[93m[INFO][0m Chunked Encoding
+      Server response: 403
+[92m[PASS][0m Multiple Content-Length
+      Server rejected ambiguous Content-Length
+[93m[INFO][0m HTTP Pipelining
+      Server handled 4 pipelined requests
+[91m[FAIL][0m CRLF Header Injection
+      Successfully injected second request!
+[93m[INFO][0m HTTP/0.9 Request
+      Server responded to HTTP/0.9 format
+
+[94m============================================================[0m
+Total: 7 | [92mPassed: 6[0m | [91mFailed: 1[0m
+[94m============================================================[0m
+
+[91m⚠️  SECURITY WARNING: 1 HTTP smuggling vulnerabilities detected![0m
+
+
+
+--------------------------------------------------------------------------------
+
+Test: test_information_disclosure.py
+Status: PASS
+Return Code: 0
+
+Output:
+
+[94m============================================================[0m
+[94mInformation Disclosure Tests[0m
+[94m============================================================[0m
+
+[93m[INFO][0m Server Header Disclosure
+      Server header present: WebServ
+[92m[PASS][0m Error Page Information
+      Error pages don't leak sensitive information
+[93m[WARN][0m Directory Listing
+      Directory listing enabled on: /browse/, /uploads/, /docs/
+[92m[PASS][0m HTTP Methods Disclosure
+      Methods not explicitly disclosed
+[92m[PASS][0m Stack Trace Disclosure
+      No stack traces in error responses
+[92m[PASS][0m Git Folder Exposure
+      .git folder not accessible
+[92m[PASS][0m Backup File Exposure
+      No backup files found
+[92m[PASS][0m PHPInfo Disclosure
+      No phpinfo() exposure detected
+[92m[PASS][0m CORS Configuration
+      CORS not configured
+[92m[PASS][0m Sensitive Files
+      No sensitive files found
+
+[94m============================================================[0m
+Total: 10 | [92mPassed: 10[0m | [91mFailed: 0[0m
+[94m============================================================[0m
+
+[92m✓ All information disclosure tests passed![0m
+
+
+
+--------------------------------------------------------------------------------
+
+RISK ASSESSMENT
+--------------------------------------------------------------------------------
+🚨 HIGH RISK: Multiple critical vulnerabilities detected!
+IMMEDIATE ACTION REQUIRED: The server has serious security issues.
+
+================================================================================

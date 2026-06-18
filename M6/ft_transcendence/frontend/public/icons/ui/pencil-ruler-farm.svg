@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="0 0 92.211 92.211" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.386" y1="0.356" x2="0.59" y2="0.614" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#face00"/>
+      <stop offset="1" stop-color="#f68600"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="0.389" y1="0.422" x2="0.942" y2="0.893" xlink:href="#linear-gradient"/>
+  </defs>
+  <g id="pencil_ruler" data-name="pencil ruler" transform="translate(-445.833 -197.508)">
+    <path id="Path_109" data-name="Path 109" d="M447,212.212a3.989,3.989,0,0,0,0,5.631l70.714,70.716a3.993,3.993,0,0,0,5.628,0l6.772-6.774-76.342-76.344Z" fill="#e1e5f5"/>
+    <path id="Path_110" data-name="Path 110" d="M460.54,198.668l-6.772,6.773,76.342,76.344,6.773-6.773a3.992,3.992,0,0,0,0-5.629l-70.716-70.715A3.993,3.993,0,0,0,460.54,198.668Z" fill="#f2f3f7"/>
+    <path id="Path_111" data-name="Path 111" d="M483.187,254.034l8.091-8.093-1.67-1.67-8.093,8.093Zm-5.231-13.676-4.225,4.222,1.673,1.671,4.221-4.222ZM450.381,221.23l1.672,1.67,8.093-8.093-1.672-1.671Zm19.79,11.347-4.223,4.222,1.67,1.67,4.223-4.223Zm-7.784-7.787-4.222,4.222,1.668,1.67,4.226-4.221Zm31.135,31.133-4.224,4.223,1.67,1.674,4.224-4.221Zm15.569,15.572-4.225,4.22,1.67,1.669,4.223-4.221Zm5.23,13.677,8.1-8.1-1.672-1.67-8.1,8.091Zm-13.013-21.464-4.227,4.226,1.673,1.664,4.223-4.218Z" fill="#61688d"/>
+    <path id="Path_112" data-name="Path 112" d="M453.318,263.411l5.513,3.754,3.328,6.2,6.2,3.331,3.755,5.512,0,.034.024,0,48.933-48.93L502.25,214.482Z" fill="url(#linear-gradient)"/>
+    <path id="Path_113" data-name="Path 113" d="M533.006,215.738l-13.2-13.189a3.989,3.989,0,0,0-5.625,0l-8.737,8.735,18.821,18.823,8.737-8.736A4,4,0,0,0,533.006,215.738Z" fill="#f27a74"/>
+    <path id="Path_114" data-name="Path 114" d="M472.115,282.238l0-.034-3.755-5.512-6.2-3.331-3.328-6.2-5.513-3.754-3.607,22.429Z" fill="#f2f3f7"/>
+    <path id="Path_115" data-name="Path 115" d="M459.714,284.233l-8.394-8.393-1.609,10Z" fill="#555c84"/>
+    <rect id="Rectangle_7" data-name="Rectangle 7" width="4.522" height="26.619" transform="translate(502.25 214.482) rotate(-44.995)" fill="#f2f3f7"/>
+    <path id="Path_116" data-name="Path 116" d="M458.848,267.205l3.311,6.157,6.2,3.331,48.053-48.052-9.5-9.5Z" fill="url(#linear-gradient-2)"/>
+  </g>
+</svg>

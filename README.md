@@ -1,202 +1,140 @@
-# 🚀 My 42 School Journey | Becoming a Full-Stack Developer
-
 <div align="center">
-  
+
+# 🚀 42 Common Core — Completed
+
+### Valentino Garcia Susini · `vagarcia`
+
 ![School](https://img.shields.io/badge/42-School-000000?style=for-the-badge&logo=42&logoColor=white)
-![Status](https://img.shields.io/badge/Status-In%50Progress-yellow?style=for-the-badge)
-![Level](https://img.shields.io/badge/Level-9.38-blue?style=for-the-badge)
+![Status](https://img.shields.io/badge/Common%20Core-Completed-2ea44f?style=for-the-badge)
+![Level](https://img.shields.io/badge/Level-11.81-blue?style=for-the-badge)
 
-### 💫 *"The journey of a thousand miles begins with a single step"*
+*A complete archive of my 42 Common Core — every project, from `libft` to `ft_transcendence`.*
 
 </div>
 
 ---
 
-## 🌟 About This Repository
+## 🌟 About
 
-Welcome to my **42 School adventure**! This repository is a living documentation of my transformation from curious learner to full-stack software developer. Here you'll find all my projects, learnings, and the evolution of my coding skills through the innovative 42 curriculum.
+This repository documents my full journey through the **42 Common Core**: a peer-to-peer, project-driven curriculum with no teachers and no lectures. It spans low-level C and memory management, algorithms, concurrency, C++ and OOP, graphics, networking, system administration, and a final full-stack web application.
 
-<div align="center">
+Projects are grouped into modules **M1–M6**, roughly following the order in which they were completed.
 
-```ascii
-    🎯 MISSION: Master Full-Stack Development
-    📚 METHOD: Peer-to-Peer Learning
-    🔥 MINDSET: No Teachers, Just Discovery
 ```
-
-</div>
-
----
-
-## 🎨 My Developer Journey
-
-<div align="center">
-
-| Phase | Focus Area | Status | Skills Gained |
-|-------|------------|--------|---------------|
-| 🌱 **Piscine** | Fundamentals | ✅ Complete | C Programming, Shell, Git |
-| 🔧 **Common Core** | System Programming | 🔄 In Progress | Algorithms, Data Structures |
-| 🎯 **Specialization** | Full-Stack Dev | ⏳ Coming Soon | Web Technologies |
-| 🚀 **Internship** | Real World | 📅 Future | Professional Experience |
-
-</div>
+🎯  Master systems & full-stack development
+📚  Method: peer-to-peer, learn-by-building
+🔥  Mindset: no teachers, just discovery
+```
 
 ---
 
 ## 📂 Project Portfolio
 
-### 🥇 Core Projects
+### `M1` — Foundations of C
+| Project | Description | Stack |
+|---|---|---|
+| **[Libft](./M1/UltimateLibft)** | My own C standard library (libc reimplementation + list utils) | ![C](https://img.shields.io/badge/-C-00599C?logo=c&logoColor=white) |
+| **[ft_printf](./M1/Ft_Printf)** | Recreation of `printf` with variadic args & format parsing | ![C](https://img.shields.io/badge/-C-00599C?logo=c&logoColor=white) |
+| **[get_next_line](./M1/Get_next_line)** | Read a file line-by-line with static buffers (+ bonus) | ![C](https://img.shields.io/badge/-C-00599C?logo=c&logoColor=white) |
 
-<table>
-<tr>
-<td width="50%">
+### `M2` — Algorithms & Unix
+| Project | Description | Stack |
+|---|---|---|
+| **[push_swap](./M2/Push_swap)** | Sort a stack with a limited instruction set in minimal moves | ![C](https://img.shields.io/badge/-C-00599C?logo=c&logoColor=white) |
+| **[pipex](./M2/pipex)** | Reproduce shell pipes & redirections with `fork`/`execve`/`dup2` | ![C](https://img.shields.io/badge/-C-00599C?logo=c&logoColor=white) |
+| **[minitalk](./M2/Minitalk)** | Client/server messaging over UNIX signals (`SIGUSR1/2`) | ![C](https://img.shields.io/badge/-C-00599C?logo=c&logoColor=white) |
+| **[FdF](./M2/Fdf)** | 3D wireframe renderer of a heightmap (isometric projection) | ![C](https://img.shields.io/badge/-C-00599C?logo=c&logoColor=white) ![MiniLibX](https://img.shields.io/badge/-MiniLibX-5586A4?logo=opengl&logoColor=white) |
 
-#### 🛠️ **System & Algorithms**
-- **[Libft](./libft)** - Custom C Library
-  ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
-- **[Printf](./ft_printf)** - Printf Recreation
-  ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
-- **[Get Next Line](./get_next_line)** - File Reading
-  ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
-- **[Push Swap](./push_swap)** - Sorting Algorithm
-  ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
-- **[Pipex](./pipex)** - Shell Pipe Recreation
-  ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
+### `M3` — Concurrency & Shell
+| Project | Description | Stack |
+|---|---|---|
+| **[philosophers](./M3/Philosophers)** | Dining philosophers — threads, mutexes & deadlock avoidance | ![C](https://img.shields.io/badge/-C-00599C?logo=c&logoColor=white) ![Threads](https://img.shields.io/badge/-pthreads-FF6B6B) |
+| **[minishell](./M3/Minishell)** | A working shell: parsing, pipes, redirects, env, builtins, signals | ![C](https://img.shields.io/badge/-C-00599C?logo=c&logoColor=white) ![Bash](https://img.shields.io/badge/-Bash-4EAA25?logo=gnubash&logoColor=white) |
 
-#### 🎮 **Graphics & Multimedia**
-- **[FdF](./fdf)** - 3D Wireframe Renderer
-  ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
-  ![OpenGL](https://img.shields.io/badge/OpenGL-5586A4?style=flat&logo=opengl&logoColor=white)
-- **[Cub3D](./cub3d)** - Raycasting Game Engine
-  ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
-  ![OpenGL](https://img.shields.io/badge/OpenGL-5586A4?style=flat&logo=opengl&logoColor=white)
+### `M4` — C++, Graphics & Networking
+| Project | Description | Stack |
+|---|---|---|
+| **[CPP Modules 00–09](./M4/CPP)** | Ten modules covering OOP, templates, the STL, containers & more | ![C++](https://img.shields.io/badge/-C++-00599C?logo=cplusplus&logoColor=white) |
+| **[cub3D](./M4/Cub3D)** | Wolfenstein-style raycasting engine with textures & sprites | ![C](https://img.shields.io/badge/-C-00599C?logo=c&logoColor=white) ![MiniLibX](https://img.shields.io/badge/-MiniLibX-5586A4?logo=opengl&logoColor=white) |
+| **[NetPractice](./M4/NetPractice)** | TCP/IP subnetting & routing configuration exercises | ![Networking](https://img.shields.io/badge/-TCP%2FIP-1572B6) |
 
-</td>
-<td width="50%">
+### `M5` — System Administration & Web Server
+| Project | Description | Stack |
+|---|---|---|
+| **[Inception](./M5/Inception)** | Multi-service infra from scratch with Docker Compose (NGINX, WordPress, MariaDB) | ![Docker](https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white) |
+| **[webserv](./M5/webserv)** | An HTTP/1.1 server in C++ (config parsing, CGI, non-blocking I/O) | ![C++](https://img.shields.io/badge/-C++-00599C?logo=cplusplus&logoColor=white) ![HTTP](https://img.shields.io/badge/-HTTP-E34F26) |
 
-#### 🧠 **Concurrency & System Programming**
-- **[Philosophers](./philosophers)** - Threading & Synchronization
-  ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
-  ![Threading](https://img.shields.io/badge/Threading-FF6B6B?style=flat)
-- **[Minishell](./minishell)** - Custom Shell Implementation
-  ![C](https://img.shields.io/badge/C-00599C?style=flat&logo=c&logoColor=white)
-  ![Bash](https://img.shields.io/badge/Bash-4EAA25?style=flat&logo=gnubash&logoColor=white)
+### `M6` — Final Project
+| Project | Description | Stack |
+|---|---|---|
+| **[ft_transcendence — AlpacaParty](./M6/ft_transcendence)** | Full-stack social gaming platform: 3D alpaca farm, real-time multiplayer mini-games, chat, social feed, AI help desk | ![Vue](https://img.shields.io/badge/-Vue-4FC08D?logo=vuedotjs&logoColor=white) ![ThreeJS](https://img.shields.io/badge/-Three.js-000000?logo=threedotjs&logoColor=white) ![Express](https://img.shields.io/badge/-Express-000000?logo=express&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-4169E1?logo=postgresql&logoColor=white) ![Docker](https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white) |
 
-#### 🌐 **Web Development & Advanced**
-- **[CPP Modules](./cpp_modules)** - Object-Oriented Programming
-  ![C++](https://img.shields.io/badge/C++-00599C?style=flat&logo=c%2B%2B&logoColor=white)
-  ![OOP](https://img.shields.io/badge/OOP-FF9500?style=flat)
-- **[Webserv](./webserv)** - HTTP Server
-  ![C++](https://img.shields.io/badge/C++-00599C?style=flat&logo=c%2B%2B&logoColor=white)
-- **[Transcendence](./transcendence)** - Full-Stack Web App
-  ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
-  ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
-- **[Inception](./inception)** - Docker Infrastructure
-  ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
-
-</td>
-</tr>
-</table>
+> **AlpacaParty** is a team project (4 members). It combines a Three.js 3D farm with two real-time multiplayer mini-games, direct messaging, a social feed, a Groq-powered AI help desk, a public REST API with Swagger docs, and an NGINX + HTTPS deployment — all orchestrated with Docker Compose. See its [README](./M6/ft_transcendence/README.md) for full details.
 
 ---
 
-## 💻 Tech Stack Evolution
+## 💻 Tech Stack
 
 <div align="center">
-
-### 🔥 Current Arsenal
 
 ![C](https://img.shields.io/badge/C-00599C?style=for-the-badge&logo=c&logoColor=white)
-![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=threedotjs&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
-### 🛠️ Tools & Technologies
-
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![NGINX](https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=nginx&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-![Vim](https://img.shields.io/badge/VIM-019733?style=for-the-badge&logo=vim&logoColor=white)
-![OpenGL](https://img.shields.io/badge/OpenGL-5586A4?style=for-the-badge&logo=opengl&logoColor=white)
-![Threading](https://img.shields.io/badge/Threading-FF6B6B?style=for-the-badge&logo=&logoColor=white)
+![Bash](https://img.shields.io/badge/Bash-4EAA25?style=for-the-badge&logo=gnubash&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![Make](https://img.shields.io/badge/Make-A42E2B?style=for-the-badge&logo=gnu&logoColor=white)
 
 </div>
 
 ---
 
-## 📊 Progress Tracking
+## 📊 Progress
 
 <div align="center">
 
-### 🎯 42 Cursus Progress
-
-```
-Level: [█████████░] 90% Complete
-```
-
-**Current Level:** 9.38%
-**Projects Completed:** 21/23    
-
-### 📈 Skills Development
-
-| Skill | Completion | Projects |
-|-------|-------------|----------|
-| **C Programming** | ██████████ 100% | Libft, Printf, Push_swap, Pipex |
-| **Graphics Programming** | ██████████ 100% | FdF, Cub3D |
-| **Threading & Concurrency** | ██████████ 100% | Philosophers |
-| **System Programming** | █████████░ 90% | Minishell, Pipex, Minitalk |
-| **Object-Oriented (C++)** | ██████████ 100% | CPP Modules |
-| **Web Development** | ████████░░ 80% | Webserv, Transcendence |
-| **DevOps** | ██████████ 100% | Inception, Born2beroot |
+**Common Core: `████████████████████` 100%** · **Level 11.81**
 
 </div>
 
----
-
-## 🌈 Learning Philosophy
-
-<div align="center">
-
-> ### 🎓 "At 42, we don't just learn to code - we learn to learn and to think like developers"
-
-</div>
-
-### 🔑 Key Principles I've Embraced:
-
-- **🤝 Peer Learning**: Collaborating and learning from fellow students
-- **🔍 Problem Solving**: Breaking down complex problems into manageable pieces
-- **📚 Self-Directed Learning**: Taking ownership of my educational journey
-- **🛠️ Hands-On Practice**: Learning by building real projects
-- **🔄 Iterative Improvement**: Constantly refining and optimizing code
+| Domain | Projects |
+|---|---|
+| **C & memory management** | libft, ft_printf, get_next_line, push_swap, pipex, minitalk |
+| **Algorithms** | push_swap, FdF, cub3D |
+| **Concurrency** | philosophers |
+| **Unix & systems** | pipex, minitalk, minishell |
+| **C++ / OOP** | CPP Modules 00–09 |
+| **Graphics** | FdF, cub3D |
+| **Networking** | NetPractice, webserv, ft_transcendence |
+| **DevOps / Sysadmin** | Inception, webserv, ft_transcendence |
+| **Full-stack web** | ft_transcendence |
 
 ---
 
-## 🎯 Future Goals
+## 🗂️ Repository Layout
 
-<div align="center">
-
-### 🚀 **Next Milestones**
-
-```mermaid
-graph LR
-    A[Complete Core] --> B[Specialization]
-    B --> C[Internship]
-    C --> D[Full-Stack Dev]
-    D --> E[Tech Industry]
+```
+42CC/
+├── M1/  Foundations ......... libft · ft_printf · get_next_line
+├── M2/  Algorithms & Unix ... push_swap · pipex · minitalk · FdF
+├── M3/  Concurrency & Shell . philosophers · minishell
+├── M4/  C++ / Graphics / Net  CPP 00–09 · cub3D · NetPractice
+├── M5/  Sysadmin & Web ...... Inception · webserv
+└── M6/  Final project ....... ft_transcendence (AlpacaParty)
 ```
 
-</div>
-
-- 🎯 **Short Term**: Complete remaining core projects
-- 🌐 **Medium Term**: Master full-stack web development
-- 🚀 **Long Term**: Land a software engineering role
-- 💡 **Dream**: Contribute to open-source projects and mentor others
+Most C/C++ projects build with `make` inside their folder. `Inception` and `ft_transcendence` run via `make` + Docker Compose (see each project's README for prerequisites and `.env` setup).
 
 ---
 
-## 📞 Let's Connect!
+## 📞 Connect
 
 <div align="center">
 
@@ -205,12 +143,8 @@ graph LR
 [![42 Profile](https://img.shields.io/badge/42-Profile-000000?style=for-the-badge&logo=42&logoColor=white)](https://profile.intra.42.fr/users/vagarcia)
 [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:entinosusini@gmail.com)
 
----
+⭐ *If this journey interests you, consider starring the repo!*
 
-### 💭 *"The best way to predict the future is to create it"*
-
-**⭐ If you find my journey interesting, please give this repo a star!**
-
-*Last Updated: February 2026*
+**Last updated: June 2026**
 
 </div>

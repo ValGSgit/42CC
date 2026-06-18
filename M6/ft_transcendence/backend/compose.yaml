@@ -1,0 +1,57 @@
+# Backend (Express)
+#
+# Secrets and config are read directly from the project-root .env via the
+# env_file directive.
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        API_PORT: ${API_PORT:-3000}
+    container_name: backend_prod
+    env_file:
+      - ../.env
+    environment:
+      NODE_ENV: production
+      API_PORT: ${API_PORT:-3000}
+
+      # ── Infrastructure (non-secret) ───────────────────────────
+      DB_HOST: postgres
+      DB_PORT: ${DB_PORT:-5432}
+
+      # ── App config (non-secret) ───────────────────────────────
+      JWT_EXPIRES_IN: "${JWT_EXPIRES_IN:-1h}"
+      JWT_REFRESH_EXPIRES_IN: "${JWT_REFRESH_EXPIRES_IN:-7d}"
+      JWT_PUBLIC_API_EXPIRES_IN: "${JWT_PUBLIC_API_EXPIRES_IN:-30d}"
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      FRONTEND_URL: ${FRONTEND_URL}
+      SSL_CERT_PATH: /app/ssl/cert.pem
+      SSL_KEY_PATH: /app/ssl/key.pem
+      UPLOAD_DIR: /app/uploads
+      AUTH_RATE_LIMIT_MAX: "${AUTH_RATE_LIMIT_MAX:-}"
+      LOGIN_RATE_LIMIT_MAX: "${LOGIN_RATE_LIMIT_MAX:-}"
+      PUBLIC_API_HOST: "${PUBLIC_API_HOST}"
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}?schema=public
+    volumes:
+      - ssl:/app/ssl
+      - backend_uploads:/app/uploads
+      - backend_migrations:/app/prisma/migrations
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --insecure --fail --silent --connect-timeout 5 --max-time 10 https://localhost:${API_PORT:-3000}/api/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      # First boot runs Prisma migrate + generate + seed before the server listens;
+      # give it room so CI with a fresh pg volume doesn't flap.
+      start_period: 120s
+    restart: always
+    networks:
+      - alpacaparty_net

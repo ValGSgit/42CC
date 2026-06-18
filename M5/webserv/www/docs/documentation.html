@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebServ Documentation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        h1 { color: #1f2937; margin-bottom: 20px; }
+        h2 { color: #374151; margin-top: 30px; margin-bottom: 15px; }
+        h3 { color: #4b5563; margin-top: 20px; margin-bottom: 10px; }
+        p { color: #6b7280; line-height: 1.6; margin-bottom: 15px; }
+        code {
+            background: #1f2937;
+            color: #10b981;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        ul { margin-left: 30px; color: #6b7280; line-height: 1.8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+        
+        <div class="card">
+            <h1>📚 WebServ Documentation</h1>
+            
+            <h2>Overview</h2>
+            <p>WebServ is a C++98 HTTP/1.1 compliant web server implementing non-blocking I/O with epoll for high performance.</p>
+            
+            <h2>Quick Start</h2>
+            <h3>Compilation</h3>
+            <pre>make</pre>
+            
+            <h3>Running the Server</h3>
+            <pre>./webserv webserv.conf</pre>
+            
+            <h3>Testing</h3>
+            <pre>curl http://localhost:8080/
+curl -X POST -d "test=data" http://localhost:8080/cgi-bin/test.py
+curl -X DELETE http://localhost:8080/uploads/test.txt</pre>
+            
+            <h2>Features</h2>
+            <ul>
+                <li>HTTP/1.1 Protocol (RFC 9112)</li>
+                <li>GET, POST, DELETE methods</li>
+                <li>CGI Support (.py, .php, .pl, .rb, .sh)</li>
+                <li>File upload (multipart/form-data)</li>
+                <li>Directory listing (autoindex)</li>
+                <li>HTTP redirections (301/302)</li>
+                <li>Custom error pages</li>
+                <li>Multiple server instances</li>
+                <li>Non-blocking I/O with epoll</li>
+            </ul>
+            
+            <h2>Configuration</h2>
+            <p>WebServ uses NGINX-style configuration files:</p>
+            <pre>server {
+    listen 8080;
+    server_name localhost;
+    root ./www;
+    index index.html;
+    
+    location / {
+        allowed_methods GET POST;
+    }
+    
+    location /cgi-bin {
+        allowed_methods GET POST;
+        cgi_extensions .py .php .pl .rb .sh;
+    }
+}</pre>
+            
+            <h2>API Endpoints</h2>
+            <h3>GET Requests</h3>
+            <p>Retrieve static files or execute CGI scripts:</p>
+            <pre>GET /index.html
+GET /cgi-bin/test.py?name=John&age=30</pre>
+            
+            <h3>POST Requests</h3>
+            <p>Submit data or upload files:</p>
+            <pre>POST /upload
+Content-Type: multipart/form-data
+
+POST /cgi-bin/test.py
+Content-Type: application/x-www-form-urlencoded</pre>
+            
+            <h3>DELETE Requests</h3>
+            <p>Remove files from the server:</p>
+            <pre>DELETE /uploads/file.txt</pre>
+            
+            <h2>Error Handling</h2>
+            <p>WebServ provides custom error pages for common HTTP errors:</p>
+            <ul>
+                <li>400 - Bad Request</li>
+                <li>403 - Forbidden</li>
+                <li>404 - Not Found</li>
+                <li>405 - Method Not Allowed</li>
+                <li>500 - Internal Server Error</li>
+            </ul>
+            
+            <h2>Performance</h2>
+            <p>Tested with siege for concurrent connections:</p>
+            <pre>siege -b -t 30s -c 100 http://localhost:8080/</pre>
+            
+            <h2>Standards Compliance</h2>
+            <ul>
+                <li>C++98 Standard</li>
+                <li>HTTP/1.1 (RFC 9112)</li>
+                <li>CGI/1.1 Specification</li>
+                <li>POSIX Standards</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

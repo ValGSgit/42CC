@@ -1,0 +1,32 @@
+# Frontend (Vue 3 + Vite) — built to static files, served by nginx
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-/api}
+        - FRONTEND_PORT=${FRONTEND_PORT:-5173}
+    container_name: frontend_prod
+    environment:
+      # Consumed by the nginx entrypoint's envsubst to fill ${FRONTEND_PORT}
+      # in the SPA server config (template at /etc/nginx/templates).
+      FRONTEND_PORT: ${FRONTEND_PORT:-5173}
+      NGINX_ENVSUBST_FILTER: "FRONTEND_PORT"
+    depends_on:
+      backend:
+        condition: service_started
+    volumes:
+      - ssl:/etc/nginx/conf/ssl
+    healthcheck:
+      # The SPA is served over HTTPS on FRONTEND_PORT — a 2xx means the build
+      # succeeded and the static server is up, so the top-level nginx never
+      # proxies to a broken upstream.
+      test: ["CMD-SHELL", "wget --no-check-certificate -qO /dev/null https://localhost:${FRONTEND_PORT:-5173}/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - alpacaparty_net

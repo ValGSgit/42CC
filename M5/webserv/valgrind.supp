@@ -1,0 +1,283 @@
+# Valgrind Suppression File for WebServ
+# Suppresses known leaks from external libraries and interpreters
+
+# =============================================================================
+# Python Interpreter Leaks
+# =============================================================================
+
+{
+   python_malloc
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   obj:*/libpython*
+}
+
+{
+   python_init
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:malloc
+   fun:Py_Initialize*
+}
+
+{
+   python_finalize
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:malloc
+   fun:Py_Finalize*
+}
+
+{
+   python_import
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:PyImport_*
+}
+
+{
+   python_dict
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:PyDict_*
+}
+
+{
+   python_unicode
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:PyUnicode_*
+}
+
+# =============================================================================
+# PHP Interpreter Leaks
+# =============================================================================
+
+{
+   php_malloc
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   obj:*/libphp*
+}
+
+{
+   php_startup
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:malloc
+   fun:php_module_startup
+}
+
+{
+   php_request_startup
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:php_request_startup
+}
+
+# =============================================================================
+# Perl Interpreter Leaks
+# =============================================================================
+
+{
+   perl_malloc
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   obj:*/perl*
+}
+
+{
+   perl_parse
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:malloc
+   fun:perl_parse
+}
+
+{
+   perl_run
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:perl_run
+}
+
+# =============================================================================
+# Ruby Interpreter Leaks
+# =============================================================================
+
+{
+   ruby_malloc
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   obj:*/libruby*
+}
+
+{
+   ruby_init
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:malloc
+   fun:ruby_init*
+}
+
+{
+   ruby_run
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   fun:ruby_run*
+}
+
+# =============================================================================
+# C Standard Library
+# =============================================================================
+
+{
+   libc_dl_init
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_dl_init
+}
+
+{
+   libc_dl_open
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_dl_open
+}
+
+{
+   libc_setlocale
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:setlocale
+}
+
+# =============================================================================
+# C++ Standard Library
+# =============================================================================
+
+{
+   cpp_locale
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZNSt6locale*
+}
+
+{
+   cpp_string
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:*/libstdc++*
+}
+
+{
+   cpp_iostream
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZNSt8ios_base*
+}
+
+# =============================================================================
+# System Calls
+# =============================================================================
+
+{
+   getaddrinfo_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:getaddrinfo
+}
+
+{
+   gethostbyname_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:gethostbyname*
+}
+
+# =============================================================================
+# Bash/Shell Leaks
+# =============================================================================
+
+{
+   bash_malloc
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   obj:*/bash
+}
+
+{
+   sh_malloc
+   Memcheck:Leak
+   match-leak-kinds: possible,reachable
+   obj:*/sh
+}
+
+# =============================================================================
+# Threading Libraries
+# =============================================================================
+
+{
+   pthread_create
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:allocate_dtv
+   fun:_dl_allocate_tls
+}
+
+{
+   pthread_getspecific
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:pthread_getspecific
+}
+
+# =============================================================================
+# DNS Resolution
+# =============================================================================
+
+{
+   libresolv_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:*/libresolv*
+}
+
+{
+   nss_lookup
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:*/libnss_*
+}
+
+# =============================================================================
+# Conditional Jumps (Uninitialized Values)
+# =============================================================================
+
+{
+   syscall_uninit
+   Memcheck:Param
+   socketcall.sendto(msg)
+   fun:send*
+   ...
+}
+
+{
+   write_uninit
+   Memcheck:Param
+   write(buf)
+   fun:write
+   ...
+}

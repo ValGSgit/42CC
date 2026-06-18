@@ -1,0 +1,236 @@
+================================================================================
+WebServ Security Vulnerability Assessment Report
+================================================================================
+
+Test Date: 2025-11-17 16:41:21
+Duration: 44.33 seconds
+Total Tests: 7
+
+SUMMARY
+--------------------------------------------------------------------------------
+Passed:  2
+Failed:  5
+Errors:  0
+Skipped: 0
+
+DETAILED RESULTS
+--------------------------------------------------------------------------------
+
+Test: test_path_traversal.py
+Status: PASS
+Return Code: 0
+
+Output:
+
+[94m============================================================[0m
+[94mPath Traversal Vulnerability Tests[0m
+[94m============================================================[0m
+
+[92m[PASS][0m Basic Path Traversal
+      Path traversal blocked
+[92m[PASS][0m Encoded Path Traversal
+      Encoded traversal blocked
+[92m[PASS][0m Absolute Path Access
+      Absolute paths blocked
+[92m[PASS][0m Null Byte Injection
+      Null byte injection blocked
+[92m[PASS][0m Backslash Traversal
+      Backslash traversal blocked
+[92m[PASS][0m Unicode Encoding
+      Unicode encoding blocked
+[93m[SKIP][0m Symlink Traversal
+      Requires manual setup (create symlink in web root)
+[92m[PASS][0m CGI Path Traversal
+      CGI path traversal blocked
+[92m[PASS][0m Path Normalization
+      Path normalization working
+[92m[PASS][0m Config File Access
+      Config files protected
+[92m[PASS][0m Source Code Access
+      Source code protected
+
+[94m============================================================[0m
+Total: 11 | [92mPassed: 11[0m | [91mFailed: 0[0m
+[94m============================================================[0m
+
+[92m✓ All path traversal tests passed![0m
+
+
+
+--------------------------------------------------------------------------------
+
+Test: test_file_operations.py
+Status: FAIL
+Return Code: 1
+
+Output:
+
+[94m============================================================[0m
+[94mFile Operations Vulnerability Tests[0m
+[94m============================================================[0m
+
+[92m[PASS][0m DELETE Path Traversal
+      Path traversal in DELETE blocked
+[92m[PASS][0m DELETE Without Validation
+      Server properly handles nonexistent files (status: 405)
+[92m[PASS][0m Upload Path Traversal
+      Path traversal in filenames blocked
+[92m[PASS][0m Upload Malicious Extensions
+      Dangerous file types blocked
+[93m[SKIP][0m Upload Overwrite
+      Initial upload failed
+[93m[ERROR][0m Upload Large File
+      ('Connection aborted.', TimeoutError('timed out'))
+[93m[ERROR][0m Upload No Filename
+      HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=5)
+[93m[ERROR][0m Upload Directory Listing
+      HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=5)
+[92m[PASS][0m Upload Race Condition
+      Race condition handling appears adequate
+[93m[ERROR][0m Multipart Boundary Injection
+      HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=5)
+[93m[INFO][0m DELETE Timing Attack
+      Timing analysis not implemented in this test
+
+[94m============================================================[0m
+Total: 11 | [92mPassed: 7[0m | [91mFailed: 4[0m
+[94m============================================================[0m
+
+[91m⚠️  SECURITY WARNING: 4 file operation vulnerabilities detected![0m
+
+
+
+--------------------------------------------------------------------------------
+
+Test: test_cgi_injection.py
+Status: FAIL
+Return Code: 1
+
+Output:
+
+[94m============================================================[0m
+[94mCGI Injection Vulnerability Tests[0m
+[94m============================================================[0m
+
+[91mERROR: Cannot connect to http://localhost:8080[0m
+Make sure the server is running: ./webserv webserv.conf
+
+
+--------------------------------------------------------------------------------
+
+Test: test_dos_attacks.py
+Status: FAIL
+Return Code: 1
+
+Output:
+
+[94m============================================================[0m
+[94mDenial of Service Vulnerability Tests[0m
+[94m============================================================[0m
+
+[93mWARNING: These tests may temporarily affect server performance[0m
+
+[91mERROR: Cannot connect to http://localhost:8080[0m
+Make sure the server is running: ./webserv webserv.conf
+
+
+--------------------------------------------------------------------------------
+
+Test: test_input_validation.py
+Status: FAIL
+Return Code: 1
+
+Output:
+
+[94m============================================================[0m
+[94mInput Validation Vulnerability Tests[0m
+[94m============================================================[0m
+
+[91mERROR: Cannot connect to http://localhost:8080[0m
+Make sure the server is running: ./webserv webserv.conf
+
+
+--------------------------------------------------------------------------------
+
+Test: test_http_smuggling.py
+Status: FAIL
+Return Code: 1
+
+Output:
+
+[94m============================================================[0m
+[94mHTTP Request Smuggling Tests[0m
+[94m============================================================[0m
+
+[92m[PASS][0m CL-TE Smuggling
+      Request smuggling blocked
+[92m[PASS][0m TE-CL Smuggling
+      Reverse smuggling blocked
+[93m[INFO][0m Chunked Encoding
+      Server response: 405
+[92m[PASS][0m Multiple Content-Length
+      Server rejected ambiguous Content-Length
+[93m[INFO][0m HTTP Pipelining
+      Server handled 4 pipelined requests
+[91m[FAIL][0m CRLF Header Injection
+      Successfully injected second request!
+[93m[INFO][0m HTTP/0.9 Request
+      Server responded to HTTP/0.9 format
+
+[94m============================================================[0m
+Total: 7 | [92mPassed: 6[0m | [91mFailed: 1[0m
+[94m============================================================[0m
+
+[91m⚠️  SECURITY WARNING: 1 HTTP smuggling vulnerabilities detected![0m
+
+
+
+--------------------------------------------------------------------------------
+
+Test: test_information_disclosure.py
+Status: PASS
+Return Code: 0
+
+Output:
+
+[94m============================================================[0m
+[94mInformation Disclosure Tests[0m
+[94m============================================================[0m
+
+[93m[INFO][0m Server Header Disclosure
+      Server header present: WebServ
+[92m[PASS][0m Error Page Information
+      Error pages don't leak sensitive information
+[93m[WARN][0m Directory Listing
+      Directory listing enabled on: /browse/, /uploads/, /docs/
+[93m[INFO][0m HTTP Methods Disclosure
+      Allowed methods: GET, HEAD, OPTIONS
+[92m[PASS][0m Stack Trace Disclosure
+      No stack traces in error responses
+[92m[PASS][0m Git Folder Exposure
+      .git folder not accessible
+[92m[PASS][0m Backup File Exposure
+      No backup files found
+[92m[PASS][0m PHPInfo Disclosure
+      No phpinfo() exposure detected
+[92m[PASS][0m CORS Configuration
+      CORS not configured
+[92m[PASS][0m Sensitive Files
+      No sensitive files found
+
+[94m============================================================[0m
+Total: 10 | [92mPassed: 10[0m | [91mFailed: 0[0m
+[94m============================================================[0m
+
+[92m✓ All information disclosure tests passed![0m
+
+
+
+--------------------------------------------------------------------------------
+
+RISK ASSESSMENT
+--------------------------------------------------------------------------------
+🚨 HIGH RISK: Multiple critical vulnerabilities detected!
+IMMEDIATE ACTION REQUIRED: The server has serious security issues.
+
+================================================================================

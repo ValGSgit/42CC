@@ -1,0 +1,163 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║               SIEGE QUICK REFERENCE - WebServ Testing            ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────┐
+│ QUICK START                                                     │
+└─────────────────────────────────────────────────────────────────┘
+
+1. Start server:     ./webserv config/default.conf
+2. Run tests:        ./test_siege.sh
+3. Specific test:    ./test_siege.sh quick
+
+┌─────────────────────────────────────────────────────────────────┐
+│ AVAILABLE TESTS                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+  ./test_siege.sh all         → Run all tests (default)
+  ./test_siege.sh quick       → Quick 10s benchmark
+  ./test_siege.sh concurrent  → 25 concurrent users test
+  ./test_siege.sh sustained   → 30s sustained load
+  ./test_siege.sh heavy       → 50 users × 50 requests (stress)
+  ./test_siege.sh static      → Static file performance
+  ./test_siege.sh cgi         → CGI script performance
+  ./test_siege.sh urls        → Multiple endpoint testing
+  ./test_siege.sh internet    → Internet simulation (delays)
+  ./test_siege.sh help        → Show help
+
+┌─────────────────────────────────────────────────────────────────┐
+│ COMMON MANUAL COMMANDS                                          │
+└─────────────────────────────────────────────────────────────────┘
+
+# Basic tests
+siege -c 10 -r 10 http://localhost:8080/           # 10 users, 10 requests each
+siege -c 25 -t 30S http://localhost:8080/          # 25 users for 30 seconds
+siege -c 50 -r 100 -b http://localhost:8080/       # Benchmark mode (fast)
+
+# URL file testing
+siege -c 10 -r 5 -f siege_urls.txt                 # Test multiple URLs
+
+# POST request
+siege -c 5 -r 10 "http://localhost:8080/cgi-bin/test.py POST name=John"
+
+# DELETE request
+siege -c 5 -r 5 "http://localhost:8080/uploads/test.txt DELETE"
+
+# With delays (realistic)
+siege -c 20 -t 60S --delay=1 http://localhost:8080/
+
+# Verbose output
+siege -c 10 -r 5 -v http://localhost:8080/
+
+┌─────────────────────────────────────────────────────────────────┐
+│ KEY OPTIONS                                                     │
+└─────────────────────────────────────────────────────────────────┘
+
+  -c NUM       Concurrent users             -c 25
+  -r NUM       Requests per user            -r 10
+  -t TIME      Duration (S/M/H)             -t 30S
+  -f FILE      URL file                     -f urls.txt
+  -d NUM       Delay (seconds)              -d 1
+  -b           Benchmark (no delays)        -b
+  -v           Verbose output               -v
+  -i           Internet mode (random)       -i
+
+┌─────────────────────────────────────────────────────────────────┐
+│ UNDERSTANDING OUTPUT                                            │
+└─────────────────────────────────────────────────────────────────┘
+
+Transactions:          1247 hits    → Total successful requests
+Availability:        100.00 %       → Success rate (want 100%)
+Response time:          0.23 secs   → Avg time per request (lower better)
+Transaction rate:      41.75 /sec   → Requests per second (higher better)
+Throughput:             0.08 MB/s   → Data transfer rate
+Concurrency:            9.73        → Avg simultaneous connections
+Failed transactions:       0        → Errors (want 0)
+
+┌─────────────────────────────────────────────────────────────────┐
+│ PERFORMANCE BENCHMARKS                                          │
+└─────────────────────────────────────────────────────────────────┘
+
+EXCELLENT             GOOD                 NEEDS WORK
+─────────             ────                 ──────────
+Availability: 100%    Availability: >99%   Availability: <99%
+Response: <0.5s       Response: 0.5-1s     Response: >2s
+Rate: >100 req/s      Rate: 50-100 req/s   Rate: <20 req/s
+
+┌─────────────────────────────────────────────────────────────────┐
+│ TROUBLESHOOTING                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+Server not responding?
+  → Check: ps aux | grep webserv
+  → Start: ./webserv config/default.conf
+
+Low availability (<100%)?
+  → Run verbose: siege -c 10 -r 5 -v http://localhost:8080/
+  → Check server logs
+  → Test single request: curl -v http://localhost:8080/
+
+Slow response times?
+  → Test static files only: ./test_siege.sh static
+  → Monitor resources: top -p $(pgrep webserv)
+  → Profile code: valgrind --tool=callgrind ./webserv
+
+┌─────────────────────────────────────────────────────────────────┐
+│ WORKFLOW                                                        │
+└─────────────────────────────────────────────────────────────────┘
+
+1. Run functional tests first:    ./run_all_tests.sh
+2. Fix any failures
+3. Run siege performance tests:   ./test_siege.sh
+4. Optimize based on metrics
+5. Re-test both suites
+
+┌─────────────────────────────────────────────────────────────────┐
+│ CUSTOM URL FILE (siege_urls.txt)                                │
+└─────────────────────────────────────────────────────────────────┘
+
+# Edit siege_urls.txt to add your URLs:
+
+http://localhost:8080/
+http://localhost:8080/index.html
+http://localhost:8080/cgi-bin/test.py POST data=test
+http://localhost:8080/uploads/file.txt DELETE
+
+┌─────────────────────────────────────────────────────────────────┐
+│ EXAMPLES                                                        │
+└─────────────────────────────────────────────────────────────────┘
+
+# Start server in background
+./webserv config/default.conf &
+
+# Quick health check
+./test_siege.sh quick
+
+# Full test suite
+./test_siege.sh all
+
+# Heavy stress test
+./test_siege.sh custom -c 100 -r 100
+
+# Test for 5 minutes
+siege -c 50 -t 5M http://localhost:8080/
+
+# Save results
+./test_siege.sh sustained > results.txt 2>&1
+
+# Kill server
+killall webserv
+
+┌─────────────────────────────────────────────────────────────────┐
+│ FILES CREATED                                                   │
+└─────────────────────────────────────────────────────────────────┘
+
+  test_siege.sh       → Main test script (run this!)
+  siege_urls.txt      → URLs to test (edit as needed)
+  SIEGE_GUIDE.md      → Complete documentation
+  SIEGE_CHEATSHEET    → This file
+
+╔═══════════════════════════════════════════════════════════════════╗
+║  For full guide: cat SIEGE_GUIDE.md                              ║
+║  For help:       ./test_siege.sh help                            ║
+╚═══════════════════════════════════════════════════════════════════╝

@@ -1,0 +1,16 @@
+key,name,description,icon,xpReward
+first_login,First Footstep,Welcome to AlpacaParty! You logged in for the first time.,/icons/achievements/first-login.svg,10
+first_win,Winner's Circle,You won your first game. The herd is cheering!,/icons/achievements/first-win.svg,50
+win_streak_5,Hot Streak,Win 5 games in a row without losing.,/icons/achievements/win-streak.svg,100
+social_butterfly,Social Butterfly,Add 5 friends and build your alpaca crew.,/icons/achievements/social.svg,30
+spit_facts,Spit Facts,Create your very first post on the feed.,/icons/achievements/spit-facts.svg,20
+farm_started,Humble Beginnings,Start your alpaca farm and place your first item.,/icons/achievements/farm-started.svg,25
+level_10,Rising Star,Reach level 10 by earning XP across the platform.,/icons/achievements/level-up.svg,75
+sharpshooter,Sharpshooter,Win 10 Spit Royale matches. Precision is everything.,/icons/achievements/sharpshooter.svg,80
+road_warrior,Road Warrior,Complete 5 stages in Alpaca Road. Gotta go fast.,/icons/achievements/road-warrior.svg,60
+coin_hoarder,Coin Hoarder,Accumulate 1000 farm coins. The richest alpaca wins.,/icons/achievements/coin-hoarder.svg,50
+chatterbox,Chatterbox,Send 50 messages across DMs.,/icons/achievements/chatterbox.svg,30
+kinda_relatable,Kinda Relatable,Get a post with more than 10 likes. The herd agrees.,/icons/achievements/relatable.svg,40
+top_player,Alpaca Royalty,Reach the #1 spot on any leaderboard. Long live the king.,/icons/achievements/top-player.svg,150
+profile_polisher,Profile Polisher,Customize your profile with a bio or avatar.,/icons/achievements/profile_polisher.svg,15
+data_explorer,Data Explorer,Download a copy of your personal AlpacaParty data.,/icons/achievements/data_explorer.svg,20

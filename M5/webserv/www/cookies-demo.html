@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookies Demo - WebServ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+
+        h1 {
+            color: #1f2937;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            background: #f9fafb;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .cookie-display {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 2px solid #e5e7eb;
+            min-height: 60px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        .cookie-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f3f4f6;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cookie-name {
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .cookie-value {
+            color: #666;
+            flex: 1;
+            margin: 0 15px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1em;
+            margin: 8px 0;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        button.danger:hover {
+            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        button.secondary:hover {
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
+        .status-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #3b82f6;
+        }
+
+        .cookie-count {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #1f2937;
+            margin: 15px 0;
+        }
+
+        .cookie-count strong {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        .info-box {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            color: #92400e;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .example-code {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+
+        <h1>🍪 Cookie Management Demo</h1>
+        <p class="subtitle">Explore HTTP Cookies in WebServ</p>
+
+        <div id="status-message" class="status-message"></div>
+
+        <!-- Current Cookies Display -->
+        <div class="section">
+            <h2>Current Cookies</h2>
+            <div class="cookie-count">
+                Active Cookies: <strong id="cookie-count">0</strong>
+            </div>
+            <div id="cookie-list" class="cookie-display">
+                No cookies set
+            </div>
+            <div class="button-group">
+                <button onclick="displayCookies()" class="secondary">🔄 Refresh Cookies</button>
+                <button onclick="deleteAllCookies()" class="danger">🗑️ Delete All Cookies</button>
+            </div>
+        </div>
+
+        <!-- Set Cookie Section -->
+        <div class="section">
+            <h2>Create New Cookie</h2>
+            <div class="input-group">
+                <label>Cookie Name:</label>
+                <input type="text" id="cookie-name" placeholder="e.g., username">
+            </div>
+            <div class="input-group">
+                <label>Cookie Value:</label>
+                <input type="text" id="cookie-value" placeholder="e.g., john_doe">
+            </div>
+            <div class="grid-2col">
+                <div class="input-group">
+                    <label>Expiry (days):</label>
+                    <input type="number" id="cookie-days" placeholder="7" value="7" min="1">
+                </div>
+                <div class="input-group">
+                    <label>Path:</label>
+                    <input type="text" id="cookie-path" placeholder="/" value="/">
+                </div>
+            </div>
+            <button onclick="setCookie()">Set Cookie</button>
+        </div>
+
+        <!-- Get Cookie Section -->
+        <div class="section">
+            <h2>Get Cookie Value</h2>
+            <div class="input-group">
+                <label>Cookie Name:</label>
+                <input type="text" id="get-cookie-name" placeholder="Enter cookie name">
+            </div>
+            <button onclick="getCookieValue()">Get Value</button>
+            <div id="get-result" class="cookie-display" style="margin-top: 15px; display: none;">
+            </div>
+        </div>
+
+        <!-- Delete Cookie Section -->
+        <div class="section">
+            <h2>Delete Specific Cookie</h2>
+            <div class="input-group">
+                <label>Cookie Name:</label>
+                <input type="text" id="delete-cookie-name" placeholder="Enter cookie name to delete">
+            </div>
+            <button onclick="deleteCookie()" class="danger">Delete Cookie</button>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section">
+            <h2>Quick Actions</h2>
+            <div class="button-group">
+                <button onclick="setExampleCookies()" class="secondary">📝 Set Example Cookies</button>
+                <button onclick="testCookiePersistence()">🔍 Test Persistence</button>
+                <button onclick="exportCookies()">📤 Export Cookies</button>
+            </div>
+        </div>
+
+        <!-- Information -->
+        <div class="section">
+            <h2>About Cookies</h2>
+            <div class="info-box">
+                <strong>What are HTTP Cookies?</strong><br>
+                Cookies are small pieces of data stored in the browser that help websites remember information about your visit. They're commonly used for sessions, preferences, and tracking.
+            </div>
+            <p style="margin: 15px 0; color: #666; line-height: 1.6;">
+                <strong>Cookie Properties:</strong><br>
+                • <strong>Name:</strong> Unique identifier for the cookie<br>
+                • <strong>Value:</strong> The data stored in the cookie<br>
+                • <strong>Expires/Max-Age:</strong> When the cookie should expire<br>
+                • <strong>Path:</strong> URL path where the cookie is valid<br>
+                • <strong>Domain:</strong> Domain where the cookie is valid<br>
+                • <strong>Secure:</strong> Only sent over HTTPS<br>
+                • <strong>HttpOnly:</strong> Not accessible via JavaScript
+            </p>
+            <div class="example-code">
+document.cookie = "name=value; expires=Date; path=/";
+// Example: Set a cookie that expires in 7 days
+const date = new Date();
+date.setTime(date.getTime() + (7*24*60*60*1000));
+document.cookie = `user=JohnDoe; expires=${date.toUTCString()}; path=/`;
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Display all cookies
+        function displayCookies() {
+            const cookies = document.cookie.split(';').filter(c => c.trim());
+            const listDiv = document.getElementById('cookie-list');
+            const countSpan = document.getElementById('cookie-count');
+
+            if (cookies.length === 0 || document.cookie === '') {
+                listDiv.innerHTML = '<div style="color: #9ca3af; text-align: center; padding: 20px;">No cookies set</div>';
+                countSpan.textContent = '0';
+                return;
+            }
+
+            countSpan.textContent = cookies.length;
+            listDiv.innerHTML = '';
+
+            cookies.forEach(cookie => {
+                const [name, ...valueParts] = cookie.split('=');
+                const value = valueParts.join('=');
+                const cookieItem = document.createElement('div');
+                cookieItem.className = 'cookie-item';
+                cookieItem.innerHTML = `
+                    <span class="cookie-name">${name.trim()}</span>
+                    <span class="cookie-value">${value.trim()}</span>
+                    <button onclick="deleteSingleCookie('${name.trim()}')" class="danger" style="padding: 5px 15px; margin: 0;">Delete</button>
+                `;
+                listDiv.appendChild(cookieItem);
+            });
+
+            showStatus('Cookies refreshed successfully', 'success');
+        }
+
+        // Set a cookie
+        function setCookie() {
+            const name = document.getElementById('cookie-name').value.trim();
+            const value = document.getElementById('cookie-value').value.trim();
+            const days = parseInt(document.getElementById('cookie-days').value) || 7;
+            const path = document.getElementById('cookie-path').value.trim() || '/';
+
+            if (!name || !value) {
+                showStatus('Please provide both cookie name and value', 'error');
+                return;
+            }
+
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+
+            document.cookie = `${name}=${value}; ${expires}; path=${path}`;
+
+            showStatus(`Cookie "${name}" set successfully!`, 'success');
+            displayCookies();
+
+            // Clear inputs
+            document.getElementById('cookie-name').value = '';
+            document.getElementById('cookie-value').value = '';
+        }
+
+        // Get cookie value
+        function getCookieValue() {
+            const name = document.getElementById('get-cookie-name').value.trim();
+
+            if (!name) {
+                showStatus('Please enter a cookie name', 'error');
+                return;
+            }
+
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [cookieName, ...valueParts] = cookie.split('=');
+                if (cookieName.trim() === name) {
+                    const value = valueParts.join('=').trim();
+                    const resultDiv = document.getElementById('get-result');
+                    resultDiv.innerHTML = `<strong>${name}:</strong> ${value}`;
+                    resultDiv.style.display = 'block';
+                    showStatus('Cookie found!', 'success');
+                    return;
+                }
+            }
+
+            const resultDiv = document.getElementById('get-result');
+            resultDiv.innerHTML = `<span style="color: #ef4444;">Cookie "${name}" not found</span>`;
+            resultDiv.style.display = 'block';
+            showStatus('Cookie not found', 'error');
+        }
+
+        // Delete a specific cookie
+        function deleteCookie() {
+            const name = document.getElementById('delete-cookie-name').value.trim();
+
+            if (!name) {
+                showStatus('Please enter a cookie name', 'error');
+                return;
+            }
+
+            deleteSingleCookie(name);
+            document.getElementById('delete-cookie-name').value = '';
+        }
+
+        // Delete a single cookie by name
+        function deleteSingleCookie(name) {
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            showStatus(`Cookie "${name}" deleted`, 'success');
+            displayCookies();
+        }
+
+        // Delete all cookies
+        function deleteAllCookies() {
+            const cookies = document.cookie.split(';');
+            let count = 0;
+
+            cookies.forEach(cookie => {
+                const [name] = cookie.split('=');
+                if (name.trim()) {
+                    document.cookie = `${name.trim()}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                    count++;
+                }
+            });
+
+            showStatus(`Deleted ${count} cookie(s)`, 'success');
+            displayCookies();
+        }
+
+        // Set example cookies
+        function setExampleCookies() {
+            const examples = [
+                {name: 'username', value: 'demo_user', days: 7},
+                {name: 'theme', value: 'dark', days: 30},
+                {name: 'language', value: 'en', days: 365},
+                {name: 'session_id', value: 'abc123xyz789', days: 1}
+            ];
+
+            examples.forEach(cookie => {
+                const date = new Date();
+                date.setTime(date.getTime() + (cookie.days * 24 * 60 * 60 * 1000));
+                const expires = "expires=" + date.toUTCString();
+                document.cookie = `${cookie.name}=${cookie.value}; ${expires}; path=/`;
+            });
+
+            showStatus('Example cookies created successfully!', 'success');
+            displayCookies();
+        }
+
+        // Test cookie persistence
+        function testCookiePersistence() {
+            const testName = 'test_persistence_' + Date.now();
+            const testValue = 'persistent_value';
+
+            // Set cookie
+            const date = new Date();
+            date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000));
+            document.cookie = `${testName}=${testValue}; expires=${date.toUTCString()}; path=/`;
+
+            // Check if it persists
+            setTimeout(() => {
+                const cookies = document.cookie.split(';');
+                const found = cookies.some(c => c.includes(testName));
+
+                if (found) {
+                    showStatus('Cookie persistence test: PASSED ✓', 'success');
+                } else {
+                    showStatus('Cookie persistence test: FAILED ✗', 'error');
+                }
+
+                // Clean up test cookie
+                setTimeout(() => {
+                    document.cookie = `${testName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                    displayCookies();
+                }, 2000);
+            }, 500);
+        }
+
+        // Export cookies as JSON
+        function exportCookies() {
+            const cookies = document.cookie.split(';').filter(c => c.trim());
+            const cookieObj = {};
+
+            cookies.forEach(cookie => {
+                const [name, ...valueParts] = cookie.split('=');
+                cookieObj[name.trim()] = valueParts.join('=').trim();
+            });
+
+            const json = JSON.stringify(cookieObj, null, 2);
+
+            // Create download link
+            const blob = new Blob([json], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cookies_export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            showStatus('Cookies exported successfully!', 'success');
+        }
+
+        // Show status message
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status-message ' + type;
+            statusDiv.style.display = 'block';
+
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 4000);
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            displayCookies();
+        });
+
+        // Auto-refresh cookies every 5 seconds
+        setInterval(() => {
+            const count = document.cookie.split(';').filter(c => c.trim()).length;
+            document.getElementById('cookie-count').textContent = count || '0';
+        }, 5000);
+    </script>
+</body>
+</html>

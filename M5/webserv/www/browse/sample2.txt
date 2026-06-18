@@ -1,0 +1,2 @@
+Another sample file showing directory browsing capabilities.
+WebServ supports autoindex for displaying directory contents.

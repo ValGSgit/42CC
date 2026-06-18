@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>500 Internal Server Error</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .error-container {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 60px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: containerShake 4s ease-in-out infinite;
+            position: relative;
+        }
+        
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #ffff00, #ff6b6b, #ffff00);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 2s ease-in-out infinite, glitch 3s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        .error-title {
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: 300;
+            letter-spacing: 1px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+        
+        .error-message {
+            font-size: 18px;
+            margin: 25px 0;
+            opacity: 0.9;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.7s both;
+        }
+        
+        .home-link {
+            display: inline-block;
+            color: #ffff00;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 15px 30px;
+            border: 2px solid #ffff00;
+            border-radius: 30px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out 0.9s both;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .home-link:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,0,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .home-link:hover:before {
+            left: 100%;
+        }
+        
+        .home-link:hover {
+            background: #ffff00;
+            color: #ff6b6b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,255,0,0.4);
+        }
+        
+        .loading-dots {
+            display: inline-block;
+            margin: 20px 0;
+            animation: fadeInUp 1s ease-out 1.1s both;
+        }
+        
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffff00;
+            margin: 0 3px;
+            animation: loadingDots 1.5s infinite;
+        }
+        
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 25s infinite linear;
+        }
+        
+        .shape:nth-child(1) {
+            left: 15%;
+            animation-delay: 0s;
+            animation-duration: 20s;
+        }
+        
+        .shape:nth-child(2) {
+            left: 30%;
+            animation-delay: 3s;
+            animation-duration: 18s;
+        }
+        
+        .shape:nth-child(3) {
+            left: 60%;
+            animation-delay: 6s;
+            animation-duration: 22s;
+        }
+        
+        .shape:nth-child(4) {
+            left: 85%;
+            animation-delay: 9s;
+            animation-duration: 16s;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            opacity: 0.7;
+            animation: fadeInUp 1s ease-out 1.3s both;
+        }
+        
+        @keyframes containerShake {
+            0%, 100% { transform: translateX(0px) translateY(0px); }
+            25% { transform: translateX(-2px) translateY(-1px); }
+            50% { transform: translateX(2px) translateY(1px); }
+            75% { transform: translateX(-1px) translateY(1px); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes loadingDots {
+            0%, 20%, 80%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 40px 20px;
+                margin: 20px;
+            }
+            
+            .error-code {
+                font-size: 80px;
+            }
+            
+            .error-title {
+                font-size: 24px;
+            }
+            
+            .error-message {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape">⚠️</div>
+        <div class="shape">🔧</div>
+        <div class="shape">💻</div>
+        <div class="shape">🛠️</div>
+    </div>
+    
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <h1 class="error-title">Internal Server Error</h1>
+        <p class="error-message">
+            Something went wrong on our end!<br>
+            Our team has been notified and is working to fix the issue.
+        </p>
+        <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+        <a href="/" class="home-link">
+            ← Back to Safety
+        </a>
+        <div class="footer">
+            <small>WebServ/1.0 • Powered by C++</small>
+        </div>
+    </div>
+</body>
+</html>

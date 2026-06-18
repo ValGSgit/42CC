@@ -1,0 +1,40 @@
+# ---- Compiled objects / binaries ----
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.out
+a.out
+*.gch
+*.dSYM/
+
+# Common 42 build outputs (keep source, drop artifacts)
+**/obj/
+**/objs/
+
+# ---- Node / web (transcendence) ----
+node_modules/
+dist/
+build/
+.cache/
+*.log
+
+# ---- Secrets / env ----
+.env
+.env.*
+!.env.example
+secrets/*
+!secrets/.gitkeep
+
+# ---- Python testers ----
+__pycache__/
+*.pyc
+
+# ---- Editor / OS ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*~

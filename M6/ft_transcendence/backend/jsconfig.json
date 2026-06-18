@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "lib": ["ESNext", "DOM"],
+    "paths": {
+      "#config/*": ["./src/config/*"],
+      "#controllers/*": ["./src/controllers/*"],
+      "#lib/*": ["./src/lib/*"],
+      "#middleware/*": ["./src/middleware/*"],
+      "#routes/*": ["./src/routes/*"],
+      "#services/*": ["./src/services/*"],
+      "#utils/*": ["./src/utils/*"],
+      "#models/*": ["./src/models/*"],
+      "#validators/*": ["./src/validators/*"],
+      "#/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules", "**/node_modules/*"]
+}

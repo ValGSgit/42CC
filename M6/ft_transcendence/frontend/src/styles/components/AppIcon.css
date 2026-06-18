@@ -1,0 +1,10 @@
+.app-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  overflow: visible;
+}
+.app-icon--img {
+  object-fit: contain;
+  overflow: hidden;
+}

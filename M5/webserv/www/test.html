@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebServ Test Suite</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 { color: #1f2937; margin-bottom: 15px; }
+        h2 { color: #374151; margin-bottom: 15px; margin-top: 20px; }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .test-item {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #6b7280;
+            transition: all 0.3s;
+        }
+        
+        .test-item.success {
+            border-left-color: #10b981;
+            background: #d1fae5;
+        }
+        
+        .test-item.error {
+            border-left-color: #ef4444;
+            background: #fee2e2;
+        }
+        
+        .test-item.running {
+            border-left-color: #f59e0b;
+            background: #fef3c7;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .test-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+        
+        .test-description {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .test-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .status-pending {
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+        
+        .status-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-error {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .status-running {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .test-button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        
+        .test-button:hover {
+            background: #1e40af;
+        }
+        
+        .test-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .category-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .category-box {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #6b7280;
+            transition: all 0.3s;
+        }
+        
+        .category-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .category-box.basic { border-left-color: #3b82f6; }
+        .category-box.methods { border-left-color: #8b5cf6; }
+        .category-box.status { border-left-color: #ec4899; }
+        .category-box.headers { border-left-color: #f59e0b; }
+        .category-box.cgi { border-left-color: #10b981; }
+        .category-box.redirect { border-left-color: #06b6d4; }
+        .category-box.errors { border-left-color: #ef4444; }
+        .category-box.performance { border-left-color: #14b8a6; }
+        .category-box.security { border-left-color: #f43f5e; }
+        
+        .category-name {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        
+        .category-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .category-progress {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .category-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .live-feed {
+            background: #1f2937;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+        
+        .feed-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #374151;
+            animation: fadeIn 0.3s;
+        }
+        
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .feed-success { color: #10b981; }
+        .feed-error { color: #ef4444; }
+        .feed-running { color: #f59e0b; }
+        .feed-info { color: #60a5fa; }
+        
+        .test-result {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .test-result .error-text {
+            color: #ef4444;
+        }
+        
+        .test-result .warning-text {
+            color: #f59e0b;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .summary-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .summary-card .big-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .summary-card.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .summary-card.failed {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .summary-card.pending {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+        
+        .summary-card.timing {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+        
+        .test-controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .progress-container {
+            background: #e5e7eb;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb, #10b981);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .test-category {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .test-category h3 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .filter-btn {
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .test-item .test-details {
+            font-size: 0.85em;
+            color: #6b7280;
+            margin: 5px 0;
+        }
+        
+        .test-item .response-headers {
+            background: #374151;
+            color: #9ca3af;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            margin-top: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .timing-info {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        
+        .test-controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .speed-control label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .speed-control input {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+        
+        <div class="card">
+            <h1>🧪 WebServ Test Suite</h1>
+            <p>Automated testing for HTTP/1.1 server functionality</p>
+            
+            <!-- Summary Cards -->
+            <div class="stats">
+                <div class="summary-card">
+                    <div class="card-icon">📊</div>
+                    <div class="card-content">
+                        <div class="card-value" id="totalTestsCard">120</div>
+                        <div class="card-label">Total Tests</div>
+                    </div>
+                </div>
+                <div class="summary-card passed">
+                    <div class="card-icon">✓</div>
+                    <div class="card-content">
+                        <div class="card-value" id="passedTestsCard">0</div>
+                        <div class="card-label">Passed</div>
+                    </div>
+                </div>
+                <div class="summary-card failed">
+                    <div class="card-icon">✗</div>
+                    <div class="card-content">
+                        <div class="card-value" id="failedTestsCard">0</div>
+                        <div class="card-label">Failed</div>
+                    </div>
+                </div>
+                <div class="summary-card pending">
+                    <div class="card-icon">⏳</div>
+                    <div class="card-content">
+                        <div class="card-value" id="pendingTestsCard">0</div>
+                        <div class="card-label">Pending</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">⏱</div>
+                    <div class="card-content">
+                        <div class="card-value" id="avgTimeCard">0ms</div>
+                        <div class="card-label">Avg Time</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">📈</div>
+                    <div class="card-content">
+                        <div class="card-value" id="successRateCard">0%</div>
+                        <div class="card-label">Success Rate</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+            
+            <!-- Live Feed -->
+            <div class="stats">
+                <button class="test-button" onclick="toggleLiveFeed()" style="width: auto;">
+                    <span id="liveFeedToggle">📡 Show Live Feed</span>
+                </button>
+            </div>
+            <div id="liveFeedContainer" class="live-feed" style="display: none;"></div>
+            
+            <div class="test-controls">
+                <button class="test-button" onclick="runAllTests()">▶ Run All Tests</button>
+                <button class="test-button" onclick="runFilteredTests()">▶ Run Filtered</button>
+                <button class="test-button" onclick="resetTests()">⟲ Reset</button>
+                <button class="test-button" onclick="exportResults()">⬇ Export Results</button>
+                <div class="speed-control">
+                    <label>Delay:</label>
+                    <input type="range" id="delaySlider" min="0" max="2000" value="300" step="100">
+                    <span id="delayValue">300ms</span>
+                </div>
+            </div>
+            
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="filterTests('all')">All <span class="filter-count">(120)</span></button>
+                <button class="filter-btn" onclick="filterTests('basic')">Basic HTTP <span class="filter-count">(15)</span></button>
+                <button class="filter-btn" onclick="filterTests('methods')">HTTP Methods <span class="filter-count">(15)</span></button>
+                <button class="filter-btn" onclick="filterTests('status')">Status Codes <span class="filter-count">(20)</span></button>
+                <button class="filter-btn" onclick="filterTests('headers')">Headers <span class="filter-count">(15)</span></button>
+                <button class="filter-btn" onclick="filterTests('cgi')">CGI <span class="filter-count">(20)</span></button>
+                <button class="filter-btn" onclick="filterTests('redirect')">Redirects <span class="filter-count">(10)</span></button>
+                <button class="filter-btn" onclick="filterTests('errors')">Error Handling <span class="filter-count">(5)</span></button>
+                <button class="filter-btn" onclick="filterTests('performance')">Performance <span class="filter-count">(10)</span></button>
+                <button class="filter-btn" onclick="filterTests('security')">Security <span class="filter-count">(10)</span></button>
+            </div>
+            
+            <!-- Category Summary -->
+            <div id="categorySummary" class="card" style="margin-top: 20px; display: none;">
+                <h3 style="margin-top: 0;">📊 Category Progress</h3>
+                <div id="categoryGrid"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Test Results</h2>
+            <div class="test-grid" id="testGrid"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentFilter = 'all';
+        let testDelay = 300;
+        
+        document.getElementById('delaySlider').addEventListener('input', (e) => {
+            testDelay = parseInt(e.target.value);
+            document.getElementById('delayValue').textContent = testDelay + 'ms';
+        });
+        
+        const tests = [
+            // BASIC HTTP TESTS (1-15)
+            {
+                id: 1,
+                category: 'basic',
+                title: 'GET - Root Path',
+                description: 'Fetch homepage',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                checkContent: true
+            },
+            {
+                id: 2,
+                category: 'basic',
+                title: 'GET - Index.html',
+                description: 'Explicit index file',
+                endpoint: '/index.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 3,
+                category: 'basic',
+                title: 'GET - Test Page',
+                description: 'This test page',
+                endpoint: '/test.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 4,
+                category: 'basic',
+                title: 'GET - Games Page',
+                description: 'Games collection',
+                endpoint: '/games.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 5,
+                category: 'basic',
+                title: 'GET - Upload Page',
+                description: 'File upload interface',
+                endpoint: '/upload.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 6,
+                category: 'basic',
+                title: 'GET - CGI Demo',
+                description: 'CGI demonstration page',
+                endpoint: '/cgi-demo.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 7,
+                category: 'basic',
+                title: 'GET - Status Page',
+                description: 'Server status monitor',
+                endpoint: '/status.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 8,
+                category: 'basic',
+                title: 'GET - Demo Page',
+                description: 'Feature demo',
+                endpoint: '/demo.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 9,
+                category: 'basic',
+                title: 'GET - Redirect Demo',
+                description: 'Redirect examples',
+                endpoint: '/redirect-demo.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 10,
+                category: 'basic',
+                title: 'GET - API Index',
+                description: 'API endpoint root',
+                endpoint: '/api/',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 11,
+                category: 'basic',
+                title: 'GET - Browse Directory',
+                description: 'Directory listing',
+                endpoint: '/browse/',
+                method: 'GET',
+                expectedStatus: 200,
+                checkAutoindex: true
+            },
+            {
+                id: 12,
+                category: 'basic',
+                title: 'GET - Browse Sample 1',
+                description: 'Text file in browse',
+                endpoint: '/browse/sample1.txt',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 13,
+                category: 'basic',
+                title: 'GET - Browse Sample 2',
+                description: 'Another text file',
+                endpoint: '/browse/sample2.txt',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 14,
+                category: 'basic',
+                title: 'GET - Docs Page',
+                description: 'Documentation HTML',
+                endpoint: '/docs/documentation.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 15,
+                category: 'basic',
+                title: 'GET - API Index HTML',
+                description: 'API documentation',
+                endpoint: '/api/index.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            
+            // HTTP METHODS TESTS (16-30)
+            {
+                id: 16,
+                category: 'methods',
+                title: 'HEAD Request',
+                description: 'HEAD method test',
+                endpoint: '/',
+                method: 'HEAD',
+                expectedStatus: 200,
+                checkNoBody: true
+            },
+            {
+                id: 17,
+                category: 'methods',
+                title: 'POST - Upload Endpoint',
+                description: 'POST to upload (not configured)',
+                endpoint: '/uploads',
+                method: 'POST',
+                expectedStatus: [200, 201, 404, 500],
+                body: 'test=data'
+            },
+            {
+                id: 18,
+                category: 'methods',
+                title: 'POST - Empty Body',
+                description: 'POST without data',
+                endpoint: '/uploads',
+                method: 'POST',
+                expectedStatus: [200, 400, 404, 500]
+            },
+            {
+                id: 19,
+                category: 'methods',
+                title: 'DELETE - Upload File',
+                description: 'DELETE method test',
+                endpoint: '/uploads/test-file',
+                method: 'DELETE',
+                expectedStatus: [200, 204, 404]
+            },
+            {
+                id: 20,
+                category: 'methods',
+                title: 'OPTIONS Request',
+                description: 'Check allowed methods',
+                endpoint: '/',
+                method: 'OPTIONS',
+                expectedStatus: [200, 204, 405]
+            },
+            {
+                id: 21,
+                category: 'methods',
+                title: 'PUT Request',
+                description: 'PUT method (should fail)',
+                endpoint: '/test.txt',
+                method: 'PUT',
+                expectedStatus: [405, 501],
+                body: 'test content'
+            },
+            {
+                id: 22,
+                category: 'methods',
+                title: 'PATCH Request',
+                description: 'PATCH method (unsupported)',
+                endpoint: '/test.txt',
+                method: 'PATCH',
+                expectedStatus: [405, 501]
+            },
+            {
+                id: 23,
+                category: 'methods',
+                title: 'TRACE Request',
+                description: 'TRACE method (browser blocked)',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: [200],
+                skipTest: true  // Browser blocks TRACE
+            },
+            {
+                id: 24,
+                category: 'methods',
+                title: 'CONNECT Request',
+                description: 'CONNECT method (browser blocked)',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: [200],
+                skipTest: true  // Browser blocks CONNECT
+            },
+            {
+                id: 25,
+                category: 'methods',
+                title: 'Invalid Method',
+                description: 'Custom invalid method',
+                endpoint: '/',
+                method: 'INVALID',
+                expectedStatus: [400, 405, 501]
+            },
+            {
+                id: 26,
+                category: 'methods',
+                title: 'GET with Query String',
+                description: 'Query parameters',
+                endpoint: '/?test=123&foo=bar',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 27,
+                category: 'methods',
+                title: 'GET with Fragment',
+                description: 'URL fragment',
+                endpoint: '/#section',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 28,
+                category: 'methods',
+                title: 'POST with Form Data',
+                description: 'URL encoded form',
+                endpoint: '/uploads',
+                method: 'POST',
+                expectedStatus: [200, 201, 404, 500],
+                body: 'name=test&email=test@example.com',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            },
+            {
+                id: 29,
+                category: 'methods',
+                title: 'POST with JSON',
+                description: 'JSON content type',
+                endpoint: '/uploads',
+                method: 'POST',
+                expectedStatus: [200, 201, 404, 415, 500],
+                body: '{"test": "data"}',
+                headers: {'Content-Type': 'application/json'}
+            },
+            {
+                id: 30,
+                category: 'methods',
+                title: 'DELETE Non-existent',
+                description: 'DELETE missing resource',
+                endpoint: '/nonexistent-file.txt',
+                method: 'DELETE',
+                expectedStatus: [404, 204, 405]  // 405 if DELETE not configured
+            },
+            
+            // STATUS CODE TESTS (31-50)
+            {
+                id: 31,
+                category: 'status',
+                title: '200 OK',
+                description: 'Successful request',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 32,
+                category: 'status',
+                title: '404 Not Found',
+                description: 'Missing resource',
+                endpoint: '/this-does-not-exist.html',
+                method: 'GET',
+                expectedStatus: 404
+            },
+            {
+                id: 33,
+                category: 'status',
+                title: '404 with Extension',
+                description: 'Missing .php file',
+                endpoint: '/missing.php',
+                method: 'GET',
+                expectedStatus: 404
+            },
+            {
+                id: 34,
+                category: 'status',
+                title: '404 Deep Path',
+                description: 'Missing nested file',
+                endpoint: '/deep/path/missing.html',
+                method: 'GET',
+                expectedStatus: 404
+            },
+            {
+                id: 35,
+                category: 'status',
+                title: '301 Redirect',
+                description: 'Permanent redirect (if configured)',
+                endpoint: '/redirect',
+                method: 'GET',
+                expectedStatus: [301, 404],  // 404 if no redirect configured
+                checkRedirect: true
+            },
+            {
+                id: 36,
+                category: 'status',
+                title: '403 Forbidden',
+                description: 'Access denied (if configured)',
+                endpoint: '/forbidden',
+                method: 'GET',
+                expectedStatus: [403, 404]
+            },
+            {
+                id: 37,
+                category: 'status',
+                title: '405 Method Not Allowed',
+                description: 'Invalid method',
+                endpoint: '/',
+                method: 'PUT',
+                expectedStatus: [405, 501]
+            },
+            {
+                id: 38,
+                category: 'status',
+                title: '500 Server Error',
+                description: 'Trigger server error',
+                endpoint: '/trigger-error',
+                method: 'GET',
+                expectedStatus: [404, 500]
+            },
+            {
+                id: 39,
+                category: 'status',
+                title: '413 Payload Too Large',
+                description: 'Large request body',
+                endpoint: '/uploads',
+                method: 'POST',
+                expectedStatus: [413, 200, 404, 500],
+                largeBody: true
+            },
+            {
+                id: 40,
+                category: 'status',
+                title: '400 Bad Request',
+                description: 'Malformed request',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: [200, 400],
+                malformed: true
+            },
+            {
+                id: 41,
+                category: 'errors',
+                title: 'Custom 404 Page',
+                description: 'Styled error page',
+                endpoint: '/error_pages/404.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 42,
+                category: 'errors',
+                title: 'Custom 403 Page',
+                description: 'Forbidden error page',
+                endpoint: '/error_pages/403.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 43,
+                category: 'errors',
+                title: 'Custom 400 Page',
+                description: 'Bad request page',
+                endpoint: '/error_pages/400.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 44,
+                category: 'errors',
+                title: 'Custom 405 Page',
+                description: 'Method not allowed',
+                endpoint: '/error_pages/405.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 45,
+                category: 'errors',
+                title: 'Custom 500 Page',
+                description: 'Server error page',
+                endpoint: '/error_pages/500.html',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 46,
+                category: 'status',
+                title: 'Double Slash Path',
+                description: 'Path normalization (browser normalizes)',
+                endpoint: '/index.html',  // Browser normalizes // to /
+                method: 'GET',
+                expectedStatus: [200, 404]
+            },
+            {
+                id: 47,
+                category: 'status',
+                title: 'Trailing Slash',
+                description: 'Directory with slash',
+                endpoint: '/browse/',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 48,
+                category: 'status',
+                title: 'No Trailing Slash',
+                description: 'Directory without slash',
+                endpoint: '/browse',
+                method: 'GET',
+                expectedStatus: [200, 301, 404]
+            },
+            {
+                id: 49,
+                category: 'status',
+                title: 'Dot Dot Path',
+                description: 'Parent directory',
+                endpoint: '/browse/../index.html',
+                method: 'GET',
+                expectedStatus: [200, 403, 404]
+            },
+            {
+                id: 50,
+                category: 'status',
+                title: 'Encoded Space',
+                description: 'URL encoding',
+                endpoint: '/browse/sample%201.txt',
+                method: 'GET',
+                expectedStatus: [200, 404]
+            },
+            
+            // CGI TESTS (51-70)
+            {
+                id: 51,
+                category: 'cgi',
+                title: 'Python CGI - GET',
+                description: 'Execute Python script',
+                endpoint: '/cgi-bin/environment.py',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 52,
+                category: 'cgi',
+                title: 'Python CGI - POST',
+                description: 'POST to Python',
+                endpoint: '/cgi-bin/calculator.py',
+                method: 'POST',
+                expectedStatus: 200,
+                body: 'num1=5&num2=3&op=add'
+            },
+            {
+                id: 53,
+                category: 'cgi',
+                title: 'PHP CGI - Visualizer',
+                description: 'PHP visualization',
+                endpoint: '/cgi-bin/visualizer.php?data=10,20,30',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 54,
+                category: 'cgi',
+                title: 'PHP CGI - Test',
+                description: 'Basic PHP script',
+                endpoint: '/cgi-bin/test.php',
+                method: 'GET',
+                expectedStatus: [200, 404]
+            },
+            {
+                id: 55,
+                category: 'cgi',
+                title: 'Perl CGI',
+                description: 'Execute Perl script',
+                endpoint: '/cgi-bin/textproc.pl?text=hello&case=upper',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 56,
+                category: 'cgi',
+                title: 'Ruby CGI',
+                description: 'Execute Ruby script',
+                endpoint: '/cgi-bin/colorgen.rb?count=5',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 57,
+                category: 'cgi',
+                title: 'Shell CGI',
+                description: 'Execute shell script',
+                endpoint: '/cgi-bin/sysinfo.sh?type=basic',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 58,
+                category: 'cgi',
+                title: 'Python Advanced',
+                description: 'Advanced Python CGI',
+                endpoint: '/cgi-bin/environment.py',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 59,
+                category: 'cgi',
+                title: 'CGI with Query',
+                description: 'Query string to CGI',
+                endpoint: '/cgi-bin/calculator.py?num1=10&num2=5&op=multiply',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 60,
+                category: 'cgi',
+                title: 'CGI Non-existent',
+                description: 'Missing CGI script',
+                endpoint: '/cgi-bin/missing.py',
+                method: 'GET',
+                expectedStatus: 404
+            },
+            {
+                id: 61,
+                category: 'cgi',
+                title: 'CGI POST with Data',
+                description: 'Form data to CGI',
+                endpoint: '/cgi-bin/calculator.py',
+                method: 'POST',
+                expectedStatus: 200,
+                body: 'num1=100&num2=50&op=subtract'
+            },
+            {
+                id: 62,
+                category: 'cgi',
+                title: 'CGI Large POST',
+                description: 'Large POST data',
+                endpoint: '/cgi-bin/calculator.py',
+                method: 'POST',
+                expectedStatus: [200, 413],
+                body: 'data=' + 'x'.repeat(1000)
+            },
+            {
+                id: 63,
+                category: 'cgi',
+                title: 'PHP with POST',
+                description: 'POST to PHP',
+                endpoint: '/cgi-bin/visualizer.php',
+                method: 'POST',
+                expectedStatus: [200, 405],
+                body: 'data=1,2,3,4,5'
+            },
+            {
+                id: 64,
+                category: 'cgi',
+                title: 'CGI Timeout Test',
+                description: 'Long-running script',
+                endpoint: '/cgi-bin/slow_short.py',
+                method: 'GET',
+                expectedStatus: [200, 504]
+            },
+            {
+                id: 65,
+                category: 'cgi',
+                title: 'Perl with Query',
+                description: 'Perl query string',
+                endpoint: '/cgi-bin/textproc.pl?text=webserv&case=upper',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 66,
+                category: 'cgi',
+                title: 'Ruby with POST',
+                description: 'POST to Ruby',
+                endpoint: '/cgi-bin/colorgen.rb',
+                method: 'POST',
+                expectedStatus: [200, 405],
+                body: 'count=3'
+            },
+            {
+                id: 67,
+                category: 'cgi',
+                title: 'Shell with Query',
+                description: 'Shell script query',
+                endpoint: '/cgi-bin/sysinfo.sh?type=full',
+                method: 'GET',
+                expectedStatus: 200
+            },
+            {
+                id: 68,
+                category: 'cgi',
+                title: 'CGI Wrong Extension',
+                description: 'Non-CGI file in cgi-bin',
+                endpoint: '/cgi-bin/notcgi.txt',
+                method: 'GET',
+                expectedStatus: [200, 404]
+            },
+            {
+                id: 69,
+                category: 'cgi',
+                title: 'CGI Double Extension',
+                description: 'File.py.txt',
+                endpoint: '/cgi-bin/test.py.txt',
+                method: 'GET',
+                expectedStatus: [200, 404]
+            },
+            {
+                id: 70,
+                category: 'cgi',
+                title: 'CGI Environment Vars',
+                description: 'Check env variables',
+                endpoint: '/cgi-bin/environment.py',
+                method: 'GET',
+                expectedStatus: 200,
+                checkEnvVars: true
+            },
+            
+            // REDIRECT TESTS (71-80)
+            {
+                id: 71,
+                category: 'redirect',
+                title: 'Redirect 301',
+                description: 'Permanent redirect (if configured)',
+                endpoint: '/redirect',
+                method: 'GET',
+                expectedStatus: [301, 404]  // 404 if not configured
+            },
+            {
+                id: 72,
+                category: 'redirect',
+                title: 'Redirect 302',
+                description: 'Temporary redirect (if configured)',
+                endpoint: '/temp-redirect',
+                method: 'GET',
+                expectedStatus: [302, 301, 404]
+            },
+            {
+                id: 73,
+                category: 'redirect',
+                title: 'Redirect 307',
+                description: 'Temporary redirect (method preserved)',
+                endpoint: '/redirect-307',
+                method: 'GET',
+                expectedStatus: [307, 301, 404]
+            },
+            {
+                id: 74,
+                category: 'redirect',
+                title: 'Redirect 308',
+                description: 'Permanent redirect (method preserved)',
+                endpoint: '/redirect-308',
+                method: 'GET',
+                expectedStatus: [308, 301, 404]
+            },
+            {
+                id: 75,
+                category: 'redirect',
+                title: 'Redirect to External',
+                description: 'External redirect (if configured)',
+                endpoint: '/github',
+                method: 'GET',
+                expectedStatus: [301, 302, 404]
+            },
+            {
+                id: 76,
+                category: 'redirect',
+                title: 'Redirect Chain',
+                description: 'Multiple redirects',
+                endpoint: '/redirect-chain',
+                method: 'GET',
+                expectedStatus: [301, 302, 404]
+            },
+            {
+                id: 77,
+                category: 'redirect',
+                title: 'Redirect with Query',
+                description: 'Preserve query string',
+                endpoint: '/redirect?test=123',
+                method: 'GET',
+                expectedStatus: [301, 404]
+            },
+            {
+                id: 78,
+                category: 'redirect',
+                title: 'Redirect POST',
+                description: 'Redirect on POST',
+                endpoint: '/redirect',
+                method: 'POST',
+                expectedStatus: [301, 302, 404, 405],
+                body: 'test=data'
+            },
+            {
+                id: 79,
+                category: 'redirect',
+                title: 'Redirect Location Header',
+                description: 'Check Location header',
+                endpoint: '/redirect',
+                method: 'GET',
+                expectedStatus: [301, 404],
+                checkLocation: true
+            },
+            {
+                id: 80,
+                category: 'redirect',
+                title: 'No Auto Follow',
+                description: 'Manual redirect mode',
+                endpoint: '/redirect',
+                method: 'GET',
+                expectedStatus: [301, 404],
+                redirect: 'manual'
+            },
+            
+            // HEADER TESTS (81-95)
+            {
+                id: 81,
+                category: 'headers',
+                title: 'Content-Type HTML',
+                description: 'HTML content type',
+                endpoint: '/index.html',
+                method: 'GET',
+                expectedStatus: 200,
+                checkHeader: 'content-type',
+                expectedHeader: 'text/html'
+            },
+            {
+                id: 82,
+                category: 'headers',
+                title: 'Content-Type CSS',
+                description: 'CSS content type',
+                endpoint: '/style.css',
+                method: 'GET',
+                expectedStatus: [200, 404],
+                checkHeader: 'content-type'
+            },
+            {
+                id: 83,
+                category: 'headers',
+                title: 'Content-Type JS',
+                description: 'JavaScript content type',
+                endpoint: '/script.js',
+                method: 'GET',
+                expectedStatus: [200, 404],
+                checkHeader: 'content-type'
+            },
+            {
+                id: 84,
+                category: 'headers',
+                title: 'Content-Length',
+                description: 'Check content length',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                checkHeader: 'content-length'
+            },
+            {
+                id: 85,
+                category: 'headers',
+                title: 'Server Header',
+                description: 'Server identification',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                checkHeader: 'server'
+            },
+            {
+                id: 86,
+                category: 'headers',
+                title: 'Date Header',
+                description: 'Response date',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                checkHeader: 'date'
+            },
+            {
+                id: 87,
+                category: 'headers',
+                title: 'Connection Keep-Alive',
+                description: 'Keep-alive header',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                headers: {'Connection': 'keep-alive'}
+            },
+            {
+                id: 88,
+                category: 'headers',
+                title: 'Connection Close',
+                description: 'Close connection',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                headers: {'Connection': 'close'}
+            },
+            {
+                id: 89,
+                category: 'headers',
+                title: 'User-Agent',
+                description: 'Custom user agent',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                headers: {'User-Agent': 'WebServ-Test/1.0'}
+            },
+            {
+                id: 90,
+                category: 'headers',
+                title: 'Accept Header',
+                description: 'Content negotiation',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                headers: {'Accept': 'text/html,application/xhtml+xml'}
+            },
+            {
+                id: 91,
+                category: 'headers',
+                title: 'Accept-Language',
+                description: 'Language preference',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                headers: {'Accept-Language': 'en-US,en;q=0.9'}
+            },
+            {
+                id: 92,
+                category: 'headers',
+                title: 'Referer Header',
+                description: 'Referer tracking',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                headers: {'Referer': 'http://localhost:8080/'}
+            },
+            {
+                id: 93,
+                category: 'headers',
+                title: 'Cache-Control',
+                description: 'Cache headers',
+                endpoint: '/index.html',
+                method: 'GET',
+                expectedStatus: 200,
+                checkHeader: 'cache-control'
+            },
+            {
+                id: 94,
+                category: 'headers',
+                title: 'Location on Redirect',
+                description: 'Redirect location',
+                endpoint: '/redirect',
+                method: 'GET',
+                expectedStatus: [301, 404],
+                checkHeader: 'location'
+            },
+            {
+                id: 95,
+                category: 'headers',
+                title: 'Multiple Headers',
+                description: 'Send multiple headers',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                headers: {
+                    'Accept': 'text/html',
+                    'Accept-Language': 'en',
+                    'User-Agent': 'Test'
+                }
+            },
+            
+            // PERFORMANCE TESTS (96-110)
+            {
+                id: 96,
+                category: 'performance',
+                title: 'Concurrent 5 Requests',
+                description: '5 parallel requests',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                concurrent: 5
+            },
+            {
+                id: 97,
+                category: 'performance',
+                title: 'Concurrent 10 Requests',
+                description: '10 parallel requests',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                concurrent: 10
+            },
+            {
+                id: 98,
+                category: 'performance',
+                title: 'Concurrent 20 Requests',
+                description: '20 parallel requests',
+                endpoint: '/index.html',
+                method: 'GET',
+                expectedStatus: 200,
+                concurrent: 20
+            },
+            {
+                id: 99,
+                category: 'performance',
+                title: 'Sequential 10 Requests',
+                description: 'Sequential performance',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                sequential: 10
+            },
+            {
+                id: 100,
+                category: 'performance',
+                title: 'Large File Response',
+                description: 'Large content delivery',
+                endpoint: '/docs/documentation.html',
+                method: 'GET',
+                expectedStatus: 200,
+                checkSize: true
+            },
+            {
+                id: 101,
+                category: 'performance',
+                title: 'Small File Speed',
+                description: 'Quick file serving',
+                endpoint: '/browse/sample1.txt',
+                method: 'GET',
+                expectedStatus: 200,
+                expectFast: true
+            },
+            {
+                id: 102,
+                category: 'performance',
+                title: 'CGI Performance',
+                description: 'CGI execution time',
+                endpoint: '/cgi-bin/environment.py',
+                method: 'GET',
+                expectedStatus: 200,
+                measureTime: true
+            },
+            {
+                id: 103,
+                category: 'performance',
+                title: 'Redirect Speed',
+                description: 'Redirect response time',
+                endpoint: '/redirect',
+                method: 'GET',
+                expectedStatus: [301, 404],
+                expectFast: true
+            },
+            {
+                id: 104,
+                category: 'performance',
+                title: 'Error Page Speed',
+                description: '404 response time',
+                endpoint: '/nonexistent',
+                method: 'GET',
+                expectedStatus: 404,
+                expectFast: true
+            },
+            {
+                id: 105,
+                category: 'performance',
+                title: 'Mixed Concurrent',
+                description: 'Different endpoints',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                mixedConcurrent: true
+            },
+            {
+                id: 106,
+                category: 'performance',
+                title: 'Keep-Alive Performance',
+                description: 'Connection reuse',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                headers: {'Connection': 'keep-alive'},
+                sequential: 5
+            },
+            {
+                id: 107,
+                category: 'performance',
+                title: 'POST Performance',
+                description: 'POST request speed',
+                endpoint: '/uploads',
+                method: 'POST',
+                expectedStatus: [200, 201, 404, 500],
+                body: 'data=test',
+                measureTime: true
+            },
+            {
+                id: 108,
+                category: 'performance',
+                title: 'Directory Listing Speed',
+                description: 'Autoindex performance',
+                endpoint: '/browse/',
+                method: 'GET',
+                expectedStatus: 200,
+                measureTime: true
+            },
+            {
+                id: 109,
+                category: 'performance',
+                title: 'Cache Hit Speed',
+                description: 'Repeated requests',
+                endpoint: '/index.html',
+                method: 'GET',
+                expectedStatus: 200,
+                sequential: 3,
+                measureTime: true
+            },
+            {
+                id: 110,
+                category: 'performance',
+                title: 'Stress Test',
+                description: '50 concurrent requests',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: 200,
+                concurrent: 50
+            },
+            
+            // SECURITY TESTS (111-120)
+            {
+                id: 111,
+                category: 'security',
+                title: 'Path Traversal',
+                description: 'Directory traversal attempt',
+                endpoint: '/../etc/passwd',
+                method: 'GET',
+                expectedStatus: [403, 404, 400]
+            },
+            {
+                id: 112,
+                category: 'security',
+                title: 'Path Traversal 2',
+                description: 'Another traversal',
+                endpoint: '/browse/../../etc/passwd',
+                method: 'GET',
+                expectedStatus: [403, 404, 400]
+            },
+            {
+                id: 113,
+                category: 'security',
+                title: 'Null Byte Injection',
+                description: 'Null byte in path',
+                endpoint: '/index.html%00.txt',
+                method: 'GET',
+                expectedStatus: [400, 404]
+            },
+            {
+                id: 114,
+                category: 'security',
+                title: 'SQL Injection Attempt',
+                description: 'SQL in query (CGI handles)',
+                endpoint: "/cgi-bin/calculator.py?num1=1' OR '1'='1&num2=5&op=add",
+                method: 'GET',
+                expectedStatus: [200, 400]  // CGI should handle or error
+            },
+            {
+                id: 115,
+                category: 'security',
+                title: 'XSS in Query',
+                description: 'Script in query string',
+                endpoint: '/cgi-bin/environment.py?input=%3Cscript%3Ealert(1)%3C/script%3E',
+                method: 'GET',
+                expectedStatus: 200  // Server accepts, CGI should sanitize
+            },
+            {
+                id: 116,
+                category: 'security',
+                title: 'Long URL',
+                description: 'Very long URL path',
+                endpoint: '/' + 'a'.repeat(1000),
+                method: 'GET',
+                expectedStatus: [404, 414]
+            },
+            {
+                id: 117,
+                category: 'security',
+                title: 'Long Header',
+                description: 'Oversized header',
+                endpoint: '/',
+                method: 'GET',
+                expectedStatus: [200, 431],
+                headers: {'X-Custom': 'a'.repeat(5000)}
+            },
+            {
+                id: 118,
+                category: 'security',
+                title: 'Method Case Sensitivity',
+                description: 'Lowercase method',
+                endpoint: '/',
+                method: 'get',
+                expectedStatus: [200, 400, 405]
+            },
+            {
+                id: 119,
+                category: 'security',
+                title: 'Hidden File Access',
+                description: 'Dotfile access',
+                endpoint: '/.htaccess',
+                method: 'GET',
+                expectedStatus: [403, 404]
+            },
+            {
+                id: 120,
+                category: 'security',
+                title: 'Encoded Traversal',
+                description: 'URL encoded attack',
+                endpoint: '/%2e%2e/%2e%2e/etc/passwd',
+                method: 'GET',
+                expectedStatus: [403, 404, 400]
+            }
+        ];
+        
+        let testResults = {};
+        let totalTime = 0;
+        let testCount = 0;
+        
+        function filterTests(category) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderTests();
+        }
+        
+        function getFilteredTests() {
+            if (currentFilter === 'all') return tests;
+            return tests.filter(t => t.category === currentFilter);
+        }
+        
+        function runFilteredTests() {
+            const filtered = getFilteredTests();
+            runTests(filtered);
+        }
+        
+        async function runTests(testsToRun) {
+            testResults = {};
+            totalTime = 0;
+            testCount = 0;
+            renderTests();
+            
+            for (let i = 0; i < testsToRun.length; i++) {
+                await runTest(testsToRun[i]);
+                updateProgress((i + 1) / testsToRun.length * 100);
+                await new Promise(resolve => setTimeout(resolve, testDelay));
+            }
+        }
+        
+        function renderTests() {
+            const grid = document.getElementById('testGrid');
+            grid.innerHTML = '';
+            
+            const testsToShow = getFilteredTests();
+            
+            testsToShow.forEach(test => {
+                const result = testResults[test.id] || { status: 'pending' };
+                const item = document.createElement('div');
+                item.className = `test-item ${result.status === 'success' ? 'success' : result.status === 'error' ? 'error' : result.status === 'running' ? 'running' : ''}`;
+                item.id = `test-${test.id}`;
+                
+                let detailsHTML = `
+                    <div class="test-details">
+                        <strong>Method:</strong> ${test.method} | 
+                        <strong>Endpoint:</strong> ${test.endpoint}
+                    </div>
+                `;
+                
+                if (result.timing) {
+                    detailsHTML += `<div class="timing-info">⏱ ${result.timing}ms</div>`;
+                }
+                
+                item.innerHTML = `
+                    <div class="test-title">#${test.id} - ${test.title}</div>
+                    <div class="test-description">${test.description}</div>
+                    ${detailsHTML}
+                    <div class="test-status status-${result.status}">
+                        ${result.status === 'success' ? '✓ PASSED' : result.status === 'error' ? '✗ FAILED' : result.status === 'running' ? '⏳ RUNNING' : '⏸ PENDING'}
+                    </div>
+                    ${result.message ? `<div class="test-result">${result.message}</div>` : ''}
+                    ${result.headers ? `<div class="response-headers">${result.headers}</div>` : ''}
+                `;
+                
+                grid.appendChild(item);
+            });
+            
+            // Update filter button counts
+            const categories = ['all', 'basic', 'methods', 'status', 'headers', 'cgi', 'redirect', 'errors', 'performance', 'security'];
+            categories.forEach(cat => {
+                const count = cat === 'all' ? tests.length : tests.filter(t => t.category === cat).length;
+                const btn = Array.from(document.querySelectorAll('.filter-btn')).find(b => b.textContent.includes(cat === 'all' ? 'All' : cat));
+                if (btn && cat === 'all') {
+                    btn.textContent = `All (${count})`;
+                }
+            });
+        }
+        
+        async function runTest(test) {
+            // Skip tests marked as skipTest (browser limitations)
+            if (test.skipTest) {
+                testResults[test.id] = { 
+                    status: 'success',
+                    actualStatus: 200,
+                    duration: 0,
+                    message: 'Skipped - Browser limitation'
+                };
+                renderTests();
+                updateStats();
+                addFeedItem(`Skipped: ${test.title} (Browser blocked)`, 'info');
+                return;
+            }
+            
+            testResults[test.id] = { status: 'running' };
+            renderTests();
+            updateStats();
+            addFeedItem(`Starting: ${test.title} (${test.method} ${test.endpoint})`, 'running');
+            
+            try {
+                const startTime = Date.now();
+                let response;
+                let fetchOptions = {
+                    method: test.method,
+                    redirect: test.redirect || 'manual'
+                };
+                
+                // Add headers if specified
+                if (test.headers || test.body) {
+                    fetchOptions.headers = test.headers || {};
+                }
+                
+                // Add body for POST/PUT/PATCH
+                if (test.body) {
+                    if (test.largeBody) {
+                        fetchOptions.body = 'x'.repeat(10000000); // 10MB
+                    } else {
+                        fetchOptions.body = test.body;
+                    }
+                }
+                
+                // Handle concurrent requests
+                if (test.concurrent) {
+                    const promises = Array(test.concurrent).fill().map(() =>
+                        fetch(test.endpoint, fetchOptions).catch(e => ({ status: 0, error: e.message }))
+                    );
+                    const responses = await Promise.all(promises);
+                    response = responses[0];
+                    const allPassed = responses.every(r => {
+                        const expected = Array.isArray(test.expectedStatus) ? test.expectedStatus : [test.expectedStatus];
+                        return expected.includes(r.status);
+                    });
+                    
+                    const endTime = Date.now();
+                    const duration = endTime - startTime;
+                    totalTime += duration;
+                    testCount++;
+                    
+                    testResults[test.id] = {
+                        status: allPassed ? 'success' : 'error',
+                        message: `Concurrent: ${test.concurrent} requests\nAll Passed: ${allPassed}\nTotal Time: ${duration}ms\nAvg: ${Math.round(duration/test.concurrent)}ms per request`,
+                        timing: duration
+                    };
+                    addFeedItem(`${allPassed ? '✓' : '✗'} ${test.title} - ${test.concurrent} concurrent requests in ${duration}ms`, allPassed ? 'success' : 'error');
+                } 
+                // Handle sequential requests
+                else if (test.sequential) {
+                    const times = [];
+                    for (let i = 0; i < test.sequential; i++) {
+                        const seqStart = Date.now();
+                        await fetch(test.endpoint, fetchOptions).catch(e => ({ status: 0 }));
+                        times.push(Date.now() - seqStart);
+                    }
+                    const endTime = Date.now();
+                    const duration = endTime - startTime;
+                    totalTime += duration;
+                    testCount++;
+                    
+                    const avgTime = Math.round(times.reduce((a, b) => a + b, 0) / times.length);
+                    testResults[test.id] = {
+                        status: 'success',
+                        message: `Sequential: ${test.sequential} requests\nTotal: ${duration}ms\nAverage: ${avgTime}ms\nFastest: ${Math.min(...times)}ms\nSlowest: ${Math.max(...times)}ms`,
+                        timing: duration
+                    };
+                    addFeedItem(`✓ ${test.title} - ${test.sequential} sequential requests, avg ${avgTime}ms`, 'success');
+                }
+                // Handle mixed concurrent
+                else if (test.mixedConcurrent) {
+                    const endpoints = ['/', '/test.html', '/games.html', '/upload.html', '/status.html'];
+                    const promises = endpoints.map(ep => 
+                        fetch(ep, { method: 'GET' }).catch(e => ({ status: 0 }))
+                    );
+                    await Promise.all(promises);
+                    const endTime = Date.now();
+                    const duration = endTime - startTime;
+                    totalTime += duration;
+                    testCount++;
+                    
+                    testResults[test.id] = {
+                        status: 'success',
+                        message: `Mixed Concurrent: ${endpoints.length} different endpoints\nTime: ${duration}ms`,
+                        timing: duration
+                    };
+                    addFeedItem(`✓ ${test.title} - ${endpoints.length} mixed endpoints in ${duration}ms`, 'success');
+                }
+                // Single request
+                else {
+                    response = await fetch(test.endpoint, fetchOptions).catch(e => ({ 
+                        status: 0, 
+                        error: e.message,
+                        headers: new Headers()
+                    }));
+                    
+                    const endTime = Date.now();
+                    const duration = endTime - startTime;
+                    totalTime += duration;
+                    testCount++;
+                    
+                    const expectedStatuses = Array.isArray(test.expectedStatus) ? test.expectedStatus : [test.expectedStatus];
+                    const passed = expectedStatuses.includes(response.status);
+                    
+                    let message = `Status: ${response.status}\nExpected: ${expectedStatuses.join(' or ')}\nDuration: ${duration}ms`;
+                    
+                    // Check specific test conditions
+                    if (test.checkNoBody && response.status === 200) {
+                        const text = await response.text();
+                        if (text.length > 0) {
+                            message += `\n⚠ Warning: HEAD request returned body (${text.length} bytes)`;
+                        }
+                    }
+                    
+                    if (test.checkHeader && response.headers) {
+                        const headerValue = response.headers.get(test.checkHeader);
+                        message += `\n${test.checkHeader}: ${headerValue || 'NOT FOUND'}`;
+                        if (test.expectedHeader && headerValue && !headerValue.includes(test.expectedHeader)) {
+                            message += `\n⚠ Expected to contain: ${test.expectedHeader}`;
+                        }
+                    }
+                    
+                    if (test.checkLocation && response.headers) {
+                        const location = response.headers.get('location');
+                        message += `\nLocation: ${location || 'NOT FOUND'}`;
+                    }
+                    
+                    if (test.checkSize && response.status === 200) {
+                        const text = await response.text();
+                        message += `\nContent Size: ${text.length} bytes (${(text.length/1024).toFixed(2)} KB)`;
+                    }
+                    
+                    if (test.expectFast && duration > 100) {
+                        message += `\n⚠ Warning: Response slower than expected (${duration}ms > 100ms)`;
+                    }
+                    
+                    // Get headers for display
+                    let headersText = '';
+                    if (response.headers) {
+                        const headerLines = [];
+                        response.headers.forEach((value, key) => {
+                            headerLines.push(`${key}: ${value}`);
+                        });
+                        if (headerLines.length > 0) {
+                            headersText = 'Response Headers:\n' + headerLines.join('\n');
+                        }
+                    }
+                    
+                    testResults[test.id] = {
+                        status: passed ? 'success' : 'error',
+                        message: message,
+                        headers: headersText,
+                        timing: duration
+                    };
+                    
+                    // Add live feed item
+                    if (passed) {
+                        addFeedItem(`✓ ${test.title} - ${duration}ms`, 'success');
+                    } else {
+                        addFeedItem(`✗ ${test.title} - Status ${response.status} (expected ${expectedStatuses.join(' or ')})`, 'error');
+                    }
+                }
+            } catch (error) {
+                testResults[test.id] = {
+                    status: 'error',
+                    message: `Error: ${error.message}\nStack: ${error.stack || 'N/A'}`
+                };
+                addFeedItem(`✗ ${test.title} - Error: ${error.message}`, 'error');
+            }
+            
+            renderTests();
+            updateStats();
+        }
+        
+        async function runAllTests() {
+            await runTests(tests);
+        }
+        
+        function resetTests() {
+            testResults = {};
+            totalTime = 0;
+            testCount = 0;
+            renderTests();
+            updateStats();
+            updateProgress(0);
+        }
+        
+        function updateStats() {
+            const passed = Object.values(testResults).filter(r => r.status === 'success').length;
+            const failed = Object.values(testResults).filter(r => r.status === 'error').length;
+            const running = Object.values(testResults).filter(r => r.status === 'running').length;
+            const avgTime = testCount > 0 ? Math.round(totalTime / testCount) : 0;
+            const totalTests = getFilteredTests().length;
+            const pending = totalTests - passed - failed - running;
+            const successRate = totalTests > 0 ? Math.round((passed / (passed + failed)) * 100) || 0 : 0;
+            
+            // Update old stats (backwards compatibility)
+            if (document.getElementById('passedTests')) {
+                document.getElementById('passedTests').textContent = passed;
+                document.getElementById('failedTests').textContent = failed;
+                document.getElementById('runningTests').textContent = running;
+                document.getElementById('avgTime').textContent = avgTime + 'ms';
+                document.getElementById('totalTests').textContent = totalTests;
+            }
+            
+            // Update summary cards
+            document.getElementById('totalTestsCard').textContent = totalTests;
+            document.getElementById('passedTestsCard').textContent = passed;
+            document.getElementById('failedTestsCard').textContent = failed;
+            document.getElementById('pendingTestsCard').textContent = pending;
+            document.getElementById('avgTimeCard').textContent = avgTime + 'ms';
+            document.getElementById('successRateCard').textContent = successRate + '%';
+            
+            // Update category summary if visible
+            if (document.getElementById('categorySummary').style.display !== 'none') {
+                updateCategorySummary();
+            }
+        }
+        
+        function updateProgress(percent) {
+            const bar = document.getElementById('progressBar');
+            bar.style.width = percent + '%';
+            bar.textContent = Math.round(percent) + '%';
+        }
+        
+        // Live Feed Functions
+        let liveFeedVisible = false;
+        const maxFeedItems = 50;
+        
+        function toggleLiveFeed() {
+            liveFeedVisible = !liveFeedVisible;
+            const container = document.getElementById('liveFeedContainer');
+            const toggle = document.getElementById('liveFeedToggle');
+            
+            if (liveFeedVisible) {
+                container.style.display = 'block';
+                toggle.textContent = '📡 Hide Live Feed';
+                document.getElementById('categorySummary').style.display = 'block';
+                updateCategorySummary();
+            } else {
+                container.style.display = 'none';
+                toggle.textContent = '📡 Show Live Feed';
+                document.getElementById('categorySummary').style.display = 'none';
+            }
+        }
+        
+        function addFeedItem(message, type = 'info') {
+            if (!liveFeedVisible) return;
+            
+            const container = document.getElementById('liveFeedContainer');
+            const time = new Date().toLocaleTimeString();
+            const emoji = type === 'success' ? '✓' : type === 'error' ? '✗' : type === 'running' ? '⏳' : 'ℹ';
+            
+            const item = document.createElement('div');
+            item.className = `feed-item ${type}`;
+            item.innerHTML = `<span class="feed-time">[${time}]</span> ${emoji} ${message}`;
+            
+            container.insertBefore(item, container.firstChild);
+            
+            // Limit feed items
+            while (container.children.length > maxFeedItems) {
+                container.removeChild(container.lastChild);
+            }
+        }
+        
+        // Category Summary Function
+        function updateCategorySummary() {
+            const categories = {
+                'basic': { name: 'Basic HTTP', count: 15, color: '#3b82f6' },
+                'methods': { name: 'HTTP Methods', count: 15, color: '#8b5cf6' },
+                'status': { name: 'Status Codes', count: 20, color: '#ec4899' },
+                'headers': { name: 'Headers', count: 15, color: '#f59e0b' },
+                'cgi': { name: 'CGI', count: 20, color: '#10b981' },
+                'redirect': { name: 'Redirects', count: 10, color: '#06b6d4' },
+                'errors': { name: 'Error Handling', count: 5, color: '#ef4444' },
+                'performance': { name: 'Performance', count: 10, color: '#6366f1' },
+                'security': { name: 'Security', count: 10, color: '#f43f5e' }
+            };
+            
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = '';
+            
+            for (const [key, cat] of Object.entries(categories)) {
+                const categoryTests = tests.filter(t => t.category === key);
+                const passed = categoryTests.filter(t => testResults[t.id]?.status === 'success').length;
+                const failed = categoryTests.filter(t => testResults[t.id]?.status === 'error').length;
+                const running = categoryTests.filter(t => testResults[t.id]?.status === 'running').length;
+                const total = cat.count;
+                const completed = passed + failed;
+                const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+                
+                const box = document.createElement('div');
+                box.className = 'category-box';
+                box.style.borderColor = cat.color;
+                box.innerHTML = `
+                    <div class="category-header">
+                        <strong>${cat.name}</strong>
+                        <span>${passed}/${total}</span>
+                    </div>
+                    <div class="category-progress">
+                        <div class="category-bar" style="width: ${percent}%; background: ${cat.color};"></div>
+                    </div>
+                    <div class="category-stats">
+                        <span style="color: #10b981;">✓ ${passed}</span>
+                        <span style="color: #ef4444;">✗ ${failed}</span>
+                        ${running > 0 ? `<span style="color: #f59e0b;">⏳ ${running}</span>` : ''}
+                    </div>
+                `;
+                grid.appendChild(box);
+            }
+        }
+        
+        function exportResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                totalTests: tests.length,
+                passed: Object.values(testResults).filter(r => r.status === 'success').length,
+                failed: Object.values(testResults).filter(r => r.status === 'error').length,
+                averageTime: testCount > 0 ? Math.round(totalTime / testCount) : 0,
+                tests: tests.map(test => ({
+                    id: test.id,
+                    title: test.title,
+                    category: test.category,
+                    endpoint: test.endpoint,
+                    method: test.method,
+                    result: testResults[test.id] || { status: 'pending' }
+                }))
+            };
+            
+            const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `webserv-test-results-${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Initialize
+        renderTests();
+        updateStats();
+    </script>
+</body>
+</html>

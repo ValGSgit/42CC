@@ -1,0 +1,112 @@
+
+services:
+  # NGINX Service - Web server and reverse proxy
+  nginx:
+    build: ./requirements/nginx              # Build image from custom Dockerfile in nginx folder
+    image: nginx                             # Name the built image "nginx"
+    container_name: nginx                    # Give the container a specific name for easy reference
+    depends_on:                              # Wait for wordpress service to start before starting nginx
+      - wordpress
+    environment:                             # Environment variables passed to the container
+      DOMAIN_NAME: ${DOMAIN_NAME}           # Domain name from .env file (e.g., vagarcia.42.fr)
+    volumes:                                 # Mount volumes to share data between host and container
+      - wordpress_data:/var/www/html:ro     # Mount wordpress files as read-only (nginx only serves, doesn't modify)
+    networks:                               # Connect to custom network for inter-container communication
+      - inception_network
+    ports:                                  # Expose container ports to host
+      - "80:80"                            # Map host port 80 to container port 80 (HTTP - redirects to HTTPS)
+      - "443:443"                          # Map host port 443 to container port 443 (HTTPS)
+    restart: unless-stopped                 # Automatically restart container if it crashes (required by subject)
+
+  # WordPress Service - PHP application with WordPress CMS
+  wordpress:
+    build: ./requirements/wordpress         # Build image from custom Dockerfile in wordpress folder
+    image: wordpress                        # Name the built image "wordpress" (required by subject)
+    container_name: wordpress               # Give the container a specific name
+    depends_on:                             # Wait for mariadb service to start before starting wordpress
+      - mariadb
+    environment:                            # Environment variables for WordPress configuration
+      MYSQL_DATABASE: ${MYSQL_DATABASE}     # Database name from .env file
+      MYSQL_USER: ${MYSQL_USER}            # Database username from .env file
+      MYSQL_PASSWORD_FILE: ${MYSQL_PASSWORD_FILE}  # Path to password file inside container (using Docker secrets)
+      MYSQL_HOST: mariadb:3306             # Database host and port (mariadb is the service name)
+      WP_ADMIN_USER: ${WP_ADMIN_USER}      # WordPress admin username from .env file
+      WP_ADMIN_PASSWORD_FILE: ${WP_ADMIN_PASSWORD_FILE}  # Path to admin password file (using Docker secrets)
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}    # WordPress admin email from .env file
+      WP_USER: ${WP_USER}                  # Second WordPress user from .env file
+      WP_USER_EMAIL: ${WP_USER_EMAIL}      # Second user's email from .env file
+      WP_USER_PASSWORD_FILE: ${WP_USER_PASSWORD_FILE}  # Path to second user's password file (using Docker secrets)
+      DOMAIN_NAME: ${DOMAIN_NAME}          # Domain name for WordPress configuration
+    volumes:                                # Mount volumes to persist WordPress files
+      - wordpress_data:/var/www/html       # Mount wordpress files (read-write access needed)
+    networks:                               # Connect to custom network
+      - inception_network
+    secrets:                                # Mount Docker secrets (secure way to handle passwords)
+      - db_password                        # Database user password file
+      - credentials                        # Admin credentials file
+      - wp_user_password                   # WordPress regular user password file
+    restart: unless-stopped                 # Auto-restart on crash
+    expose:                                 # Expose ports only to other containers (not to host)
+      - "9000"                             # PHP-FPM listens on port 9000 for nginx to connect
+
+  # MariaDB Service - MySQL-compatible database server
+  mariadb:
+    build: ./requirements/mariadb           # Build image from custom Dockerfile in mariadb folder
+    image: mariadb                          # Name the built image "mariadb" (required by subject)
+    container_name: mariadb                 # Give the container a specific name
+    environment:                            # Environment variables for database configuration
+      MYSQL_ROOT_PASSWORD_FILE: ${MYSQL_ROOT_PASSWORD_FILE}  # Path to root password file (Docker secrets)
+      MYSQL_DATABASE: ${MYSQL_DATABASE}     # Name of database to create
+      MYSQL_USER: ${MYSQL_USER}            # Database user to create
+      MYSQL_PASSWORD_FILE: ${MYSQL_PASSWORD_FILE}  # Path to user password file (Docker secrets)
+    volumes:                                # Mount volume to persist database data
+      - mariadb_data:/var/lib/mysql        # Mount database files directory
+    networks:                               # Connect to custom network
+      - inception_network
+    secrets:                                # Mount Docker secrets for passwords
+      - db_root_password                   # Database root password file
+      - db_password                        # Database user password file
+    restart: unless-stopped                 # Auto-restart on crash
+    expose:                                 # Expose port only to other containers
+      - "3306"                             # MySQL/MariaDB standard port
+
+# Volume definitions - persistent data storage
+volumes:
+  # WordPress files volume
+  wordpress_data:
+    driver: local                           # Use local driver (stores on host filesystem)
+    driver_opts:                            # Driver-specific options
+      type: none                           # Don't create new filesystem, use existing directory
+      o: bind                              # Bind mount (directly map host directory to container)
+      device: /home/vagarcia/data/wordpress # Host directory path (required by subject)
+  
+  # Database files volume
+  mariadb_data:
+    driver: local                           # Use local driver
+    driver_opts:                            # Driver-specific options
+      type: none                           # Use existing directory
+      o: bind                              # Bind mount
+      device: /home/vagarcia/data/mariadb   # Host directory path (required by subject)
+
+# Network definition - allows containers to communicate
+networks:
+  inception_network:                        # Custom network name
+    driver: bridge                          # Bridge driver creates isolated network for containers
+
+# Secrets definition - secure way to handle sensitive data
+secrets:
+  # Database root password
+  db_root_password:
+    file: ../secrets/db_root_password.txt   # Path to file containing root password
+
+  # Database user password
+  db_password:
+    file: ../secrets/db_password.txt        # Path to file containing user password
+
+  # WordPress admin credentials
+  credentials:
+    file: ../secrets/credentials.txt        # Path to file containing admin password
+
+  # WordPress regular user password
+  wp_user_password:
+    file: ../secrets/wp_user_password.txt   # Path to file containing regular user password

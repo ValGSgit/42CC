@@ -1,0 +1,6 @@
+
+
+services:
+  backend:
+    ports:
+      - "5555:5555"

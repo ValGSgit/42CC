@@ -1,0 +1,50 @@
+# ── Dependencies ─────────────────────────────────────────────
+node_modules/
+
+# ── Build outputs ────────────────────────────────────────────
+dist/
+build/
+
+# ── Environment ─────────────────────────────────────────────
+.env
+.env.local
+.env.production
+
+# ── SSL certificates ────────────────────────────────────────
+*/ssl/
+ssl/
+*.pem
+*.key
+*.crt
+
+# ── IDE ──────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Logs ─────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+
+# ── Docker persistent data (local) ──────────────────────────
+data/
+
+# ── Uploaded files ───────────────────────────────────────────
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# ── Test artifacts ───────────────────────────────────────────
+coverage/
+**/coverage/
+playwright-report/
+test-results/
+
+# ── Prisma ───────────────────────────────────────────────────
+backend/prisma/migrations

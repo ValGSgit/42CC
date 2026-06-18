@@ -1,0 +1,60 @@
+{
+  "name": "alpacaparty-backend",
+  "version": "0.1.0",
+  "description": "AlpacaParty Express.js backend",
+  "main": "src/index.js",
+  "type": "module",
+  "imports": {
+    "#config/*.js": "./src/config/*.js",
+    "#controllers/*.js": "./src/controllers/*.js",
+    "#docs/*.js": "./src/docs/*.js",
+    "#lib/prisma.js": "./src/config/prisma.js",
+    "#lib/*.js": "./src/lib/*.js",
+    "#middleware/*.js": "./src/middleware/*.js",
+    "#routes/*.js": "./src/routes/*.js",
+    "#services/*.js": "./src/services/*.js",
+    "#tools/*.js": "./src/tools/*.js",
+    "#utils/*.js": "./src/utils/*.js",
+    "#models/*.js": "./src/models/*.js",
+    "#validators/*.js": "./src/validators/*.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "seed": "npx prisma db seed",
+    "buildDocs": "node src/docs/swaggerPublicApi.js"
+  },
+  "keywords": [
+    "alpacaparty",
+    "backend",
+    "express",
+    "postgresql"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^7.4.2",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "csv-parse": "^6.1.0",
+    "dotenv": "^16.4.0",
+    "env-cmd": "^10.1.0",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "express-validator": "^7.3.1",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "ms": "^2.1.3",
+    "multer": "^2.0.0",
+    "prisma": "^7.4.2",
+    "socket.io": "^4.8.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "swagger-autogen": "^2.3.1"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.0.0",
+    "jest": "^30.0.0",
+    "supertest": "^7.0.0"
+  }
+}

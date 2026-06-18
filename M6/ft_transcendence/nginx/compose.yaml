@@ -1,0 +1,34 @@
+# nginx reverse proxy — external entrypoint for the whole stack
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nginx_prod
+    ports:
+      - "${HTTPS_PORT:-8443}:443"
+      - "${HTTP_PORT:-8080}:80"
+    environment:
+      # Consumed by the nginx entrypoint's envsubst to fill the ${...} vars in
+      # conf/nginx.conf (upstream ports + the HTTP→HTTPS redirect port).
+      HTTPS_PORT: ${HTTPS_PORT:-8443}
+      BACKEND_PORT: ${API_PORT:-3000}
+      FRONTEND_PORT: ${FRONTEND_PORT:-5173}
+      NGINX_ENVSUBST_FILTER: "HTTPS_PORT|BACKEND_PORT|FRONTEND_PORT"
+    volumes:
+      - ssl:/etc/nginx/conf/ssl
+    depends_on:
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_healthy
+    restart: always
+    networks:
+      - alpacaparty_net
+    healthcheck:
+      # nginx listens on 443 inside the container (the host maps HTTPS_PORT→443).
+      test: ["CMD-SHELL", "wget --no-check-certificate -qO /dev/null https://127.0.0.1:443/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

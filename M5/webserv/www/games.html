@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Games - WebServ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: transform 0.3s;
+        }
+        
+        .back-link:hover { transform: translateX(-5px); }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            background: linear-gradient(135deg, #2563eb, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header p { color: #666; font-size: 1.1em; }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-card h2 {
+            color: #1f2937;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        
+        .game-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .game-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .play-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1em;
+            transition: background 0.3s;
+        }
+        
+        .play-btn:hover {
+            background: #1e40af;
+        }
+        
+        .game-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .game-modal.active {
+            display: flex;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .close-btn:hover {
+            background: #dc2626;
+        }
+        
+        .game-title {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        
+        .game-canvas {
+            border: 3px solid #2563eb;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto 20px;
+            background: #f3f4f6;
+        }
+        
+        .game-info {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 10px 0;
+        }
+        
+        .game-controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 1em;
+        }
+        
+        .control-btn:hover {
+            background: #059669;
+        }
+        
+        .control-btn.reset {
+            background: #f59e0b;
+        }
+        
+        .control-btn.reset:hover {
+            background: #d97706;
+        }
+        
+        .instructions {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .instructions strong {
+            color: #1f2937;
+        }
+        
+        /* Memory Game Cards */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        
+        .memory-card {
+            aspect-ratio: 1;
+            background: #2563eb;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+            transition: transform 0.3s;
+            user-select: none;
+        }
+        
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .memory-card.flipped {
+            background: white;
+            border: 2px solid #2563eb;
+        }
+        
+        .memory-card.matched {
+            background: #10b981;
+            cursor: default;
+        }
+        
+        /* 2048 Grid */
+        .grid-2048 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+            background: #bbada0;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        .tile-2048 {
+            aspect-ratio: 1;
+            background: #cdc1b4;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #776e65;
+        }
+        
+        .tile-2048[data-value="2"] { background: #eee4da; }
+        .tile-2048[data-value="4"] { background: #ede0c8; }
+        .tile-2048[data-value="8"] { background: #f2b179; color: #f9f6f2; }
+        .tile-2048[data-value="16"] { background: #f59563; color: #f9f6f2; }
+        .tile-2048[data-value="32"] { background: #f67c5f; color: #f9f6f2; }
+        .tile-2048[data-value="64"] { background: #f65e3b; color: #f9f6f2; }
+        .tile-2048[data-value="128"] { background: #edcf72; color: #f9f6f2; }
+        .tile-2048[data-value="256"] { background: #edcc61; color: #f9f6f2; }
+        .tile-2048[data-value="512"] { background: #edc850; color: #f9f6f2; }
+        .tile-2048[data-value="1024"] { background: #edc53f; color: #f9f6f2; }
+        .tile-2048[data-value="2048"] { background: #edc22e; color: #f9f6f2; }
+        
+        /* Tic-Tac-Toe Grid */
+        .ttt-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+        
+        .ttt-cell {
+            aspect-ratio: 1;
+            background: #f3f4f6;
+            border: 3px solid #2563eb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        
+        .ttt-cell:hover:not(.filled) {
+            background: #e5e7eb;
+            transform: scale(1.05);
+        }
+        
+        .ttt-cell.filled {
+            cursor: not-allowed;
+        }
+        
+        /* Simon Says */
+        .simon-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 350px;
+            margin: 20px auto;
+        }
+        
+        .simon-btn {
+            aspect-ratio: 1;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0.7;
+        }
+        
+        .simon-btn:active, .simon-btn.active {
+            opacity: 1;
+            transform: scale(0.95);
+            box-shadow: 0 0 30px currentColor;
+        }
+        
+        .simon-btn.red { background: #ef4444; }
+        .simon-btn.blue { background: #3b82f6; }
+        .simon-btn.green { background: #10b981; }
+        .simon-btn.yellow { background: #f59e0b; }
+        
+        /* Breakout */
+        .breakout-canvas {
+            border: 3px solid #2563eb;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+            background: #1f2937;
+        }
+        
+        /* Whack-a-Mole */
+        .mole-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        
+        .mole-hole {
+            aspect-ratio: 1;
+            background: linear-gradient(to bottom, #78350f, #92400e);
+            border-radius: 50% 50% 45% 45%;
+            position: relative;
+            cursor: pointer;
+            border: 4px solid #451a03;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .mole-hole:active {
+            transform: scale(0.95);
+        }
+        
+        .mole-hole::before {
+            content: '🐹';
+            font-size: 3.5em;
+            position: absolute;
+            opacity: 0;
+            transform: translateY(100px) scale(0);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .mole-hole.active::before {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .mole-hole.whacked::before {
+            content: '💫';
+            animation: whackEffect 0.3s;
+        }
+        
+        @keyframes whackEffect {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.3) rotate(180deg); }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Reaction Time */
+        .reaction-box {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            margin: 20px auto;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .reaction-box.waiting {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .reaction-box.ready {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .reaction-box.go {
+            background: #10b981;
+            color: white;
+        }
+        
+        /* Typing Test */
+        .typing-text {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        
+        .typing-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #2563eb;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-family: monospace;
+        }
+        
+        .typing-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .typing-stat {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+        
+        <div class="header">
+            <h1>🎮 Browser Games</h1>
+            <p>Play classic games right in your browser!</p>
+        </div>
+        
+        <div class="games-grid">
+            <!-- Snake Game Card -->
+            <div class="game-card" onclick="openGame('snake')">
+                <div class="game-icon">🐍</div>
+                <h2>Snake</h2>
+                <p class="game-description">
+                    Control the snake to eat food and grow longer. Don't hit the walls or yourself!
+                </p>
+                <button class="play-btn">Play Snake</button>
+            </div>
+            
+            <!-- Memory Game Card -->
+            <div class="game-card" onclick="openGame('memory')">
+                <div class="game-icon">🧠</div>
+                <h2>Memory Match</h2>
+                <p class="game-description">
+                    Find matching pairs by flipping cards. Train your memory skills!
+                </p>
+                <button class="play-btn">Play Memory</button>
+            </div>
+            
+            <!-- 2048 Game Card -->
+            <div class="game-card" onclick="openGame('2048')">
+                <div class="game-icon">🔢</div>
+                <h2>2048</h2>
+                <p class="game-description">
+                    Combine tiles with the same number to create 2048. Addictive puzzle game!
+                </p>
+                <button class="play-btn">Play 2048</button>
+            </div>
+            
+            <!-- Tic-Tac-Toe Game Card -->
+            <div class="game-card" onclick="openGame('tictactoe')">
+                <div class="game-icon">❌⭕</div>
+                <h2>Tic-Tac-Toe</h2>
+                <p class="game-description">
+                    Classic X and O game. Play against the computer and try to win!
+                </p>
+                <button class="play-btn">Play Tic-Tac-Toe</button>
+            </div>
+            
+            <!-- Simon Says Game Card -->
+            <div class="game-card" onclick="openGame('simon')">
+                <div class="game-icon">🎨</div>
+                <h2>Simon Says</h2>
+                <p class="game-description">
+                    Remember and repeat the color sequence. How far can you go?
+                </p>
+                <button class="play-btn">Play Simon Says</button>
+            </div>
+            
+            <!-- Breakout Game Card -->
+            <div class="game-card" onclick="openGame('breakout')">
+                <div class="game-icon">🧱</div>
+                <h2>Breakout</h2>
+                <p class="game-description">
+                    Break all the bricks with the ball. Use your paddle to keep it in play!
+                </p>
+                <button class="play-btn">Play Breakout</button>
+            </div>
+            
+            <!-- Whack-a-Mole Game Card -->
+            <div class="game-card" onclick="openGame('mole')">
+                <div class="game-icon">🔨</div>
+                <h2>Whack-a-Mole</h2>
+                <p class="game-description">
+                    Hit the moles as they pop up! Test your reflexes and speed!
+                </p>
+                <button class="play-btn">Play Whack-a-Mole</button>
+            </div>
+            
+            <!-- Reaction Time Game Card -->
+            <div class="game-card" onclick="openGame('reaction')">
+                <div class="game-icon">⚡</div>
+                <h2>Reaction Time</h2>
+                <p class="game-description">
+                    Test how fast you can react. Click when the screen turns green!
+                </p>
+                <button class="play-btn">Test Reaction</button>
+            </div>
+            
+            <!-- Typing Speed Game Card -->
+            <div class="game-card" onclick="openGame('typing')">
+                <div class="game-icon">⌨️</div>
+                <h2>Typing Speed</h2>
+                <p class="game-description">
+                    Test your typing speed and accuracy. How many WPM can you type?
+                </p>
+                <button class="play-btn">Test Typing</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Snake Game Modal -->
+    <div id="snake-modal" class="game-modal">
+        <div class="game-container">
+            <button class="close-btn" onclick="closeGame('snake')">×</button>
+            <h2 class="game-title">🐍 Snake Game</h2>
+            <div class="instructions">
+                <strong>Controls:</strong> Use Arrow Keys to move the snake. Eat the red food to grow!
+            </div>
+            <div class="game-info">
+                <div class="score">Score: <span id="snake-score">0</span></div>
+            </div>
+            <canvas id="snake-canvas" class="game-canvas" width="400" height="400"></canvas>
+            <div class="game-controls">
+                <button class="control-btn reset" onclick="resetSnake()">Reset Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Memory Game Modal -->
+    <div id="memory-modal" class="game-modal">
+        <div class="game-container">
+            <button class="close-btn" onclick="closeGame('memory')">×</button>
+            <h2 class="game-title">🧠 Memory Match</h2>
+            <div class="instructions">
+                <strong>How to play:</strong> Click cards to flip them. Find all matching pairs!
+            </div>
+            <div class="game-info">
+                <div class="score">Moves: <span id="memory-moves">0</span> | Pairs: <span id="memory-pairs">0</span>/8</div>
+            </div>
+            <div id="memory-grid" class="memory-grid"></div>
+            <div class="game-controls">
+                <button class="control-btn reset" onclick="resetMemory()">New Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 2048 Game Modal -->
+    <div id="2048-modal" class="game-modal">
+        <div class="game-container">
+            <button class="close-btn" onclick="closeGame('2048')">×</button>
+            <h2 class="game-title">🔢 2048</h2>
+            <div class="instructions">
+                <strong>Controls:</strong> Use Arrow Keys to slide tiles. Combine same numbers to reach 2048!
+            </div>
+            <div class="game-info">
+                <div class="score">Score: <span id="2048-score">0</span></div>
+            </div>
+            <div id="grid-2048" class="grid-2048"></div>
+            <div class="game-controls">
+                <button class="control-btn reset" onclick="reset2048()">New Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tic-Tac-Toe Modal -->
+    <div id="tictactoe-modal" class="game-modal">
+        <div class="game-container">
+            <button class="close-btn" onclick="closeGame('tictactoe')">×</button>
+            <h2 class="game-title">❌⭕ Tic-Tac-Toe</h2>
+            <div class="instructions">
+                <strong>How to play:</strong> Click cells to place X. Try to get 3 in a row!
+            </div>
+            <div class="game-info">
+                <div class="score">Player: <span id="ttt-player">X</span></div>
+            </div>
+            <div id="ttt-grid" class="ttt-grid"></div>
+            <div class="game-controls">
+                <button class="control-btn reset" onclick="resetTicTacToe()">New Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Simon Says Modal -->
+    <div id="simon-modal" class="game-modal">
+        <div class="game-container">
+            <button class="close-btn" onclick="closeGame('simon')">×</button>
+            <h2 class="game-title">🎨 Simon Says</h2>
+            <div class="instructions">
+                <strong>How to play:</strong> Watch the sequence, then repeat it by clicking the colors!
+            </div>
+            <div class="game-info">
+                <div class="score">Level: <span id="simon-level">0</span> | High Score: <span id="simon-high">0</span></div>
+            </div>
+            <div class="simon-grid">
+                <button class="simon-btn red" onclick="simonClick(0)"></button>
+                <button class="simon-btn blue" onclick="simonClick(1)"></button>
+                <button class="simon-btn green" onclick="simonClick(2)"></button>
+                <button class="simon-btn yellow" onclick="simonClick(3)"></button>
+            </div>
+            <div class="game-controls">
+                <button class="control-btn" id="simon-start" onclick="startSimon()">Start Game</button>
+                <button class="control-btn reset" onclick="resetSimon()">Reset</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Breakout Modal -->
+    <div id="breakout-modal" class="game-modal">
+        <div class="game-container">
+            <button class="close-btn" onclick="closeGame('breakout')">×</button>
+            <h2 class="game-title">🧱 Breakout</h2>
+            <div class="instructions">
+                <strong>Controls:</strong> Move mouse or use ← → arrows to control the paddle!
+            </div>
+            <div class="game-info">
+                <div class="score">Score: <span id="breakout-score">0</span> | Lives: <span id="breakout-lives">3</span></div>
+            </div>
+            <canvas id="breakout-canvas" class="breakout-canvas" width="480" height="400"></canvas>
+            <div class="game-controls">
+                <button class="control-btn reset" onclick="resetBreakout()">New Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Whack-a-Mole Modal -->
+    <div id="mole-modal" class="game-modal">
+        <div class="game-container">
+            <button class="close-btn" onclick="closeGame('mole')">×</button>
+            <h2 class="game-title">🔨 Whack-a-Mole</h2>
+            <div class="instructions">
+                <strong>How to play:</strong> Click the moles when they pop up!
+            </div>
+            <div class="game-info">
+                <div class="score">Score: <span id="mole-score">0</span> | Time: <span id="mole-time">30</span>s</div>
+            </div>
+            <div id="mole-grid" class="mole-grid"></div>
+            <div class="game-controls">
+                <button class="control-btn" id="mole-start" onclick="startMole()">Start Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reaction Time Modal -->
+    <div id="reaction-modal" class="game-modal">
+        <div class="game-container">
+            <button class="close-btn" onclick="closeGame('reaction')">×</button>
+            <h2 class="game-title">⚡ Reaction Time Test</h2>
+            <div class="instructions">
+                <strong>How to play:</strong> Click when the box turns green. Don't click too early!
+            </div>
+            <div class="game-info">
+                <div class="score">Best Time: <span id="reaction-best">-</span> ms</div>
+            </div>
+            <div id="reaction-box" class="reaction-box waiting" onclick="reactionClick()">
+                Click to Start
+            </div>
+            <div class="game-controls">
+                <button class="control-btn reset" onclick="resetReaction()">Try Again</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Typing Speed Modal -->
+    <div id="typing-modal" class="game-modal">
+        <div class="game-container">
+            <button class="close-btn" onclick="closeGame('typing')">×</button>
+            <h2 class="game-title">⌨️ Typing Speed Test</h2>
+            <div class="instructions">
+                <strong>How to play:</strong> Type the text below as fast and accurately as you can!
+            </div>
+            <div class="typing-stats">
+                <div class="typing-stat">
+                    <strong>WPM</strong><br><span id="typing-wpm">0</span>
+                </div>
+                <div class="typing-stat">
+                    <strong>Accuracy</strong><br><span id="typing-accuracy">100</span>%
+                </div>
+                <div class="typing-stat">
+                    <strong>Time</strong><br><span id="typing-time">0</span>s
+                </div>
+            </div>
+            <div id="typing-text" class="typing-text"></div>
+            <input type="text" id="typing-input" class="typing-input" placeholder="Start typing here..." disabled>
+            <div class="game-controls">
+                <button class="control-btn" id="typing-start" onclick="startTyping()">Start Test</button>
+                <button class="control-btn reset" onclick="resetTyping()">New Text</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Game Management
+        function openGame(gameName) {
+            document.getElementById(gameName + '-modal').classList.add('active');
+            if (gameName === 'snake') initSnake();
+            else if (gameName === 'memory') initMemory();
+            else if (gameName === '2048') init2048();
+            else if (gameName === 'tictactoe') initTicTacToe();
+            else if (gameName === 'simon') resetSimon();
+            else if (gameName === 'breakout') initBreakout();
+            else if (gameName === 'mole') initMole();
+            else if (gameName === 'reaction') resetReaction();
+            else if (gameName === 'typing') initTyping();
+        }
+        
+        function closeGame(gameName) {
+            document.getElementById(gameName + '-modal').classList.remove('active');
+            if (gameName === 'snake') stopSnake();
+            else if (gameName === 'breakout' && breakoutGame.animationId) {
+                cancelAnimationFrame(breakoutGame.animationId);
+            } else if (gameName === 'mole' && moleGame.active) {
+                clearInterval(moleGame.interval);
+                clearInterval(moleGame.timer);
+                moleGame.active = false;
+            } else if (gameName === 'reaction' && reactionGame.timeout) {
+                clearTimeout(reactionGame.timeout);
+            } else if (gameName === 'typing' && typingGame.timer) {
+                clearInterval(typingGame.timer);
+            }
+        }
+        
+        // ==================== SNAKE GAME ====================
+        let snakeGame = {
+            canvas: null,
+            ctx: null,
+            snake: [],
+            food: {},
+            direction: 'right',
+            nextDirection: 'right',
+            score: 0,
+            gameLoop: null,
+            gridSize: 20
+        };
+        
+        function initSnake() {
+            snakeGame.canvas = document.getElementById('snake-canvas');
+            snakeGame.ctx = snakeGame.canvas.getContext('2d');
+            snakeGame.snake = [{x: 10, y: 10}];
+            snakeGame.direction = 'right';
+            snakeGame.nextDirection = 'right';
+            snakeGame.score = 0;
+            document.getElementById('snake-score').textContent = '0';
+            spawnFood();
+            
+            if (snakeGame.gameLoop) clearInterval(snakeGame.gameLoop);
+            snakeGame.gameLoop = setInterval(updateSnake, 100);
+            
+            document.addEventListener('keydown', handleSnakeKey);
+        }
+        
+        function handleSnakeKey(e) {
+            const key = e.key;
+            if (key === 'ArrowUp' && snakeGame.direction !== 'down') snakeGame.nextDirection = 'up';
+            else if (key === 'ArrowDown' && snakeGame.direction !== 'up') snakeGame.nextDirection = 'down';
+            else if (key === 'ArrowLeft' && snakeGame.direction !== 'right') snakeGame.nextDirection = 'left';
+            else if (key === 'ArrowRight' && snakeGame.direction !== 'left') snakeGame.nextDirection = 'right';
+        }
+        
+        function updateSnake() {
+            snakeGame.direction = snakeGame.nextDirection;
+            const head = {...snakeGame.snake[0]};
+            
+            if (snakeGame.direction === 'up') head.y--;
+            else if (snakeGame.direction === 'down') head.y++;
+            else if (snakeGame.direction === 'left') head.x--;
+            else if (snakeGame.direction === 'right') head.x++;
+            
+            // Check collision with walls
+            if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) {
+                gameOver();
+                return;
+            }
+            
+            // Check collision with self
+            if (snakeGame.snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                gameOver();
+                return;
+            }
+            
+            snakeGame.snake.unshift(head);
+            
+            // Check if food eaten
+            if (head.x === snakeGame.food.x && head.y === snakeGame.food.y) {
+                snakeGame.score += 10;
+                document.getElementById('snake-score').textContent = snakeGame.score;
+                spawnFood();
+            } else {
+                snakeGame.snake.pop();
+            }
+            
+            drawSnake();
+        }
+        
+        function drawSnake() {
+            const ctx = snakeGame.ctx;
+            const size = snakeGame.gridSize;
+            
+            // Clear canvas
+            ctx.fillStyle = '#f3f4f6';
+            ctx.fillRect(0, 0, 400, 400);
+            
+            // Draw grid
+            ctx.strokeStyle = '#e5e7eb';
+            for (let i = 0; i <= 20; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * size, 0);
+                ctx.lineTo(i * size, 400);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, i * size);
+                ctx.lineTo(400, i * size);
+                ctx.stroke();
+            }
+            
+            // Draw food
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(snakeGame.food.x * size, snakeGame.food.y * size, size, size);
+            
+            // Draw snake
+            snakeGame.snake.forEach((segment, index) => {
+                ctx.fillStyle = index === 0 ? '#10b981' : '#2563eb';
+                ctx.fillRect(segment.x * size, segment.y * size, size - 2, size - 2);
+            });
+        }
+        
+        function spawnFood() {
+            do {
+                snakeGame.food = {
+                    x: Math.floor(Math.random() * 20),
+                    y: Math.floor(Math.random() * 20)
+                };
+            } while (snakeGame.snake.some(s => s.x === snakeGame.food.x && s.y === snakeGame.food.y));
+        }
+        
+        function gameOver() {
+            stopSnake();
+            alert('Game Over! Score: ' + snakeGame.score);
+            resetSnake();
+        }
+        
+        function stopSnake() {
+            if (snakeGame.gameLoop) {
+                clearInterval(snakeGame.gameLoop);
+                snakeGame.gameLoop = null;
+            }
+        }
+        
+        function resetSnake() {
+            stopSnake();
+            initSnake();
+        }
+        
+        // ==================== MEMORY GAME ====================
+        let memoryGame = {
+            cards: [],
+            flippedCards: [],
+            matchedPairs: 0,
+            moves: 0,
+            canFlip: true
+        };
+        
+        function initMemory() {
+            const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
+            memoryGame.cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+            memoryGame.flippedCards = [];
+            memoryGame.matchedPairs = 0;
+            memoryGame.moves = 0;
+            memoryGame.canFlip = true;
+            
+            document.getElementById('memory-moves').textContent = '0';
+            document.getElementById('memory-pairs').textContent = '0';
+            
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
+            
+            memoryGame.cards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.index = index;
+                card.dataset.emoji = emoji;
+                card.textContent = '?';
+                card.onclick = () => flipCard(index);
+                grid.appendChild(card);
+            });
+        }
+        
+        function flipCard(index) {
+            if (!memoryGame.canFlip) return;
+            
+            const cards = document.querySelectorAll('.memory-card');
+            const card = cards[index];
+            
+            if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            if (memoryGame.flippedCards.length >= 2) return;
+            
+            card.classList.add('flipped');
+            card.textContent = card.dataset.emoji;
+            memoryGame.flippedCards.push({index, emoji: card.dataset.emoji});
+            
+            if (memoryGame.flippedCards.length === 2) {
+                memoryGame.moves++;
+                document.getElementById('memory-moves').textContent = memoryGame.moves;
+                memoryGame.canFlip = false;
+                
+                setTimeout(checkMatch, 1000);
+            }
+        }
+        
+        function checkMatch() {
+            const cards = document.querySelectorAll('.memory-card');
+            const [card1, card2] = memoryGame.flippedCards;
+            
+            if (card1.emoji === card2.emoji) {
+                cards[card1.index].classList.add('matched');
+                cards[card2.index].classList.add('matched');
+                memoryGame.matchedPairs++;
+                document.getElementById('memory-pairs').textContent = memoryGame.matchedPairs;
+                
+                if (memoryGame.matchedPairs === 8) {
+                    setTimeout(() => alert(`Congratulations! You won in ${memoryGame.moves} moves!`), 500);
+                }
+            } else {
+                cards[card1.index].classList.remove('flipped');
+                cards[card2.index].classList.remove('flipped');
+                cards[card1.index].textContent = '?';
+                cards[card2.index].textContent = '?';
+            }
+            
+            memoryGame.flippedCards = [];
+            memoryGame.canFlip = true;
+        }
+        
+        function resetMemory() {
+            initMemory();
+        }
+        
+        // ==================== 2048 GAME ====================
+        let game2048 = {
+            grid: [],
+            score: 0,
+            size: 4
+        };
+        
+        function init2048() {
+            game2048.grid = Array(4).fill().map(() => Array(4).fill(0));
+            game2048.score = 0;
+            document.getElementById('2048-score').textContent = '0';
+            addNewTile();
+            addNewTile();
+            render2048();
+            
+            document.addEventListener('keydown', handle2048Key);
+        }
+        
+        function handle2048Key(e) {
+            if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+            e.preventDefault();
+            
+            const oldGrid = JSON.stringify(game2048.grid);
+            
+            if (e.key === 'ArrowUp') moveUp();
+            else if (e.key === 'ArrowDown') moveDown();
+            else if (e.key === 'ArrowLeft') moveLeft();
+            else if (e.key === 'ArrowRight') moveRight();
+            
+            if (JSON.stringify(game2048.grid) !== oldGrid) {
+                addNewTile();
+                render2048();
+                
+                if (isGameOver2048()) {
+                    setTimeout(() => alert('Game Over! Score: ' + game2048.score), 500);
+                }
+            }
+        }
+        
+        function addNewTile() {
+            const empty = [];
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (game2048.grid[i][j] === 0) empty.push({i, j});
+                }
+            }
+            if (empty.length > 0) {
+                const {i, j} = empty[Math.floor(Math.random() * empty.length)];
+                game2048.grid[i][j] = Math.random() < 0.9 ? 2 : 4;
+            }
+        }
+        
+        function moveLeft() {
+            for (let i = 0; i < 4; i++) {
+                let row = game2048.grid[i].filter(x => x !== 0);
+                for (let j = 0; j < row.length - 1; j++) {
+                    if (row[j] === row[j + 1]) {
+                        row[j] *= 2;
+                        game2048.score += row[j];
+                        row.splice(j + 1, 1);
+                    }
+                }
+                game2048.grid[i] = [...row, ...Array(4 - row.length).fill(0)];
+            }
+            document.getElementById('2048-score').textContent = game2048.score;
+        }
+        
+        function moveRight() {
+            for (let i = 0; i < 4; i++) {
+                let row = game2048.grid[i].filter(x => x !== 0);
+                for (let j = row.length - 1; j > 0; j--) {
+                    if (row[j] === row[j - 1]) {
+                        row[j] *= 2;
+                        game2048.score += row[j];
+                        row.splice(j - 1, 1);
+                        j--;
+                    }
+                }
+                game2048.grid[i] = [...Array(4 - row.length).fill(0), ...row];
+            }
+            document.getElementById('2048-score').textContent = game2048.score;
+        }
+        
+        function moveUp() {
+            for (let j = 0; j < 4; j++) {
+                let col = game2048.grid.map(row => row[j]).filter(x => x !== 0);
+                for (let i = 0; i < col.length - 1; i++) {
+                    if (col[i] === col[i + 1]) {
+                        col[i] *= 2;
+                        game2048.score += col[i];
+                        col.splice(i + 1, 1);
+                    }
+                }
+                col = [...col, ...Array(4 - col.length).fill(0)];
+                for (let i = 0; i < 4; i++) {
+                    game2048.grid[i][j] = col[i];
+                }
+            }
+            document.getElementById('2048-score').textContent = game2048.score;
+        }
+        
+        function moveDown() {
+            for (let j = 0; j < 4; j++) {
+                let col = game2048.grid.map(row => row[j]).filter(x => x !== 0);
+                for (let i = col.length - 1; i > 0; i--) {
+                    if (col[i] === col[i - 1]) {
+                        col[i] *= 2;
+                        game2048.score += col[i];
+                        col.splice(i - 1, 1);
+                        i--;
+                    }
+                }
+                col = [...Array(4 - col.length).fill(0), ...col];
+                for (let i = 0; i < 4; i++) {
+                    game2048.grid[i][j] = col[i];
+                }
+            }
+            document.getElementById('2048-score').textContent = game2048.score;
+        }
+        
+        function render2048() {
+            const grid = document.getElementById('grid-2048');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile-2048';
+                    const value = game2048.grid[i][j];
+                    if (value > 0) {
+                        tile.textContent = value;
+                        tile.dataset.value = value;
+                    }
+                    grid.appendChild(tile);
+                }
+            }
+        }
+        
+        function isGameOver2048() {
+            // Check for empty cells
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (game2048.grid[i][j] === 0) return false;
+                }
+            }
+            
+            // Check for possible merges
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (j < 3 && game2048.grid[i][j] === game2048.grid[i][j + 1]) return false;
+                    if (i < 3 && game2048.grid[i][j] === game2048.grid[i + 1][j]) return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        function reset2048() {
+            init2048();
+        }
+        
+        // ==================== TIC-TAC-TOE GAME ====================
+        let tttGame = {
+            board: Array(9).fill(null),
+            currentPlayer: 'X',
+            gameActive: true
+        };
+        
+        function initTicTacToe() {
+            tttGame.board = Array(9).fill(null);
+            tttGame.currentPlayer = 'X';
+            tttGame.gameActive = true;
+            
+            const grid = document.getElementById('ttt-grid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'ttt-cell';
+                cell.dataset.index = i;
+                cell.onclick = () => tttMove(i);
+                grid.appendChild(cell);
+            }
+            
+            document.getElementById('ttt-player').textContent = 'X';
+        }
+        
+        function tttMove(index) {
+            if (!tttGame.gameActive || tttGame.board[index]) return;
+            
+            tttGame.board[index] = tttGame.currentPlayer;
+            updateTttDisplay();
+            
+            if (checkTttWinner()) {
+                setTimeout(() => {
+                    alert(tttGame.currentPlayer + ' wins!');
+                    resetTicTacToe();
+                }, 200);
+                tttGame.gameActive = false;
+                return;
+            }
+            
+            if (tttGame.board.every(cell => cell !== null)) {
+                setTimeout(() => {
+                    alert('Draw!');
+                    resetTicTacToe();
+                }, 200);
+                tttGame.gameActive = false;
+                return;
+            }
+            
+            tttGame.currentPlayer = tttGame.currentPlayer === 'X' ? 'O' : 'X';
+            document.getElementById('ttt-player').textContent = tttGame.currentPlayer;
+            
+            // Simple AI for O
+            if (tttGame.currentPlayer === 'O' && tttGame.gameActive) {
+                setTimeout(() => {
+                    const emptySpots = tttGame.board.map((val, idx) => val === null ? idx : null).filter(val => val !== null);
+                    if (emptySpots.length > 0) {
+                        const aiMove = emptySpots[Math.floor(Math.random() * emptySpots.length)];
+                        tttMove(aiMove);
+                    }
+                }, 400);
+            }
+        }
+        
+        function checkTttWinner() {
+            const lines = [
+                [0,1,2], [3,4,5], [6,7,8], // rows
+                [0,3,6], [1,4,7], [2,5,8], // cols
+                [0,4,8], [2,4,6]           // diagonals
+            ];
+            return lines.some(([a,b,c]) => 
+                tttGame.board[a] && tttGame.board[a] === tttGame.board[b] && tttGame.board[a] === tttGame.board[c]
+            );
+        }
+        
+        function updateTttDisplay() {
+            const cells = document.querySelectorAll('.ttt-cell');
+            cells.forEach((cell, i) => {
+                cell.textContent = tttGame.board[i] || '';
+                cell.className = 'ttt-cell' + (tttGame.board[i] ? ' filled' : '');
+            });
+        }
+        
+        function resetTicTacToe() {
+            initTicTacToe();
+        }
+        
+        // ==================== SIMON SAYS GAME ====================
+        let simonGame = {
+            sequence: [],
+            playerSequence: [],
+            level: 0,
+            highScore: parseInt(localStorage.getItem('simonHigh')) || 0,
+            active: false,
+            colors: ['red', 'blue', 'green', 'yellow']
+        };
+        
+        function startSimon() {
+            simonGame.sequence = [];
+            simonGame.playerSequence = [];
+            simonGame.level = 0;
+            simonGame.active = true;
+            document.getElementById('simon-start').disabled = true;
+            document.getElementById('simon-high').textContent = simonGame.highScore;
+            nextSimonLevel();
+        }
+        
+        function nextSimonLevel() {
+            simonGame.level++;
+            simonGame.playerSequence = [];
+            simonGame.sequence.push(Math.floor(Math.random() * 4));
+            document.getElementById('simon-level').textContent = simonGame.level;
+            playSimonSequence();
+        }
+        
+        function playSimonSequence() {
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i >= simonGame.sequence.length) {
+                    clearInterval(interval);
+                    return;
+                }
+                lightUpSimon(simonGame.sequence[i]);
+                i++;
+            }, 700);
+        }
+        
+        function lightUpSimon(colorIndex) {
+            const btn = document.querySelectorAll('.simon-btn')[colorIndex];
+            btn.classList.add('active');
+            setTimeout(() => btn.classList.remove('active'), 400);
+        }
+        
+        function simonClick(colorIndex) {
+            if (!simonGame.active) return;
+            
+            lightUpSimon(colorIndex);
+            simonGame.playerSequence.push(colorIndex);
+            
+            const currentIndex = simonGame.playerSequence.length - 1;
+            if (simonGame.playerSequence[currentIndex] !== simonGame.sequence[currentIndex]) {
+                alert('Wrong! Final Level: ' + simonGame.level);
+                if (simonGame.level > simonGame.highScore) {
+                    simonGame.highScore = simonGame.level;
+                    localStorage.setItem('simonHigh', simonGame.highScore);
+                    document.getElementById('simon-high').textContent = simonGame.highScore;
+                }
+                resetSimon();
+                return;
+            }
+            
+            if (simonGame.playerSequence.length === simonGame.sequence.length) {
+                setTimeout(() => nextSimonLevel(), 1000);
+            }
+        }
+        
+        function resetSimon() {
+            simonGame.active = false;
+            simonGame.sequence = [];
+            simonGame.playerSequence = [];
+            simonGame.level = 0;
+            document.getElementById('simon-level').textContent = simonGame.level;
+            document.getElementById('simon-start').disabled = false;
+        }
+        
+        // ==================== BREAKOUT GAME ====================
+        let breakoutGame = {
+            canvas: null,
+            ctx: null,
+            ball: {x: 240, y: 300, dx: 3, dy: -3, radius: 8},
+            paddle: {x: 200, y: 370, width: 80, height: 10, speed: 7},
+            bricks: [],
+            score: 0,
+            lives: 3,
+            animationId: null
+        };
+        
+        function initBreakout() {
+            breakoutGame.canvas = document.getElementById('breakout-canvas');
+            breakoutGame.ctx = breakoutGame.canvas.getContext('2d');
+            breakoutGame.score = 0;
+            breakoutGame.lives = 3;
+            breakoutGame.ball = {x: 240, y: 300, dx: 3, dy: -3, radius: 8};
+            breakoutGame.paddle = {x: 200, y: 370, width: 80, height: 10, speed: 7};
+            
+            // Create bricks
+            breakoutGame.bricks = [];
+            const rows = 5, cols = 8;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    breakoutGame.bricks.push({
+                        x: c * 60 + 10,
+                        y: r * 20 + 30,
+                        width: 55,
+                        height: 15,
+                        alive: true
+                    });
+                }
+            }
+            
+            updateBreakoutDisplay();
+            
+            breakoutGame.canvas.addEventListener('mousemove', (e) => {
+                const rect = breakoutGame.canvas.getBoundingClientRect();
+                breakoutGame.paddle.x = e.clientX - rect.left - breakoutGame.paddle.width / 2;
+                breakoutGame.paddle.x = Math.max(0, Math.min(breakoutGame.canvas.width - breakoutGame.paddle.width, breakoutGame.paddle.x));
+            });
+            
+            document.addEventListener('keydown', (e) => {
+                if (document.getElementById('breakout-modal').classList.contains('active')) {
+                    if (e.key === 'ArrowLeft') breakoutGame.paddle.x = Math.max(0, breakoutGame.paddle.x - breakoutGame.paddle.speed);
+                    if (e.key === 'ArrowRight') breakoutGame.paddle.x = Math.min(breakoutGame.canvas.width - breakoutGame.paddle.width, breakoutGame.paddle.x + breakoutGame.paddle.speed);
+                }
+            });
+            
+            breakoutGameLoop();
+        }
+        
+        function breakoutGameLoop() {
+            const ctx = breakoutGame.ctx;
+            ctx.clearRect(0, 0, breakoutGame.canvas.width, breakoutGame.canvas.height);
+            
+            // Draw bricks
+            breakoutGame.bricks.forEach(brick => {
+                if (brick.alive) {
+                    ctx.fillStyle = '#00d4ff';
+                    ctx.fillRect(brick.x, brick.y, brick.width, brick.height);
+                    ctx.strokeStyle = '#0088cc';
+                    ctx.strokeRect(brick.x, brick.y, brick.width, brick.height);
+                }
+            });
+            
+            // Draw ball
+            ctx.beginPath();
+            ctx.arc(breakoutGame.ball.x, breakoutGame.ball.y, breakoutGame.ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fill();
+            ctx.closePath();
+            
+            // Draw paddle
+            ctx.fillStyle = '#00ff88';
+            ctx.fillRect(breakoutGame.paddle.x, breakoutGame.paddle.y, breakoutGame.paddle.width, breakoutGame.paddle.height);
+            
+            // Move ball
+            breakoutGame.ball.x += breakoutGame.ball.dx;
+            breakoutGame.ball.y += breakoutGame.ball.dy;
+            
+            // Wall collision
+            if (breakoutGame.ball.x + breakoutGame.ball.radius > breakoutGame.canvas.width || breakoutGame.ball.x - breakoutGame.ball.radius < 0) {
+                breakoutGame.ball.dx = -breakoutGame.ball.dx;
+            }
+            if (breakoutGame.ball.y - breakoutGame.ball.radius < 0) {
+                breakoutGame.ball.dy = -breakoutGame.ball.dy;
+            }
+            
+            // Paddle collision
+            if (breakoutGame.ball.y + breakoutGame.ball.radius > breakoutGame.paddle.y && 
+                breakoutGame.ball.x > breakoutGame.paddle.x && 
+                breakoutGame.ball.x < breakoutGame.paddle.x + breakoutGame.paddle.width) {
+                breakoutGame.ball.dy = -breakoutGame.ball.dy;
+            }
+            
+            // Brick collision
+            breakoutGame.bricks.forEach(brick => {
+                if (brick.alive && 
+                    breakoutGame.ball.x > brick.x && 
+                    breakoutGame.ball.x < brick.x + brick.width &&
+                    breakoutGame.ball.y > brick.y && 
+                    breakoutGame.ball.y < brick.y + brick.height) {
+                    breakoutGame.ball.dy = -breakoutGame.ball.dy;
+                    brick.alive = false;
+                    breakoutGame.score += 10;
+                    updateBreakoutDisplay();
+                }
+            });
+            
+            // Bottom collision
+            if (breakoutGame.ball.y + breakoutGame.ball.radius > breakoutGame.canvas.height) {
+                breakoutGame.lives--;
+                updateBreakoutDisplay();
+                if (breakoutGame.lives <= 0) {
+                    alert('Game Over! Score: ' + breakoutGame.score);
+                    resetBreakout();
+                    return;
+                }
+                breakoutGame.ball.x = 240;
+                breakoutGame.ball.y = 300;
+                breakoutGame.ball.dx = 3;
+                breakoutGame.ball.dy = -3;
+            }
+            
+            // Win condition
+            if (breakoutGame.bricks.every(brick => !brick.alive)) {
+                alert('You Win! Score: ' + breakoutGame.score);
+                resetBreakout();
+                return;
+            }
+            
+            breakoutGame.animationId = requestAnimationFrame(breakoutGameLoop);
+        }
+        
+        function updateBreakoutDisplay() {
+            document.getElementById('breakout-score').textContent = breakoutGame.score;
+            document.getElementById('breakout-lives').textContent = breakoutGame.lives;
+        }
+        
+        function resetBreakout() {
+            if (breakoutGame.animationId) cancelAnimationFrame(breakoutGame.animationId);
+            initBreakout();
+        }
+        
+        // ==================== WHACK-A-MOLE GAME ====================
+        let moleGame = {
+            score: 0,
+            time: 30,
+            interval: null,
+            timer: null,
+            active: false,
+            activeMole: null,
+            moleTimeout: null,
+            holes: []
+        };
+        
+        function initMole() {
+            const grid = document.getElementById('mole-grid');
+            grid.innerHTML = '';
+            moleGame.holes = [];
+            
+            for (let i = 0; i < 9; i++) {
+                const hole = document.createElement('div');
+                hole.className = 'mole-hole';
+                hole.dataset.index = i;
+                hole.addEventListener('click', () => whackMole(i));
+                grid.appendChild(hole);
+                moleGame.holes.push(hole);
+            }
+            
+            document.getElementById('mole-score').textContent = '0';
+            document.getElementById('mole-time').textContent = '30';
+        }
+        
+        function startMole() {
+            moleGame.score = 0;
+            moleGame.time = 30;
+            moleGame.active = true;
+            moleGame.activeMole = null;
+            
+            document.getElementById('mole-score').textContent = moleGame.score;
+            document.getElementById('mole-time').textContent = moleGame.time;
+            document.getElementById('mole-start').disabled = true;
+            
+            // Clear all holes
+            moleGame.holes.forEach(h => {
+                h.classList.remove('active', 'whacked');
+            });
+            
+            // Start timer
+            moleGame.timer = setInterval(() => {
+                moleGame.time--;
+                document.getElementById('mole-time').textContent = moleGame.time;
+                
+                if (moleGame.time <= 0) {
+                    endMoleGame();
+                }
+            }, 1000);
+            
+            // Start spawning moles
+            popupMole();
+        }
+        
+        function popupMole() {
+            if (!moleGame.active) return;
+            
+            // Hide current mole
+            if (moleGame.activeMole !== null) {
+                moleGame.holes[moleGame.activeMole].classList.remove('active');
+            }
+            
+            // Random delay before next mole (400-1200ms)
+            const delay = 400 + Math.random() * 800;
+            
+            moleGame.interval = setTimeout(() => {
+                if (!moleGame.active) return;
+                
+                // Show new mole at random position
+                let randomHole;
+                do {
+                    randomHole = Math.floor(Math.random() * 9);
+                } while (randomHole === moleGame.activeMole && moleGame.holes.length > 1);
+                
+                moleGame.activeMole = randomHole;
+                moleGame.holes[randomHole].classList.remove('whacked');
+                moleGame.holes[randomHole].classList.add('active');
+                
+                // Hide mole after 600-1000ms
+                const showTime = 600 + Math.random() * 400;
+                moleGame.moleTimeout = setTimeout(() => {
+                    if (moleGame.holes[randomHole].classList.contains('active')) {
+                        moleGame.holes[randomHole].classList.remove('active');
+                        moleGame.activeMole = null;
+                    }
+                    popupMole();
+                }, showTime);
+            }, delay);
+        }
+        
+        function whackMole(index) {
+            if (!moleGame.active) return;
+            
+            const hole = moleGame.holes[index];
+            
+            if (hole.classList.contains('active')) {
+                // Hit!
+                moleGame.score++;
+                document.getElementById('mole-score').textContent = moleGame.score;
+                
+                hole.classList.remove('active');
+                hole.classList.add('whacked');
+                
+                // Remove whacked effect after animation
+                setTimeout(() => {
+                    hole.classList.remove('whacked');
+                }, 300);
+                
+                if (index === moleGame.activeMole) {
+                    moleGame.activeMole = null;
+                }
+                
+                // Clear the mole timeout and spawn next one sooner
+                clearTimeout(moleGame.moleTimeout);
+                clearTimeout(moleGame.interval);
+                setTimeout(() => popupMole(), 200);
+            }
+        }
+        
+        function endMoleGame() {
+            moleGame.active = false;
+            clearInterval(moleGame.timer);
+            clearTimeout(moleGame.interval);
+            clearTimeout(moleGame.moleTimeout);
+            
+            moleGame.holes.forEach(h => {
+                h.classList.remove('active', 'whacked');
+            });
+            
+            setTimeout(() => {
+                alert('Time\'s up! Final Score: ' + moleGame.score);
+                document.getElementById('mole-start').disabled = false;
+            }, 100);
+        }
+        
+        // ==================== REACTION TIME GAME ====================
+        let reactionGame = {
+            timeout: null,
+            startTime: 0,
+            bestTime: Infinity,
+            state: 'waiting' // waiting, ready, go, tooEarly
+        };
+        
+        function reactionClick() {
+            const box = document.getElementById('reaction-box');
+            
+            if (reactionGame.state === 'waiting') {
+                reactionGame.state = 'ready';
+                box.className = 'reaction-box ready';
+                box.textContent = 'Wait for green...';
+                const delay = 2000 + Math.random() * 3000;
+                reactionGame.timeout = setTimeout(() => {
+                    reactionGame.state = 'go';
+                    box.className = 'reaction-box go';
+                    box.textContent = 'CLICK NOW!';
+                    reactionGame.startTime = Date.now();
+                }, delay);
+            } else if (reactionGame.state === 'ready') {
+                clearTimeout(reactionGame.timeout);
+                reactionGame.state = 'tooEarly';
+                box.className = 'reaction-box tooEarly';
+                box.textContent = 'Too early! Click to try again';
+                setTimeout(() => {
+                    reactionGame.state = 'waiting';
+                    box.className = 'reaction-box waiting';
+                    box.textContent = 'Click to Start';
+                }, 1500);
+            } else if (reactionGame.state === 'go') {
+                const reactionTime = Date.now() - reactionGame.startTime;
+                if (reactionTime < reactionGame.bestTime) {
+                    reactionGame.bestTime = reactionTime;
+                    document.getElementById('reaction-best').textContent = reactionGame.bestTime;
+                }
+                box.className = 'reaction-box waiting';
+                box.textContent = reactionTime + ' ms! Click to try again';
+                reactionGame.state = 'waiting';
+            }
+        }
+        
+        function resetReaction() {
+            if (reactionGame.timeout) clearTimeout(reactionGame.timeout);
+            reactionGame.state = 'waiting';
+            const box = document.getElementById('reaction-box');
+            box.className = 'reaction-box waiting';
+            box.textContent = 'Click to Start';
+        }
+        
+        // ==================== TYPING SPEED TEST ====================
+        const typingSampleTexts = [
+            "The quick brown fox jumps over the lazy dog near the riverbank.",
+            "Programming is the art of telling another human what one wants the computer to do.",
+            "Practice makes perfect when it comes to improving your typing speed and accuracy.",
+            "The best time to plant a tree was twenty years ago. The second best time is now.",
+            "Success is not final, failure is not fatal: it is the courage to continue that counts."
+        ];
+        
+        let typingGame = {
+            text: '',
+            startTime: 0,
+            timer: null,
+            active: false
+        };
+        
+        function initTyping() {
+            const randomText = typingSampleTexts[Math.floor(Math.random() * typingSampleTexts.length)];
+            typingGame.text = randomText;
+            const textDisplay = document.getElementById('typing-text');
+            textDisplay.innerHTML = randomText.split('').map(char => 
+                `<span class="char">${char}</span>`
+            ).join('');
+            
+            document.getElementById('typing-input').value = '';
+            document.getElementById('typing-input').disabled = true;
+            document.getElementById('typing-wpm').textContent = '0';
+            document.getElementById('typing-accuracy').textContent = '100';
+            document.getElementById('typing-time').textContent = '0';
+        }
+        
+        function startTyping() {
+            typingGame.active = true;
+            typingGame.startTime = Date.now();
+            document.getElementById('typing-input').disabled = false;
+            document.getElementById('typing-input').focus();
+            document.getElementById('typing-start').disabled = true;
+            
+            typingGame.timer = setInterval(updateTypingStats, 100);
+            
+            const input = document.getElementById('typing-input');
+            input.oninput = () => {
+                const typed = input.value;
+                const chars = document.querySelectorAll('.char');
+                let correct = 0;
+                
+                chars.forEach((char, i) => {
+                    if (i < typed.length) {
+                        if (typed[i] === typingGame.text[i]) {
+                            char.className = 'char correct';
+                            correct++;
+                        } else {
+                            char.className = 'char incorrect';
+                        }
+                    } else {
+                        char.className = 'char';
+                    }
+                });
+                
+                if (typed.length === typingGame.text.length) {
+                    clearInterval(typingGame.timer);
+                    typingGame.active = false;
+                    document.getElementById('typing-start').disabled = false;
+                    const accuracy = Math.round((correct / typingGame.text.length) * 100);
+                    alert(`Complete! WPM: ${document.getElementById('typing-wpm').textContent}, Accuracy: ${accuracy}%`);
+                }
+                
+                updateTypingStats();
+            };
+        }
+        
+        function updateTypingStats() {
+            if (!typingGame.active) return;
+            
+            const elapsed = (Date.now() - typingGame.startTime) / 1000;
+            const typed = document.getElementById('typing-input').value;
+            const words = typed.trim().split(/\s+/).length;
+            const wpm = Math.round((words / elapsed) * 60);
+            
+            let correct = 0;
+            for (let i = 0; i < typed.length; i++) {
+                if (typed[i] === typingGame.text[i]) correct++;
+            }
+            const accuracy = typed.length > 0 ? Math.round((correct / typed.length) * 100) : 100;
+            
+            document.getElementById('typing-wpm').textContent = wpm || 0;
+            document.getElementById('typing-accuracy').textContent = accuracy;
+            document.getElementById('typing-time').textContent = elapsed.toFixed(1);
+        }
+        
+        function resetTyping() {
+            if (typingGame.timer) clearInterval(typingGame.timer);
+            typingGame.active = false;
+            document.getElementById('typing-start').disabled = false;
+            initTyping();
+        }
+    </script>
+</body>
+</html>

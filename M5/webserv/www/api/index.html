@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - WebServ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        h1 { color: #1f2937; margin-bottom: 20px; }
+        .endpoint {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2563eb;
+        }
+        .method {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            font-size: 0.85em;
+            margin-right: 10px;
+        }
+        .get { background: #10b981; }
+        .post { background: #f59e0b; }
+        .delete { background: #ef4444; }
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            color: #1f2937;
+        }
+        .description { color: #6b7280; margin-top: 10px; }
+        pre {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔌 WebServ API Documentation</h1>
+            <p style="color: #6b7280;">RESTful API endpoints for WebServ</p>
+            
+            <div style="margin-top: 30px;">
+                <div class="endpoint">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/status</span>
+                    <p class="description">Get server status and statistics</p>
+                    <pre>curl http://localhost:8082/api/status</pre>
+                </div>
+                
+                <div class="endpoint">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/files</span>
+                    <p class="description">List all uploaded files</p>
+                    <pre>curl http://localhost:8082/api/files</pre>
+                </div>
+                
+                <div class="endpoint">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/api/upload</span>
+                    <p class="description">Upload a file via API</p>
+                    <pre>curl -X POST -F "file=@test.txt" http://localhost:8082/api/upload</pre>
+                </div>
+                
+                <div class="endpoint">
+                    <span class="method delete">DELETE</span>
+                    <span class="endpoint-path">/api/files/:filename</span>
+                    <p class="description">Delete a specific file</p>
+                    <pre>curl -X DELETE http://localhost:8082/api/files/test.txt</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+⚠️ Important Note on assets/models
+In Vite/Vue projects, static 3D files (like .glb, .fbx, .obj) usually need to live in the public/ folder at the root of your project, not inside src/.
+
+src/game/assets/textures: ✅ Good for images you import (e.g., UI icons, textures).
+
+public/models: ✅ Good for 3D files loaded by URL string (e.g., loader.load('/models/rock.fbx')).
+
+If you put .fbx files inside src/, the pathing can get complicated because the bundler changes the filenames. I recommend keeping your 3D models in public/game/models/ instead.

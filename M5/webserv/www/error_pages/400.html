@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>400 Bad Request</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .error-container {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 60px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: containerWobble 4s ease-in-out infinite;
+            position: relative;
+        }
+        
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #ffeaa7, #fdcb6e, #ffeaa7);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 2.5s ease-in-out infinite, confused 3s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        .error-title {
+            font-size: 32px;
+            margin: 20px 0;
+            font-weight: 300;
+            letter-spacing: 2px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+        
+        .error-message {
+            font-size: 18px;
+            margin: 25px 0;
+            opacity: 0.9;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.7s both;
+        }
+        
+        .confused-emoji {
+            font-size: 60px;
+            margin: 20px 0;
+            animation: confusedSpin 4s ease-in-out infinite, fadeInUp 1s ease-out 0.3s both;
+        }
+        
+        .home-link {
+            display: inline-block;
+            color: #ffeaa7;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 15px 30px;
+            border: 2px solid #ffeaa7;
+            border-radius: 30px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out 0.9s both;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .home-link:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,234,167,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .home-link:hover:before {
+            left: 100%;
+        }
+        
+        .home-link:hover {
+            background: #ffeaa7;
+            color: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,234,167,0.4);
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 35s infinite linear;
+        }
+        
+        .shape:nth-child(1) {
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 30s;
+        }
+        
+        .shape:nth-child(2) {
+            left: 35%;
+            animation-delay: 7s;
+            animation-duration: 25s;
+        }
+        
+        .shape:nth-child(3) {
+            left: 70%;
+            animation-delay: 14s;
+            animation-duration: 32s;
+        }
+        
+        .shape:nth-child(4) {
+            left: 90%;
+            animation-delay: 21s;
+            animation-duration: 27s;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            opacity: 0.7;
+            animation: fadeInUp 1s ease-out 1.1s both;
+        }
+        
+        @keyframes containerWobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(1deg); }
+            75% { transform: rotate(-1deg); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes confused {
+            0%, 100% { transform: skew(0deg); }
+            33% { transform: skew(2deg); }
+            66% { transform: skew(-2deg); }
+        }
+        
+        @keyframes confusedSpin {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(15deg); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 40px 20px;
+                margin: 20px;
+            }
+            
+            .error-code {
+                font-size: 80px;
+            }
+            
+            .error-title {
+                font-size: 24px;
+            }
+            
+            .error-message {
+                font-size: 16px;
+            }
+            
+            .confused-emoji {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape">❓</div>
+        <div class="shape">🤔</div>
+        <div class="shape">❌</div>
+        <div class="shape">⚠️</div>
+    </div>
+    
+    <div class="error-container">
+        <div class="confused-emoji">🤔</div>
+        <div class="error-code">400</div>
+        <h1 class="error-title">Bad Request</h1>
+        <p class="error-message">
+            Your request couldn't be understood by the server.<br>
+            Please check your request and try again.
+        </p>
+        <a href="/" class="home-link">
+            ← Start Fresh
+        </a>
+        <div class="footer">
+            <small>WebServ/1.0 • Powered by C++</small>
+        </div>
+    </div>
+</body>
+</html>

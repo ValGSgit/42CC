@@ -1,0 +1,177 @@
+# ============================================================================
+# Siege URL List for WebServ - Comprehensive Testing
+# ============================================================================
+# Format: URL [METHOD] [POST data]
+# This file tests all aspects of the webserv configuration including:
+# - Status codes (200, 301, 404, 405, etc.)
+# - CGI script execution
+# - Multiple HTTP methods
+# - Different content types
+# - Error handling
+# ============================================================================
+
+# ==================== 200 OK - SUCCESSFUL REQUESTS ====================
+
+# Static HTML Pages (should return 200 OK)
+http://localhost:8080/
+http://localhost:8080/index.html
+http://localhost:8080/test.html
+http://localhost:8080/demo.html
+http://localhost:8080/cgi-demo.html
+http://localhost:8080/upload.html
+http://localhost:8080/status.html
+http://localhost:8080/games.html
+http://localhost:8080/cookies-demo.html
+http://localhost:8080/session-demo.html
+http://localhost:8080/redirect-demo.html
+
+# Directory Listing - autoindex on (should return 200 OK with HTML listing)
+http://localhost:8080/browse/
+http://localhost:8080/browse/sample1.txt
+http://localhost:8080/browse/sample2.txt
+http://localhost:8080/browse/README.md
+
+# Documentation (should return 200 OK)
+http://localhost:8080/docs/
+http://localhost:8080/docs/documentation.html
+
+# Error Pages (direct access should return 200 OK)
+http://localhost:8080/error_pages/400.html
+http://localhost:8080/error_pages/403.html
+http://localhost:8080/error_pages/404.html
+http://localhost:8080/error_pages/405.html
+http://localhost:8080/error_pages/413.html
+http://localhost:8080/error_pages/500.html
+
+# ==================== 200 OK - CGI SCRIPT EXECUTION ====================
+
+# Python CGI Scripts (should return 200 OK with CGI output)
+http://localhost:8080/cgi-bin/test.py
+http://localhost:8080/cgi-bin/test.py?name=John&age=30
+http://localhost:8080/cgi-bin/test.py?query=value&test=123
+
+# Shell CGI Scripts (should return 200 OK)
+http://localhost:8080/cgi-bin/test.sh
+http://localhost:8080/cgi-bin/test.sh?param=shell_test
+http://localhost:8080/cgi-bin/test.sh?key=value&foo=bar
+
+# PHP CGI (if available, should return 200 OK)
+http://localhost:8080/cgi-bin/info.php
+http://localhost:8080/cgi-bin/test.php
+
+# Perl CGI (if available, should return 200 OK)
+http://localhost:8080/cgi-bin/test.pl
+http://localhost:8080/cgi-bin/test.pl?key=value
+
+# Ruby CGI (if available, should return 200 OK)
+http://localhost:8080/cgi-bin/test.rb
+http://localhost:8080/cgi-bin/test.rb?name=Ruby
+
+# ==================== 200 OK - POST REQUESTS TO CGI ====================
+
+# POST to Python CGI (should return 200 OK with POST data processed)
+http://localhost:8080/cgi-bin/test.py POST name=TestUser&email=test@example.com
+http://localhost:8080/cgi-bin/test.py POST data=testdata&action=process
+http://localhost:8080/cgi-bin/test.py POST username=admin&password=secret123
+http://localhost:8080/cgi-bin/advanced.py POST input=complex&type=json&value=42
+
+# POST to Shell CGI (should return 200 OK)
+http://localhost:8080/cgi-bin/test.sh POST data=shell_test&iteration=1
+http://localhost:8080/cgi-bin/test.sh POST action=test&mode=post
+
+# POST to Ruby CGI (should return 200 OK)
+http://localhost:8080/cgi-bin/test.rb POST name=Ruby&version=3&test=post
+
+# ==================== 200 OK - POST TO UPLOAD ====================
+
+# POST to upload endpoint (should return 200 OK)
+http://localhost:8080/upload POST filename=test.txt&content=HelloWorld
+http://localhost:8080/upload POST file=testdata&name=upload_test.txt
+http://localhost:8080/upload POST content=TestContent&filename=data.txt
+
+# ==================== 301 MOVED PERMANENTLY - REDIRECTS ====================
+
+# Redirect endpoints (should return 301 with Location header)
+http://localhost:8080/redirect
+http://localhost:8080/old-page
+http://localhost:8080/github
+
+# ==================== 404 NOT FOUND - MISSING RESOURCES ====================
+
+# Non-existent files (should return 404 with custom error page)
+http://localhost:8080/nonexistent.html
+http://localhost:8080/missing-page.html
+http://localhost:8080/does-not-exist.txt
+http://localhost:8080/fake/path/file.html
+http://localhost:8080/notfound
+http://localhost:8080/invalid-resource
+
+# Non-existent CGI scripts (should return 404)
+http://localhost:8080/cgi-bin/nonexistent.py
+http://localhost:8080/cgi-bin/missing.sh
+
+# ==================== 405 METHOD NOT ALLOWED - INVALID METHODS ====================
+
+# POST to browse (GET only allowed, should return 405)
+http://localhost:8080/browse/ POST should_fail=yes
+
+# DELETE to docs (GET only allowed, should return 405)
+http://localhost:8080/docs/ DELETE
+
+# POST to assets (if GET only, should return 405)
+http://localhost:8080/assets POST not_allowed=true
+
+# ==================== API ENDPOINTS (PORT 8080) ====================
+
+# API GET requests (should return 200 OK)
+http://localhost:8080/api/
+http://localhost:8080/api/index.html
+
+# API POST requests (should return 200 OK)
+http://localhost:8080/api POST data={"key":"value"}
+http://localhost:8080/api POST user=testuser&action=create
+
+# ==================== PORT 8081 - DEVELOPMENT SERVER ====================
+
+# Root (should return 200 OK)
+http://localhost:8081/
+http://localhost:8081/index.html
+
+# Test area (should return 200 OK)
+http://localhost:8081/test
+http://localhost:8081/test/
+http://localhost:8081/test POST test=data&env=development
+
+# ==================== PORT 8082 - API SERVER ====================
+
+# API root (should return 200 OK)
+http://localhost:8082/
+
+# API v1 endpoints (should return 200 OK)
+http://localhost:8082/v1
+http://localhost:8082/v1/
+http://localhost:8082/v1 POST api_key=test&request=data
+
+# API CGI (should return 200 OK)
+http://localhost:8082/cgi/test.py
+http://localhost:8082/cgi/test.py POST api_data=json&format=response
+http://localhost:8082/cgi/advanced.py
+
+# ==================== STRESS TEST MIX ====================
+
+# Balanced mix of all request types for load testing
+http://localhost:8080/
+http://localhost:8080/index.html
+http://localhost:8080/cgi-bin/test.py
+http://localhost:8080/cgi-bin/test.py?query=stress
+http://localhost:8080/cgi-bin/test.sh
+http://localhost:8080/browse/
+http://localhost:8080/docs/
+http://localhost:8080/games.html
+http://localhost:8080/redirect
+http://localhost:8080/nonexistent.html
+http://localhost:8080/cgi-bin/test.py POST load=test&iteration=1
+http://localhost:8080/upload POST file=stress_test_data
+http://localhost:8081/
+http://localhost:8082/
+http://localhost:8082/cgi/test.py

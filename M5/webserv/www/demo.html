@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Content Demo - WebServ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        h1 { color: #1f2937; margin-bottom: 20px; }
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .demo-card {
+            background: #f9fafb;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.2s;
+            border: 2px solid #e5e7eb;
+        }
+        .demo-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+        }
+        .demo-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        .demo-card h3 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .demo-card p {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        .mime-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .mime-table th, .mime-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .mime-table th {
+            background: #f3f4f6;
+            color: #374151;
+            font-weight: 600;
+        }
+        .test-section {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+        
+        <div class="card">
+            <h1>📁 Static Content Demo</h1>
+            <p>Explore various static file types served by WebServ</p>
+            
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <div class="demo-icon">📄</div>
+                    <h3>HTML Pages</h3>
+                    <p>Standard web pages with rich content</p>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-icon">🎨</div>
+                    <h3>CSS Stylesheets</h3>
+                    <p>Styling and layout definitions</p>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-icon">⚡</div>
+                    <h3>JavaScript</h3>
+                    <p>Client-side scripts and interactivity</p>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-icon">🖼️</div>
+                    <h3>Images</h3>
+                    <p>JPEG, PNG, GIF, SVG support</p>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-icon">📝</div>
+                    <h3>Text Files</h3>
+                    <p>Plain text documents</p>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-icon">📦</div>
+                    <h3>Downloads</h3>
+                    <p>Binary files and archives</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 style="color: #1f2937; margin-bottom: 15px;">🔍 MIME Type Support</h2>
+            <p>WebServ correctly identifies and serves files with appropriate Content-Type headers:</p>
+            
+            <table class="mime-table">
+                <thead>
+                    <tr>
+                        <th>Extension</th>
+                        <th>MIME Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>.html</td>
+                        <td>text/html</td>
+                        <td>HTML documents</td>
+                    </tr>
+                    <tr>
+                        <td>.css</td>
+                        <td>text/css</td>
+                        <td>Stylesheets</td>
+                    </tr>
+                    <tr>
+                        <td>.js</td>
+                        <td>application/javascript</td>
+                        <td>JavaScript files</td>
+                    </tr>
+                    <tr>
+                        <td>.jpg/.jpeg</td>
+                        <td>image/jpeg</td>
+                        <td>JPEG images</td>
+                    </tr>
+                    <tr>
+                        <td>.png</td>
+                        <td>image/png</td>
+                        <td>PNG images</td>
+                    </tr>
+                    <tr>
+                        <td>.txt</td>
+                        <td>text/plain</td>
+                        <td>Plain text</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="card">
+            <div class="test-section">
+                <h3 style="color: #92400e; margin-bottom: 10px;">🧪 Test Static File Serving</h3>
+                <p style="color: #78350f;">Try accessing these example files:</p>
+                <ul style="margin-top: 10px; margin-left: 20px; color: #78350f;">
+                    <li><a href="/uploads/dog.jpeg" target="_blank">Image: /uploads/dog.jpeg</a></li>
+                    <li><a href="/uploads/test.txt" target="_blank">Text: /uploads/test.txt</a></li>
+                    <li><a href="/index.html" target="_blank">HTML: /index.html</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

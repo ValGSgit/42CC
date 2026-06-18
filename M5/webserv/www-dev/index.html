@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebServ HTTP Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 3px solid #007acc;
+            padding-bottom: 10px;
+        }
+        .feature {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #007acc;
+            border-radius: 5px;
+        }
+        .feature h3 {
+            margin-top: 0;
+            color: #007acc;
+        }
+        .upload-form {
+            background-color: #e8f4f8;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .test-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .test-links a {
+            display: block;
+            padding: 10px;
+            background-color: #007acc;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        .test-links a:hover {
+            background-color: #005a99;
+        }
+        .code {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 DEVVVVVVVVVVVVVVVVVVV WebServ HTTP Server</h1>
+        
+        <p>Welcome to WebServ, a complete HTTP server implementation built in C++98!</p>
+        
+        <div class="feature">
+            <h3>📋 Features</h3>
+            <ul>
+                <li>Non-blocking I/O with poll()</li>
+                <li>Multiple simultaneous connections</li>
+                <li>GET, POST, and DELETE methods</li>
+                <li>Static file serving</li>
+                <li>Directory listing</li>
+                <li>File uploads</li>
+                <li>CGI script execution</li>
+                <li>NGINX-like configuration</li>
+                <li>Custom error pages</li>
+                <li>Virtual hosts support</li>
+            </ul>
+        </div>
+        
+        <div class="feature">
+            <h3>🧪 Test Links</h3>
+            <div class="test-links">
+                <a href="/">Home Page</a>
+                <a href="/test.html">Static File</a>
+                <a href="/uploads/">Uploads Directory</a>
+                <a href="/cgi-bin/">CGI Scripts</a>
+                <a href="/nonexistent">404 Test</a>
+                <a href="/redirect">Redirect Test</a>
+            </div>
+        </div>
+        
+        <div class="feature">
+            <h3>🎨 Error Pages Gallery</h3>
+            <p>Test our beautifully animated error pages:</p>
+            <div class="test-links">
+                <a href="/error_pages/400.html">400 - Bad Request</a>
+                <a href="/error_pages/403.html">403 - Forbidden</a>
+                <a href="/error_pages/404.html">404 - Not Found</a>
+                <a href="/error_pages/405.html">405 - Method Not Allowed</a>
+                <a href="/error_pages/500.html">500 - Internal Server Error</a>
+            </div>
+            <p><small>These pages feature CSS animations, floating elements, and responsive design!</small></p>
+        </div>
+        
+        <div class="upload-form">
+            <h3>📤 File Upload Test</h3>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" required>
+                <button type="submit">Upload File</button>
+            </form>
+            
+            <h4>Or test with curl:</h4>
+            <div class="code">
+                curl -X POST -F "file=@yourfile.txt" http://localhost:8080/upload
+            </div>
+        </div>
+        
+        <div class="feature">
+            <h3>🔧 Command Line Tests</h3>
+            <div class="code">
+                # Basic GET request<br>
+                curl -v http://localhost:8080/<br><br>
+                
+                # File upload<br>
+                curl -X POST -F "file=@README.md" http://localhost:8080/upload<br><br>
+                
+                # DELETE request<br>
+                curl -X DELETE http://localhost:8080/uploads/somefile.txt<br><br>
+                
+                # Stress test<br>
+                ab -n 1000 -c 10 http://localhost:8080/
+            </div>
+        </div>
+        
+        <div class="feature">
+            <h3>📊 Server Information</h3>
+            <p><strong>Server:</strong> WebServ/1.0</p>
+            <p><strong>Protocol:</strong> HTTP/1.1</p>
+            <p><strong>Configuration:</strong> NGINX-like config files</p>
+            <p><strong>Architecture:</strong> Event-driven, non-blocking I/O</p>
+        </div>
+        
+        <footer style="text-align: center; margin-top: 30px; color: #666;">
+            <p>WebServ HTTP Server - Built with C++98</p>
+        </footer>
+    </div>
+</body>
+</html>

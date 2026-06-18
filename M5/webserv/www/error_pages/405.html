@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>405 Method Not Allowed</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .error-container {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 60px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: containerBounce 3s ease-in-out infinite;
+            position: relative;
+        }
+        
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #e17055, #fd79a8, #e17055);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 2.5s ease-in-out infinite, reject 2s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        .error-title {
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: 300;
+            letter-spacing: 1px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+        
+        .error-message {
+            font-size: 18px;
+            margin: 25px 0;
+            opacity: 0.9;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.7s both;
+        }
+        
+        .stop-icon {
+            font-size: 60px;
+            margin: 20px 0;
+            animation: stopPulse 2s ease-in-out infinite, fadeInUp 1s ease-out 0.3s both;
+        }
+        
+        .allowed-methods {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 16px;
+            animation: fadeInUp 1s ease-out 0.8s both;
+        }
+        
+        .method-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 3px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .home-link {
+            display: inline-block;
+            color: #fd79a8;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 15px 30px;
+            border: 2px solid #fd79a8;
+            border-radius: 30px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out 1.0s both;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .home-link:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(253,121,168,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .home-link:hover:before {
+            left: 100%;
+        }
+        
+        .home-link:hover {
+            background: #fd79a8;
+            color: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(253,121,168,0.4);
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 40s infinite linear;
+        }
+        
+        .shape:nth-child(1) {
+            left: 8%;
+            animation-delay: 0s;
+            animation-duration: 35s;
+        }
+        
+        .shape:nth-child(2) {
+            left: 28%;
+            animation-delay: 8s;
+            animation-duration: 30s;
+        }
+        
+        .shape:nth-child(3) {
+            left: 68%;
+            animation-delay: 16s;
+            animation-duration: 38s;
+        }
+        
+        .shape:nth-child(4) {
+            left: 88%;
+            animation-delay: 24s;
+            animation-duration: 32s;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            opacity: 0.7;
+            animation: fadeInUp 1s ease-out 1.2s both;
+        }
+        
+        @keyframes containerBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes reject {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+        }
+        
+        @keyframes stopPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 40px 20px;
+                margin: 20px;
+            }
+            
+            .error-code {
+                font-size: 80px;
+            }
+            
+            .error-title {
+                font-size: 24px;
+            }
+            
+            .error-message {
+                font-size: 16px;
+            }
+            
+            .stop-icon {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape">🛑</div>
+        <div class="shape">🚫</div>
+        <div class="shape">❌</div>
+        <div class="shape">⭕</div>
+    </div>
+    
+    <div class="error-container">
+        <div class="stop-icon">🛑</div>
+        <div class="error-code">405</div>
+        <h1 class="error-title">Method Not Allowed</h1>
+        <p class="error-message">
+            The request method is not supported for this resource.<br>
+            Please use one of the allowed methods below.
+        </p>
+        <div class="allowed-methods">
+            <strong>Allowed Methods:</strong><br>
+            <span class="method-tag">GET</span>
+            <span class="method-tag">POST</span>
+            <span class="method-tag">DELETE</span>
+        </div>
+        <a href="/" class="home-link">
+            ← Go Back
+        </a>
+        <div class="footer">
+            <small>WebServ/1.0 • Powered by C++</small>
+        </div>
+    </div>
+</body>
+</html>
